@@ -22,7 +22,7 @@ import wandb
 
 ### custom your wandb setting here ###
 # os.environ["WANDB_API_KEY"] = ""
-os.environ["WANDB_MODE"] = "offline"
+os.environ["WANDB_MODE"] = "online"
 
 def create_argparser():
     defaults = dict()
