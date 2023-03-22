@@ -38,7 +38,7 @@ def create_file(filename: str) -> None:
 
     print("Write file")
     with open(output_filename, "a") as of:
-        of.writelines(processed_lines + "\n")
+        of.writelines(processed_lines)
 
 if __name__ == '__main__':
     create_file(args.input_path)
