@@ -1,6 +1,8 @@
 import argparse
 import itertools
 import os
+
+import pandas as pd
 import tqdm
 
 
@@ -9,13 +11,15 @@ parser.add_argument('--input_path', required=True, help='The input path for the 
 
 args = parser.parse_args()
 
+
 def create_file(filename: str) -> None:
     output_filename = filename.split("/")[-1].replace(".csv", ".jsonl")
     if os.path.exists(output_filename):
         os.remove(output_filename)
 
-
     print(output_filename)
+
+    processed_lines = []
     with open(filename) as f:
         f.readline()  # skip header
 
@@ -28,11 +32,13 @@ def create_file(filename: str) -> None:
 
             assert len(sequence) == len(structure), f"Missing AA or structure token for {sequence} in line {index}"
 
-            write_string = f'{{"src": "{structure}", "trg": "{sequence}"}}'
+            write_string = f'{{"src": "{sequence}", "trg": "{structure}"}}'
+            processed_lines.append(write_string)
+    print("Done processing file")
 
-            with open(output_filename, "a") as of:
-                of.write(write_string + "\n")
-
+    print("Write file")
+    with open(output_filename, "a") as of:
+        of.writelines(write_string + "\n")
 
 if __name__ == '__main__':
     create_file(args.input_path)
