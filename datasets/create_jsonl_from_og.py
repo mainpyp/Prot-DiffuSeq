@@ -32,7 +32,7 @@ def create_file(filename: str) -> None:
 
             assert len(sequence) == len(structure), f"Missing AA or structure token for {sequence} in line {index}"
 
-            write_string = f'{{"src": "{sequence}", "trg": "{structure}"}}'
+            write_string = f'{{"src": "{sequence}", "trg": "{structure}"}}\n'
             processed_lines.append(write_string)
     print("Done processing file")
 
