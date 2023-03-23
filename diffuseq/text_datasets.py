@@ -194,6 +194,7 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
     vocab_dict = loaded_vocab
 
     train_dataset = helper_tokenize(sentence_lst, vocab_dict, seq_len)
+    del sentence_lst
     return train_dataset
 
 
