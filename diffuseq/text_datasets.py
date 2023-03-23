@@ -82,6 +82,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
         batched=True,
         num_proc=4,
         remove_columns=['src', 'trg'],
+        keep_in_memory=True,
         load_from_cache_file=True,
         desc="Running tokenizer on dataset",
     )
