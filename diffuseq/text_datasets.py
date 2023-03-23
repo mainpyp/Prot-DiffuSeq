@@ -4,6 +4,8 @@ from torch.utils.data import DataLoader, Dataset
 
 import torch
 import json
+import itertools
+import tqdm
 import psutil
 import datasets
 from datasets import Dataset as Dataset2
@@ -147,7 +149,7 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
     print('#'*30, '\nLoading dataset {} from {}...'.format(data_args.dataset, data_args.data_dir))
 
     sentence_lst = {'src':[], 'trg': []}
-    
+     # TODO: This needs to be
     if split == 'train':
         print('### Loading form the TRAIN set...')
         path = f'{data_args.data_dir}/train.jsonl'
@@ -160,10 +162,30 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
     else:
         assert False, "invalid split for dataset"
 
+    # TODO: take care of that shit!
+    # processed_lines = []
+    # with open(path) as f:
+    #     f.readline()  # skip header
+    #
+    #     for index, (structure_string, seq_string) in tqdm.tqdm(enumerate(itertools.zip_longest(*[f] * 2))):
+    #         if index == 0 or structure_string == None or seq_string == None:
+    #             continue
+    #
+    #         sequence = " ".join(list(seq_string.split(',')[-1].strip()))
+    #         structure = " ".join(list(structure_string.split(',')[-1].strip()))
+    #
+    #         assert len(sequence) == len(structure), f"Missing AA or structure token for {sequence} in line {index}"
+    #
+    #         write_string = f'{{"src": "{sequence}", "trg": "{structure}"}}\n'
+    #         processed_lines.append(write_string)
+    # print("Done processing file")
+
+
     with open(path, 'r') as f_reader:
         for row in f_reader:
-            sentence_lst['src'].append(json.loads(row)['src'].strip())
-            sentence_lst['trg'].append(json.loads(row)['trg'].strip())
+            line = json.loads(row)
+            sentence_lst['src'].append(line['src'].strip())
+            sentence_lst['trg'].append(line['trg'].strip())
 
     print('### Data samples...\n', sentence_lst['src'][:2], sentence_lst['trg'][:2])
         
