@@ -183,7 +183,7 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
 
 
     with open(path, 'r') as f_reader:
-        for row in f_reader:
+        for row in tqdm.tqdm(enumerate(f_reader)):
             line = json.loads(row)
             sentence_lst['src'].append(line['src'].strip())
             sentence_lst['trg'].append(line['trg'].strip())
