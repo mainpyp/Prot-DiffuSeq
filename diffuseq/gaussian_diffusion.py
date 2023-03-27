@@ -611,7 +611,7 @@ class GaussianDiffusion:
 
         x_t = self.q_sample(x_start, t, noise=noise, mask=input_ids_mask) # reparametrization trick.
 
-        get_logits = model.module.get_logits
+        get_logits = model.model.module.get_logits
 
         terms = {}
 
