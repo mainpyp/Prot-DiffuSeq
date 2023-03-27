@@ -2,6 +2,7 @@
 /venv/*
 *egg-info*
 *wandb*
+datasets/*
 diffusion_models/
 diffusion_models/*
 generation_outputs/
