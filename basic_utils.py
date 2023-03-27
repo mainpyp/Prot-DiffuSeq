@@ -16,6 +16,7 @@ class myTokenizer():
     ### You can custome your own tokenizer here. ###
     ################################################
     def __init__(self, args):
+        self.args = args
         if args.vocab == 'bert':
             tokenizer = AutoTokenizer.from_pretrained(args.config_name)
             self.tokenizer = tokenizer
@@ -60,7 +61,7 @@ class myTokenizer():
             input_ids = [[0] + [self.tokenizer.get(x, self.tokenizer['[UNK]']) for x in seq.split()] + [1] for seq in sentences]
         elif isinstance(self.tokenizer, PreTrainedTokenizerFast):
             print("##### encode token")
-            input_ids = self.tokenizer(sentences, add_special_tokens=True, truncation=True, max_length=args.seq_len)['input_ids']
+            input_ids = self.tokenizer(sentences, add_special_tokens=True, truncation=True, max_length=self.args.seq_len)['input_ids']
         else:
             assert False, "invalid type of vocab_dict"
         return input_ids
