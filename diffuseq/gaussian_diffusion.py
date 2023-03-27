@@ -13,6 +13,9 @@ import torch as th
 import sys
 sys.path.append('.')
 
+from transformer_model import TransformerNetModel
+
+
 import torch.nn.functional as F
 
 from .utils.nn import mean_flat
@@ -580,7 +583,7 @@ class GaussianDiffusion:
 
         return {'pred_xprev':pred_prev, 'pred_xstart':pred_xstart}
 
-    def training_losses_seq2seq(self, model, x_start, t, model_kwargs=None, noise=None):
+    def training_losses_seq2seq(self, model: TransformerNetModel, x_start, t, model_kwargs=None, noise=None):
         """
         Compute training losses for a single timestep.
 
@@ -597,7 +600,7 @@ class GaussianDiffusion:
         assert 'input_ids' in model_kwargs
         input_ids_x = model_kwargs.pop('input_ids').to(t.device)
         input_ids_mask = model_kwargs.pop('input_mask').to(t.device)
-        x_start_mean = model.model.module.get_embeds(input_ids_x)
+        x_start_mean = model.get_embeds(input_ids_x)
         
         std = _extract_into_tensor(self.sqrt_one_minus_alphas_cumprod,
                                    th.tensor([0]).to(x_start_mean.device),
