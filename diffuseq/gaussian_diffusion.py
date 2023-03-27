@@ -13,9 +13,6 @@ import torch as th
 import sys
 sys.path.append('.')
 
-from transformer_model import TransformerNetModel
-
-
 import torch.nn.functional as F
 
 from .utils.nn import mean_flat
