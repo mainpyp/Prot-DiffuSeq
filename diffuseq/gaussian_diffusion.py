@@ -580,7 +580,7 @@ class GaussianDiffusion:
 
         return {'pred_xprev':pred_prev, 'pred_xstart':pred_xstart}
 
-    def training_losses_seq2seq(self, model: TransformerNetModel, x_start, t, model_kwargs=None, noise=None):
+    def training_losses_seq2seq(self, model, x_start, t, model_kwargs=None, noise=None):
         """
         Compute training losses for a single timestep.
 
