@@ -23,6 +23,18 @@ class myTokenizer():
             self.pad_token_id = tokenizer.pad_token_id
             # save
             tokenizer.save_pretrained(args.checkpoint_path)
+        elif args.vocab == 'protbert':
+            tokenizer = AutoTokenizer.from_pretrained("Rostlab/prot_bert")
+
+            # adds 3di tokens that are lowercase
+            threedi = ['a','c','d','e','f','g','h','i','k','l','m','n','p','q','r','s','t','v','w','y']
+            tokenizer.add_tokens(threedi)
+
+            self.tokenizer = tokenizer
+            self.sep_token_id = tokenizer.sep_token_id
+            self.pad_token_id = tokenizer.pad_token_id
+            # save
+            tokenizer.save_pretrained(args.checkpoint_path)
         else: 
             # load vocab from the path
             print('#'*30, 'load vocab from', args.vocab)
