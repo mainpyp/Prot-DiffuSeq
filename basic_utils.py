@@ -59,7 +59,8 @@ class myTokenizer():
         if isinstance(self.tokenizer, dict):
             input_ids = [[0] + [self.tokenizer.get(x, self.tokenizer['[UNK]']) for x in seq.split()] + [1] for seq in sentences]
         elif isinstance(self.tokenizer, PreTrainedTokenizerFast):
-            input_ids = self.tokenizer(sentences, add_special_tokens=True)['input_ids']
+            print("##### encode token")
+            input_ids = self.tokenizer(sentences, add_special_tokens=True, truncation=True, max_length=args.seq_len)['input_ids']
         else:
             assert False, "invalid type of vocab_dict"
         return input_ids
