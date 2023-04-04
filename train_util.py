@@ -175,7 +175,7 @@ class TrainLoop:
             or self.step + self.resume_step < self.learning_steps
         ):
             batch, cond = next(self.data)
-            print(f"batch: {batch.keys()}, cond: {cond.keys()}")
+            print(f"BATCH, COND")
             print(f"batch: {batch}, cond: {cond}")
             self.run_step(batch, cond)
             if self.step % self.log_interval == 0:
