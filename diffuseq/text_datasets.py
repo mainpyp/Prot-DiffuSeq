@@ -64,6 +64,12 @@ def infinite_loader(data_loader):
         yield from data_loader
 
 def helper_tokenize(sentence_lst, vocab_dict, seq_len):
+    """ sentence_lst: 
+                    keys: 'src', 'trg' 
+                    value: shape (bsz, len)
+        vocab_dict: vocab_dict is a dict of word2id
+    """
+
     # Process.memory_info is expressed in bytes, so convert to megabytes
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
     raw_datasets = Dataset2.from_dict(sentence_lst)
@@ -77,9 +83,10 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
 
         return result_dict
 
-    print('### sentence_lst', sentence_lst)
     print('### type sentence_lst', type(sentence_lst))
     print('### type raw_datasets', type(raw_datasets))
+    print('### vocab_dict keys', vocab_dict.keys())
+    print('### vocab_dict', vocab_dict)
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
