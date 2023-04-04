@@ -77,7 +77,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
 
     def tokenize_function(examples):
-        input_id_x = vocab_dict.encode_token(examples['src'], args)
+        input_id_x = vocab_dict.encode_token(examples['src'])
         input_id_y = vocab_dict.encode_token(examples['trg'])
         result_dict = {'input_id_x': input_id_x, 'input_id_y': input_id_y}
 
