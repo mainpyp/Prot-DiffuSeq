@@ -618,7 +618,7 @@ class GaussianDiffusion:
         target = x_start
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
         assert model_output.shape == target.shape == x_start.shape
-        print(f"MODEL OUTPUT FOR TRAINING")
+        #print(f"MODEL OUTPUT FOR TRAINING")
 
         # print(model_output.shape, target.shape)
         # print("target minus output: ", target-model_output)
