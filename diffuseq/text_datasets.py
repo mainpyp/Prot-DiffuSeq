@@ -83,9 +83,9 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
 
         return result_dict
 
-    print('### type sentence_lst', type(sentence_lst))
-    print('### type raw_datasets', type(raw_datasets))
-    print('### vocab_dict', vocab_dict)
+    # print('### type sentence_lst', type(sentence_lst))
+    # print('### type raw_datasets', type(raw_datasets))
+    # print('### vocab_dict', vocab_dict)
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
