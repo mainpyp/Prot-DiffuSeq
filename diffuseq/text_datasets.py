@@ -71,12 +71,15 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
 
     def tokenize_function(examples):
-        input_id_x = vocab_dict.encode_token(examples['src'])
+        input_id_x = vocab_dict.encode_token(examples['src'], args)
         input_id_y = vocab_dict.encode_token(examples['trg'])
         result_dict = {'input_id_x': input_id_x, 'input_id_y': input_id_y}
 
         return result_dict
 
+    print('### sentence_lst', sentence_lst)
+    print('### type sentence_lst', type(sentence_lst))
+    print('### type raw_datasets', type(raw_datasets))
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
@@ -87,6 +90,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
         desc="Running tokenizer on dataset",
     )
     print('### tokenized_datasets', tokenized_datasets)
+    print('### tokenized_datasets shape', tokenized_datasets.shape)
     print('### tokenized_datasets...example', tokenized_datasets['input_id_x'][0])
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
 
@@ -97,8 +101,8 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
             end_token = group_lst['input_id_x'][i][-1]
             src = group_lst['input_id_x'][i][:-1]
             trg = group_lst['input_id_y'][i][:-1]
-            while len(src) + len(trg) > seq_len - 3:
-                if len(src)>len(trg):
+            while len(src) + len(trg) > seq_len - 3:  # 3 for [CLS], [SEP], [SEP]
+                if len(src)>len(trg): 
                     src.pop()
                 elif len(src)<len(trg):
                     trg.pop()
@@ -118,6 +122,8 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
         merge_and_mask,
         batched=True,
         num_proc=1,
+        keep_in_memory=False,
+        load_from_cache_file=True,
         desc=f"merge and mask",
     )
     
@@ -133,6 +139,8 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
         pad_function,
         batched=True,
         num_proc=1,
+        keep_in_memory=False,
+        load_from_cache_file=True,
         desc=f"padding",
     )
 
