@@ -638,6 +638,7 @@ class GaussianDiffusion:
         # assert (model.lm_head.weight == model.word_embedding.weight).all()
 
         terms["loss"] = terms["mse"] + decoder_nll + tT_loss
+        terms["test_term"] = 420
 
         return terms
 
