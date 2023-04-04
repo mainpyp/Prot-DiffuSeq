@@ -619,9 +619,10 @@ class GaussianDiffusion:
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
         assert model_output.shape == target.shape == x_start.shape
         print(f"MODEL OUTPUT FOR TRAINING")
-        print(model_output.shape, target.shape, x_start.shape)    
+
+        print(model_output.shape, target.shape)
+        print(model_output[0], target[0])
         print(model_output, target)
-        
         terms["mse"] = mean_flat((target - model_output) ** 2)
 
         model_out_x_start = self._x0_helper(model_output, x_t, t)['pred_xstart'] # predicted_xstart = model_output
