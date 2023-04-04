@@ -620,8 +620,8 @@ class GaussianDiffusion:
         assert model_output.shape == target.shape == x_start.shape
         print(f"MODEL OUTPUT FOR TRAINING")
 
-        print(model_output.shape, target.shape)
-        print("target minus output: ", target-model_output)
+        # print(model_output.shape, target.shape)
+        # print("target minus output: ", target-model_output)
         terms["mse"] = mean_flat((target - model_output) ** 2)
 
         model_out_x_start = self._x0_helper(model_output, x_t, t)['pred_xstart'] # predicted_xstart = model_output
