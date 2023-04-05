@@ -154,11 +154,14 @@ def main():
         model_kwargs = {}
 
         if args.step == args.diffusion_steps:
+            print(f"step: {args.step} == diffusion steps: {args.diffusion_steps}")
             args.use_ddim = False
             step_gap = 1
         else:
+            print(f"OTHERWISE step: {args.step} == diffusion steps: {args.diffusion_steps}")
             args.use_ddim = True
             step_gap = args.diffusion_steps//args.step
+
 
         sample_fn = (
             diffusion.p_sample_loop if not args.use_ddim else diffusion.ddim_sample_loop
