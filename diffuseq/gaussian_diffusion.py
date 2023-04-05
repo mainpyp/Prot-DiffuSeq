@@ -618,10 +618,10 @@ class GaussianDiffusion:
         target = x_start
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
         assert model_output.shape == target.shape == x_start.shape
-        #print(f"MODEL OUTPUT FOR TRAINING")
 
-        # print(model_output.shape, target.shape)
-        # print("target minus output: ", target-model_output)
+        print(f"MODEL OUTPUT FOR TRAINING")
+        print(model_output.shape, target.shape)
+        print("target minus output: ", target-model_output)
         terms["mse"] = mean_flat((target - model_output) ** 2)
 
         model_out_x_start = self._x0_helper(model_output, x_t, t)['pred_xstart'] # predicted_xstart = model_output
@@ -632,7 +632,7 @@ class GaussianDiffusion:
         # tT_mask = (t == self.num_timesteps - 1)
         out_mean, _, _ = self.q_mean_variance(x_start, th.LongTensor([self.num_timesteps - 1]).to(x_start.device))
         tT_loss =  mean_flat(out_mean ** 2)
-
+        print(f"x_start: {x_start.shape}, x_t: {x_t.shape}, model_out_x_start: {model_out_x_start.shape}, out_mean: {out_mean.shape}")
         decoder_nll = self._token_discrete_loss(x_start, get_logits, input_ids_x) # embedding regularization
         terms["nll"] = self._token_discrete_loss(model_out_x_start, get_logits, input_ids_x, mask=input_ids_mask, truncate=True, t=t) # x_0->model_out_x_start
         # assert (model.lm_head.weight == model.word_embedding.weight).all()
