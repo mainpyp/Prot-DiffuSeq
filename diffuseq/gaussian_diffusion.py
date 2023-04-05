@@ -250,7 +250,7 @@ class GaussianDiffusion:
             _extract_into_tensor(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
             + _extract_into_tensor(self.sqrt_one_minus_alphas_cumprod, t, x_start.shape)
             * noise
-        )
+        )  # 
 
         if mask == None:
             return x_t
@@ -598,12 +598,12 @@ class GaussianDiffusion:
         input_ids_x = model_kwargs.pop('input_ids').to(t.device) # shape: bsz, seqlen
         input_ids_mask = model_kwargs.pop('input_mask').to(t.device)
         x_start_mean = model.model.module.get_embeds(input_ids_x)
-
+        TOKENIZER.decode(input_ids_x)
         std = _extract_into_tensor(self.sqrt_one_minus_alphas_cumprod,
                                    th.tensor([0]).to(x_start_mean.device),
                                    x_start_mean.shape)
     
-        x_start = self._get_x_start(x_start_mean, std)
+        x_start = self._get_x_start(x_start_mean, std)  # x_start_mean + std * noise
         # print(x_start_mean.shape, x_start.shape)
         if noise is None:
             noise = th.randn_like(x_start)
