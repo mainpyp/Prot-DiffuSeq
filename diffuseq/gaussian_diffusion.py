@@ -809,6 +809,8 @@ class GaussianDiffusion:
             sample_x = noise
         else:
             sample_x = th.randn(*shape, device=device)
+
+        print(f"### -> gap is {gap}")
         indices = list(range(self.num_timesteps))[::-1][::gap]
 
         if progress:
