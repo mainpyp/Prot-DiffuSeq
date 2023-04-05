@@ -608,6 +608,7 @@ class GaussianDiffusion:
         if noise is None:
             noise = th.randn_like(x_start)
 
+        # shape: bsz, seqlen, embedding
         x_t = self.q_sample(x_start, t, noise=noise, mask=input_ids_mask) # reparametrization trick.
 
         get_logits = model.model.module.get_logits
@@ -616,6 +617,7 @@ class GaussianDiffusion:
 
         target = x_start
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
+        print(f"MODEL TYPE: {type(model)}")
         assert model_output.shape == target.shape == x_start.shape
 
         print(f"MODEL OUTPUT FOR TRAINING")
