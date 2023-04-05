@@ -633,7 +633,8 @@ class GaussianDiffusion:
         out_mean, _, _ = self.q_mean_variance(x_start, th.LongTensor([self.num_timesteps - 1]).to(x_start.device))
         tT_loss =  mean_flat(out_mean ** 2)
         print(f"x_start: {x_start.shape}, x_t: {x_t.shape}, model_out_x_start: {model_out_x_start.shape}, out_mean: {out_mean.shape}")
-        print(f"xstart: {x_start}")
+        print(f"input ids shape: {input_ids_x.shape}")
+        print(f"input ids: {input_ids_x}")
         decoder_nll = self._token_discrete_loss(x_start, get_logits, input_ids_x) # embedding regularization
         terms["nll"] = self._token_discrete_loss(model_out_x_start, get_logits, input_ids_x, mask=input_ids_mask, truncate=True, t=t) # x_0->model_out_x_start
         # assert (model.lm_head.weight == model.word_embedding.weight).all()
