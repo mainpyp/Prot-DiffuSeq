@@ -595,15 +595,14 @@ class GaussianDiffusion:
         """
         x_start_fix = x_start # save the orignal x_0
         assert 'input_ids' in model_kwargs
-        input_ids_x = model_kwargs.pop('input_ids').to(t.device)
+        input_ids_x = model_kwargs.pop('input_ids').to(t.device) # shape: bsz, seqlen
         input_ids_mask = model_kwargs.pop('input_mask').to(t.device)
         x_start_mean = model.model.module.get_embeds(input_ids_x)
-        
+
         std = _extract_into_tensor(self.sqrt_one_minus_alphas_cumprod,
                                    th.tensor([0]).to(x_start_mean.device),
                                    x_start_mean.shape)
-        # print(std.shape, )
-        # x_start_log_var = 2 * th.log(std)
+    
         x_start = self._get_x_start(x_start_mean, std)
         # print(x_start_mean.shape, x_start.shape)
         if noise is None:
@@ -634,7 +633,7 @@ class GaussianDiffusion:
         tT_loss =  mean_flat(out_mean ** 2)
         print(f"x_start: {x_start.shape}, x_t: {x_t.shape}, model_out_x_start: {model_out_x_start.shape}, out_mean: {out_mean.shape}")
         print(f"input ids shape: {input_ids_x.shape}")
-        print(f"input ids: {input_ids_x}")
+        print(f"input ids: {input_ids_x[0]}")
         decoder_nll = self._token_discrete_loss(x_start, get_logits, input_ids_x) # embedding regularization
         terms["nll"] = self._token_discrete_loss(model_out_x_start, get_logits, input_ids_x, mask=input_ids_mask, truncate=True, t=t) # x_0->model_out_x_start
         # assert (model.lm_head.weight == model.word_embedding.weight).all()
