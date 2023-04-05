@@ -153,7 +153,7 @@ def main():
 
         model_kwargs = {}
 
-        if args.step == args.diffusion_steps:
+        if args.step <= args.diffusion_steps:
             print(f"step: {args.step} == diffusion steps: {args.diffusion_steps}")
             args.use_ddim = False
             step_gap = 1
