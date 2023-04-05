@@ -32,8 +32,6 @@ class myTokenizer():
             tokenizer.add_tokens(threedi)
 
             self.tokenizer = tokenizer
-            global TOKENIZER
-            TOKENIZER = tokenizer
             self.sep_token_id = tokenizer.sep_token_id
             self.pad_token_id = tokenizer.pad_token_id
             # save
