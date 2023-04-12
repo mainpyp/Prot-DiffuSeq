@@ -3,7 +3,7 @@
   "batch_size": 2048,
   "microbatch": 64,
   "learning_steps": 320000,
-  "log_interval": 20,
+  "log_interval": 50,
   "save_interval": 40000,
   "eval_interval": 250,
   "ema_rate": "0.9999",
