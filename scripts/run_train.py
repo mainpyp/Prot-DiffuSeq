@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--config_name', type=str, default='bert-base-uncased', help='config of pre-trained models')
     parser.add_argument('--vocab', type=str, default='bert', help='use bert vocab or load external vocab dict if given as path')
-    parser.add_argument('--use_plm_init', type=str, default='no', choices=['no', 'bert'], help='load init parameter from the pre-trained lm')
+    parser.add_argument('--use_plm_init', type=str, default='no', choices=['no', 'bert', 'roformer'], help='load init parameter from the pre-trained lm')
 
     parser.add_argument('--notes', type=str, default='-', help='as training notes or specifical args')
     parser.add_argument('--app', type=str, default='', help='other input args')

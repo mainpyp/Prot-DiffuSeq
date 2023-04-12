@@ -1,4 +1,4 @@
-from transformers import AutoConfig
+from transformers import AutoConfig, RoFormerModel, RoFormerConfig
 # from transformers import BertEncoder
 from transformers.models.bert.modeling_bert import BertEncoder, BertModel
 import torch
@@ -42,6 +42,7 @@ class TransformerNetModel(nn.Module):
         super().__init__()
 
         if config is None:
+            print("config is none (TransformerNetModel)")
             config = AutoConfig.from_pretrained(config_name)
             config.hidden_dropout_prob = dropout
 
@@ -86,8 +87,39 @@ class TransformerNetModel(nn.Module):
 
             del temp_bert.embeddings
             del temp_bert.pooler
+        
+        elif init_pretrained == 'roformer':
+            print('initializing from pretrained roformer...')
+            print(config)
+            # Initializing a RoFormer junnyu/roformer_chinese_base style configuration
+            configuration = RoFormerConfig()
+
+            # Initializing a model from the junnyu/roformer_chinese_base style configuration
+            temp_model = RoFormerModel(configuration)
+            
+            self.word_embedding = temp_model.embeddings.word_embeddings
+            with th.no_grad():
+                self.lm_head.weight = self.word_embedding.weight
+            # self.lm_head.weight.requires_grad = False
+            # self.word_embedding.weight.requires_grad = False
+            
+            self.input_transformers = temp_model.encoder
+            self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
+            self.position_embeddings = temp_model.embeddings.position_embeddings
+            self.LayerNorm = temp_model.embeddings.LayerNorm
+
+            del temp_model.embeddings
+            del temp_model.pooler
 
         elif init_pretrained == 'no':
+            # To use RoFormer
+            # self.input_transformers = RoFormerModel(config)
+
+            # self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
+            # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
+            # self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
+
+
             self.input_transformers = BertEncoder(config)
 
             self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))

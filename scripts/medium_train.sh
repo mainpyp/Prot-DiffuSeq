@@ -6,6 +6,7 @@ python -m torch.distributed.launch --nproc_per_node=2 --master_port=12233 --use_
 --seed 102 \
 --noise_schedule sqrt \
 --hidden_dim 128 \
+--dropout 0 \
 --bsz 128 \
 --dataset ProtMedium \
 --data_dir datasets/ProtMediumCorrect \
