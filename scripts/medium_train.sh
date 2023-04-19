@@ -5,7 +5,7 @@ python -m torch.distributed.launch --nproc_per_node=3 --master_port=12233 --use_
 --save_interval 10000 \
 --seed 123 \
 --noise_schedule sqrt \
---hidden_dim 128 \
+--hidden_dim 256 \
 --bsz 256 \
 --dataset ProtMediumCorrect \
 --data_dir datasets/ProtMediumCorrect \
