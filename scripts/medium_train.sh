@@ -1,15 +1,15 @@
 python -m torch.distributed.launch --nproc_per_node=3 --master_port=12233 --use_env run_train.py \
 --diff_steps 6000 \
---lr 0.0001 \
+--lr 0.00001 \
 --learning_steps 1000001 \
 --save_interval 10000 \
---seed 102 \
+--seed 123 \
 --noise_schedule sqrt \
 --hidden_dim 128 \
---bsz 512 \
+--bsz 256 \
 --dataset ProtMediumCorrect \
 --data_dir datasets/ProtMediumCorrect \
 --vocab protbert \
---seq_len 128 \
+--seq_len 256 \
 --schedule_sampler lossaware \
---notes pm-correct-long
+--notes pm-correct-new-params
