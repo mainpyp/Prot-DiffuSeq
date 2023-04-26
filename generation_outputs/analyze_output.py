@@ -124,11 +124,7 @@ def plot_aa_dist_pairwise(rec_ref_src: pd.DataFrame):
     plt.show()
 
 
-def plot_aa_dist_global(rec_ref_src: pd.DataFrame, step: int, save_path: str = None):
-
-    if save_path and not os.path.exists(save_path):
-        os.makedirs(save_path)
-
+def get_global_counter(rec_ref_src: pd.DataFrame):
     glob_c_recover = Counter()
     glob_c_reference = Counter()
 
@@ -139,6 +135,31 @@ def plot_aa_dist_global(rec_ref_src: pd.DataFrame, step: int, save_path: str = N
         glob_c_recover += c_recover
         glob_c_reference += c_reference
 
+    return glob_c_recover, glob_c_reference
+
+def plot_correlations(models_path):
+    files = get_json_files(model_path)
+    corrs = pd.DataFrame(columns=["step", "spearman", "pearson"])
+    for path in files: 
+        l = load_jsonl(path)
+        glob_c_recover, glob_c_reference = get_global_counter(l)
+        sp_correlation = spearman_correlation(glob_c_recover, glob_c_reference)
+        p_correlation = pearson_correlation(glob_c_recover, glob_c_reference)
+        step = get_step_from_path(path)
+        corrs = corrs.append({"step": str(step//1000)+"K", "spearman": sp_correlation, "pearson": p_correlation}, ignore_index=True)
+
+    # barplot with y axis spearman next to pearson and x axis step
+    corrs.plot(x="step", y=["spearman", "pearson"], kind="bar", figsize=(10, 5))
+    plt.tight_layout()
+    plt.show()
+
+def plot_aa_dist_global(rec_ref_src: pd.DataFrame, step: int, save_path: str = None):
+
+    if save_path and not os.path.exists(save_path):
+        os.makedirs(save_path)
+
+    glob_c_recover, glob_c_reference = get_global_counter(rec_ref_src)
+    
     # plot the global counter dict
     sp_correlation = spearman_correlation(glob_c_recover, glob_c_reference)
     p_correlation = pearson_correlation(glob_c_recover, glob_c_reference)
@@ -153,8 +174,6 @@ def plot_aa_dist_global(rec_ref_src: pd.DataFrame, step: int, save_path: str = N
 
     if not save_path: plt.show() 
     else: plt.savefig(os.path.join(save_path, f"step_{step}.png"))
-
-    return sp_correlation, p_correlation
 
 # calculate the spearman correlation based of two counter dicts
 def spearman_correlation(c1: Counter, c2: Counter) -> float:
@@ -206,11 +225,13 @@ if __name__ == '__main__':
     l = load_jsonl(path)
     model_path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/diffuseq_ProtMediumCorrect_h256_lr1e-05_t6000_sqrt_lossaware_seed123_pm-correct-new-params20230419-17:39:32/"
 
-    files = get_json_files(model_path)
-    for path in files:
-        step = get_step_from_path(path)
-        l = load_jsonl(path)
-        plot_aa_dist_global(l, step, save_path=model_path + "plots/")
+    # files = get_json_files(model_path)
+    # for path in files:
+    #     step = get_step_from_path(path)
+    #     l = load_jsonl(path)
+    #     plot_aa_dist_global(l, step, save_path=model_path + "plots/")
+
+    corrs = plot_correlations(model_path)
 
     # basic_analyze(l)
     # plot_aa_dist_global(l)
