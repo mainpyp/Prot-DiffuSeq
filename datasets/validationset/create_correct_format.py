@@ -33,8 +33,8 @@ def create_correct_file(fasta_seq: str, fasta_struc: str) -> None:
 
 
             assert len(seq) == len(struc), f"Missing AA or structure token for {seq} in line {index}"
-
-            write_string = f'{{"src": "{struc}", "trg": "{seq}"}}\n'
+            add_whitespace = lambda x : " ".join(list(x))
+            write_string = f'{{"src": "{add_whitespace(struc)}", "trg": "{add_whitespace(seq)}"}}\n'
             processed_lines.append(write_string)
     print("Done processing file")
 

@@ -10,8 +10,14 @@ def get_knn(model_emb, text_emb, dist='cos'):
     if dist == 'cos':
         adjacency = model_emb @ text_emb.transpose(1, 0).to(model_emb.device)
     elif dist == 'l2':
-        adjacency = model_emb.unsqueeze(1).expand(-1, text_emb.size(0), -1) - text_emb.unsqueeze(0).expand(
-            model_emb.size(0), -1, -1)
+        # here we calculate the difference between model and text embedding 
+        # this is saved as adjacency
+        adjacency = model_emb.unsqueeze(1).expand(-1, text_emb.size(0), -1) - \
+        text_emb.unsqueeze(0).expand(model_emb.size(0), -1, -1)
+        # This is the second part of the euclidean distance calculation
+        # root of sum of squares of adjacent vectors (difference)
+        # boils down to that: norm = lambda x: torch.sqrt(torch.sum(x**2))
+        # https://de.wikipedia.org/wiki/Frobeniusnorm
         adjacency = -torch.norm(adjacency, dim=-1)
     topk_out = torch.topk(adjacency, k=6, dim=0)
     return topk_out.values, topk_out.indices
@@ -23,7 +29,7 @@ def get_efficient_knn(model_emb, text_emb):
     # print(emb_norm.shape, arr_norm.shape)
     dist = emb_norm + arr_norm.transpose(0, 1) - 2.0 * torch.mm(model_emb, text_emb_t) # (vocab, d) x (d, bsz*seqlen)
     dist = torch.clamp(dist, 0.0, np.inf)
-    # print(dist.shape)
+    # topk returns the largest k elements of the given input tensor along a given dimension.
     topk_out = torch.topk(-dist, k=1, dim=0)
     return topk_out.values, topk_out.indices
 
@@ -33,6 +39,8 @@ def rounding_func(text_emb_lst, model, tokenizer, emb_scale_factor=1.0):
     model_emb = model.weight  # input_embs
     down_proj_emb2 = None
 
+    # L2 also called Euclidean distance is calculated as 
+    # the square root of the sum of the squared differences between the two vectors.
     dist = 'l2'
     
     for text_emb in text_emb_lst:

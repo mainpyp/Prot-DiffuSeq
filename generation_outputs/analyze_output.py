@@ -62,11 +62,9 @@ def basic_analyze(rec_ref_src: tuple):
         # cleans the sequences from brackets and spaces
         clean_rec, clean_ref, clean_src = map(
             remove_brackets, (recover, reference, source))
-
-        print(f"generated: {clean_rec}")
         dum_ali = dummy_aligner(clean_rec, clean_ref)
         print(
-            f"dummy ali: {dum_ali[0]} score:  {dum_ali[1]} | {dum_ali[1] / len(dum_ali[0]):.3f} blosum: {dum_ali[2]}")
+            f"dummy ali: {dum_ali[0]} score:  {dum_ali[1]} | {dum_ali[1] / len(dum_ali[0]) if len(dum_ali[0]) != 0 else 0:.3f} blosum: {dum_ali[2]}")
         print(f"reference: {clean_ref}")
         print(f"source   : {clean_src}\n---")
 
@@ -221,17 +219,17 @@ if __name__ == '__main__':
     global remove_brackets
     def remove_brackets(x): return re.sub(r'\[(.*?)\]', '', x).replace(" ", "")
 
-    path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/diffuseq_ProtMediumCorrect_h256_lr1e-05_t6000_sqrt_lossaware_seed123_pm-correct-new-params20230419-17:39:32/ema_0.9999_040000.pt.samples/seed123_step0.json"
+    path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/diffuseq_ProtMediumCorrect_h256_lr1e-05_t6000_sqrt_lossaware_seed123_pm-correct-new-params20230419-17:39:32/ema_0.9999_130000.pt.samples/seed123_step0.json"
     l = load_jsonl(path)
-    model_path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/diffuseq_ProtMediumCorrect_h256_lr1e-05_t6000_sqrt_lossaware_seed123_pm-correct-new-params20230419-17:39:32/"
-
+    #model_path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/diffuseq_ProtMediumCorrect_h256_lr1e-05_t6000_sqrt_lossaware_seed123_pm-correct-new-params20230419-17:39:32/"
+    #model_path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/diffuseq_ProtMediumCorrect_h128_lr0.0001_t6000_sqrt_lossaware_seed102_pm-correct-long20230412-14:15:04/"
     # files = get_json_files(model_path)
     # for path in files:
     #     step = get_step_from_path(path)
     #     l = load_jsonl(path)
-    #     plot_aa_dist_global(l, step, save_path=model_path + "plots/")
+    #     plot_aa_dist_global(l, step, save_path=model_path + "plots_better_test/")
 
-    corrs = plot_correlations(model_path)
+    #corrs = plot_correlations(model_path)
 
-    # basic_analyze(l)
+    basic_analyze(l)
     # plot_aa_dist_global(l)
