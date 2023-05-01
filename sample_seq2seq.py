@@ -79,7 +79,7 @@ def main():
 
     set_seed(args.seed2)
 
-    print("### Sampling...on", args.split)
+    print(f"### Sampling...on {args.split}")
 
     ## load data
     data_valid = load_data_text(
@@ -95,9 +95,6 @@ def main():
 
     start_t = time.time()
 
-    # batch, cond = next(data_valid)
-    # print(batch.shape)
-
     model_base_name = os.path.basename(os.path.split(args.model_path)[0]) + f'.{os.path.split(args.model_path)[1]}'
     out_dir = os.path.join(args.out_dir, f"{model_base_name.split('.ema')[0]}")
     if not os.path.isdir(out_dir):
@@ -107,7 +104,6 @@ def main():
     if not os.path.isdir(out_path):
         os.mkdir(out_path)
     out_path = os.path.join(out_path, f"seed{args.seed2}_step{args.clamp_step}.json")
-    # fout = open(out_path, 'a')
 
     all_test_data = []
 
@@ -116,8 +112,12 @@ def main():
     try:
         while True:
             batch, cond = next(data_valid)
-            # print(batch.shape)
-            if idx % world_size == rank:  # Split data per nodes
+            print(f"cond: {cond}")
+            print(f"cond: {cond.keys()}")
+            print(f"batch: {batch}")
+
+            # Split data per nodes
+            if idx % world_size == rank:  
                 all_test_data.append(cond)
             idx += 1
 
@@ -127,7 +127,8 @@ def main():
     model_emb.to(dist_util.dev())
 
     if idx % world_size and rank >= idx % world_size:
-        all_test_data.append({})  # Dummy data for Remainder : for dist.barrier()
+        # Dummy data for Remainder : for dist.barrier()
+        all_test_data.append({})  
 
     if rank == 0:
         from tqdm import tqdm
@@ -136,7 +137,6 @@ def main():
         iterator = iter(all_test_data)
 
     for cond in iterator:
-
         if not cond:  # Barrier for Remainder
             for i in range(world_size):
                 dist.barrier()

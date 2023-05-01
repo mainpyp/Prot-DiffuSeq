@@ -157,8 +157,12 @@ class GaussianDiffusion:
 
         self.num_timesteps = int(betas.shape[0])
 
+        # https://huggingface.co/blog/annotated-diffusion
+        #Each of the variables below are just 1-dimensional tensors, 
+        # storing values from t to T.
         alphas = 1.0 - betas
         self.alphas_cumprod = np.cumprod(alphas, axis=0)
+        # appends one to beginning and zero to end
         self.alphas_cumprod_prev = np.append(1.0, self.alphas_cumprod[:-1])
         self.alphas_cumprod_next = np.append(self.alphas_cumprod[1:], 0.0)
         assert self.alphas_cumprod_prev.shape == (self.num_timesteps,)
@@ -232,7 +236,8 @@ class GaussianDiffusion:
 
     def q_sample(self, x_start, t, noise=None, mask=None):
         """
-        Diffuse the data for a given number of diffusion steps.
+        Diffuse the data for a given number of diffusion steps. 
+        (Forward process)
 
         In other words, sample from q(x_t | x_0).
 
@@ -355,7 +360,7 @@ class GaussianDiffusion:
             top_p=None, mask=None, x_start=None,
     ):
         """
-        Sample x_{t-1} from the model at the given timestep.
+        Sample x_{t-1} from the model at the given timestep. (Reverse diffusion)
 
         :param model: the model to sample from.
         :param x: the current tensor at x_{t-1}.
@@ -481,7 +486,7 @@ class GaussianDiffusion:
     ):
         """
         Generate samples from the model and yield intermediate samples from
-        each timestep of diffusion.
+        each timestep of diffusion. 
 
         Arguments are the same as p_sample_loop().
         Returns a generator over dicts, where each dict is the return value of
@@ -602,13 +607,15 @@ class GaussianDiffusion:
         std = _extract_into_tensor(self.sqrt_one_minus_alphas_cumprod,
                                    th.tensor([0]).to(x_start_mean.device),
                                    x_start_mean.shape)
-    
-        x_start = self._get_x_start(x_start_mean, std)  # x_start_mean + std * noise
-        # print(x_start_mean.shape, x_start.shape)
+        
+        # x_start_mean + std * noise
+        x_start = self._get_x_start(x_start_mean, std) 
+
         if noise is None:
             noise = th.randn_like(x_start)
 
         # shape: bsz, seqlen, embedding
+        # FORWARD DIFFUSION STEP
         x_t = self.q_sample(x_start, t, noise=noise, mask=input_ids_mask) # reparametrization trick.
 
         get_logits = model.model.module.get_logits
