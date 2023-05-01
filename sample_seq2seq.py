@@ -112,9 +112,8 @@ def main():
     try:
         while True:
             batch, cond = next(data_valid)
-            print(f"cond: {cond}")
-            print(f"cond: {cond.keys()}")
-            print(f"batch: {batch}")
+            # cond keys: input_ids and input mask
+            print(f"cond input keys: {cond['input_ids'].shape}")
 
             # Split data per nodes
             if idx % world_size == rank:  
