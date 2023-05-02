@@ -128,5 +128,6 @@ def denoised_fn_round(args, model, text_emb, t):
     rounded_tokens = indices[0]
     # print(rounded_tokens.shape)
     new_embeds = model(rounded_tokens).view(old_shape).to(old_device)
-
+    print("New embeds shape")
+    print(new_embeds.shape)
     return new_embeds
