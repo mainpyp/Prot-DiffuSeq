@@ -7,6 +7,7 @@ import json
 import numpy as np
 
 def get_knn(model_emb, text_emb, dist='cos'):
+    """This function is apparently not used since it is called in round_func"""
     if dist == 'cos':
         adjacency = model_emb @ text_emb.transpose(1, 0).to(model_emb.device)
     elif dist == 'l2':
@@ -19,19 +20,15 @@ def get_knn(model_emb, text_emb, dist='cos'):
         # boils down to that: norm = lambda x: torch.sqrt(torch.sum(x**2))
         # https://de.wikipedia.org/wiki/Frobeniusnorm
         adjacency = -torch.norm(adjacency, dim=-1)
-        print("get knn")
-        print("adjecency shape:", adjacency.shape)
 
     topk_out = torch.topk(adjacency, k=6, dim=0)
-    print("topk_out shape:", topk_out.shape)
-    print("topk_out:", topk_out)
     return topk_out.values, topk_out.indices
 
 def get_efficient_knn(model_emb, text_emb):
+    print(f"text emb shape: {text_emb.shape}")
     emb_norm = (model_emb**2).sum(-1).view(-1, 1) # vocab
     text_emb_t = torch.transpose(text_emb.view(-1, text_emb.size(-1)), 0, 1) # d, bsz*seqlen
     arr_norm = (text_emb ** 2).sum(-1).view(-1, 1) # bsz*seqlen, 1
-    # print(emb_norm.shape, arr_norm.shape)
     dist = emb_norm + arr_norm.transpose(0, 1) - 2.0 * torch.mm(model_emb, text_emb_t) # (vocab, d) x (d, bsz*seqlen)
     dist = torch.clamp(dist, 0.0, np.inf)
     # topk returns the largest k elements of the given input tensor along a given dimension.
@@ -39,6 +36,7 @@ def get_efficient_knn(model_emb, text_emb):
     return topk_out.values, topk_out.indices
 
 def rounding_func(text_emb_lst, model, tokenizer, emb_scale_factor=1.0):
+    """This function is apparently NOT used in the code."""
     decoded_out_lst = []
     
     model_emb = model.weight  # input_embs
