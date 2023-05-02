@@ -26,8 +26,10 @@ def get_knn(model_emb, text_emb, dist='cos'):
 
 def get_efficient_knn(model_emb, text_emb):
     # text embed shape text emb shape: torch.Size([12800, 256])
+    # model emb shape torch.Size([50, 256])
     print("text emb shape", text_emb.shape)
     print("model emb shape", model_emb.shape)
+    # emb norm shape torch.Size([50, 1])
     emb_norm = (model_emb**2).sum(-1).view(-1, 1) # vocab
     print("emb norm shape", emb_norm.shape)
     text_emb_t = torch.transpose(text_emb.view(-1, text_emb.size(-1)), 0, 1) # d, bsz*seqlen
@@ -40,7 +42,6 @@ def get_efficient_knn(model_emb, text_emb):
     print("dist shape", dist.shape)
     # topk returns the largest k elements of the given input tensor along a given dimension.
     topk_out = torch.topk(-dist, k=1, dim=0)
-    print("topk out shape", topk_out.shape)
     print(topk_out.values, "\n" ,topk_out.indices)
     return topk_out.values, topk_out.indices
 
