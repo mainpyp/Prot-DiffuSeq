@@ -19,7 +19,12 @@ def get_knn(model_emb, text_emb, dist='cos'):
         # boils down to that: norm = lambda x: torch.sqrt(torch.sum(x**2))
         # https://de.wikipedia.org/wiki/Frobeniusnorm
         adjacency = -torch.norm(adjacency, dim=-1)
+        print("get knn")
+        print("adjecency shape:", adjacency.shape)
+
     topk_out = torch.topk(adjacency, k=6, dim=0)
+    print("topk_out shape:", topk_out.shape)
+    print("topk_out:", topk_out)
     return topk_out.values, topk_out.indices
 
 def get_efficient_knn(model_emb, text_emb):
