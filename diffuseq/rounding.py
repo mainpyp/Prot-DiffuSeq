@@ -42,6 +42,9 @@ def get_efficient_knn(model_emb, text_emb):
     print("dist shape", dist.shape)
     # topk returns the largest k elements of the given input tensor along a given dimension.
     topk_out = torch.topk(-dist, k=1, dim=0)
+
+    print(f"{len(topk_out.values)} {len(topk_out.indices)}")
+    print(f"{len(topk_out.values[0])} {len(topk_out.indices[0])}")
     print(topk_out.values, "\n" ,topk_out.indices)
     return topk_out.values, topk_out.indices
 
