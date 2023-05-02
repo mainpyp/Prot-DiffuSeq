@@ -27,25 +27,25 @@ def get_knn(model_emb, text_emb, dist='cos'):
 def get_efficient_knn(model_emb, text_emb):
     # text embed shape text emb shape: torch.Size([12800, 256])
     # model emb shape torch.Size([50, 256])
-    print("text emb shape", text_emb.shape)
-    print("model emb shape", model_emb.shape)
+
     # emb norm shape torch.Size([50, 1])
     emb_norm = (model_emb**2).sum(-1).view(-1, 1) # vocab
-    print("emb norm shape", emb_norm.shape)
+
+    # text emb t shape torch.Size([256, 12800])
     text_emb_t = torch.transpose(text_emb.view(-1, text_emb.size(-1)), 0, 1) # d, bsz*seqlen
-    print("text emb t shape", text_emb_t.shape)
+
+    # arr norm shape torch.Size([12800, 1])
     arr_norm = (text_emb ** 2).sum(-1).view(-1, 1) # bsz*seqlen, 1
-    print("arr norm shape", arr_norm.shape)
+
+    # dist shape torch.Size([50, 12800])
     dist = emb_norm + arr_norm.transpose(0, 1) - 2.0 * torch.mm(model_emb, text_emb_t) # (vocab, d) x (d, bsz*seqlen)
-    print("dist shape", dist.shape)
     dist = torch.clamp(dist, 0.0, np.inf)
-    print("dist shape", dist.shape)
+
     # topk returns the largest k elements of the given input tensor along a given dimension.
     topk_out = torch.topk(-dist, k=1, dim=0)
 
-    print(f"{len(topk_out.values)} {len(topk_out.indices)}")
-    print(f"{len(topk_out.values[0])} {len(topk_out.indices[0])}")
-    print(topk_out.values, "\n" ,topk_out.indices)
+    # len vals and indices = 1
+    # len vals[0] and indices[0] = 12800 (bzs * hidden_dim)
     return topk_out.values, topk_out.indices
 
 def rounding_func(text_emb_lst, model, tokenizer, emb_scale_factor=1.0):

@@ -111,10 +111,11 @@ def main():
 
     try:
         while True:
-            batch, cond = next(data_valid)
             # cond keys: input_ids and input mask
-            print(f"cond input keys: {cond['input_ids'].shape}")
-
+            # input_ids shape: 50 (batch size), 256 (hidden dim)
+            # we have the embeddings of n_batch_size sequences 
+            batch, cond = next(data_valid)
+    
             # Split data per nodes
             if idx % world_size == rank:  
                 all_test_data.append(cond)
@@ -148,8 +149,8 @@ def main():
 
         noise = th.randn_like(x_start)
         input_ids_mask = th.broadcast_to(input_ids_mask.unsqueeze(dim=-1), x_start.shape).to(dist_util.dev())
+        # only on sequence embedding noise
         x_noised = th.where(input_ids_mask == 0, x_start, noise)
-
         model_kwargs = {}
 
         if args.step >= args.diffusion_steps:
@@ -186,6 +187,8 @@ def main():
         # print(samples[0].shape) # samples for each step
 
         sample = samples[-1]
+
+        # CONTINUE HERE 02.05.2023
 
         # print('decoding for seq2seq', )
         # print(sample.shape)
