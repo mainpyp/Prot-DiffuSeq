@@ -170,6 +170,7 @@ def main():
         sample_shape = (x_start.shape[0], args.seq_len, args.hidden_dim)
 
         # this is the sampling function (takes most of the time)
+        # len samples (list) 2k (len of diffusion steps t (?))
         samples = sample_fn(
             model,
             sample_shape,
@@ -184,22 +185,18 @@ def main():
             x_start=x_start,
             gap=step_gap
         )
-        # samples is a list
-        # print(samples[0].shape) # samples for each step
-        print(f"samples \n{samples}")
-        print(f"samples shape: {len(samples)}")
-
+        
+        # sample shape: torch.Size([10, 256, 256])
         sample = samples[-1]
-        print(f"sample {sample}")
-        print(f"sample shape: {sample.shape}")
-
-        # CONTINUE HERE 02.05.2023
 
         # print('decoding for seq2seq', )
         # print(sample.shape)
-
+        # pass through lm_head of the TransformerNetModel
+        # logits not normalized or rather output before softmax
         logits = model.get_logits(sample)  # bsz, seqlen, vocab
         cands = th.topk(logits, k=1, dim=-1)
+        print(f"cands: {cands}")
+        print(f"shape cands: {cands.shape}")
 
         word_lst_recover = []
         word_lst_ref = []
