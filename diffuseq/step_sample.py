@@ -79,14 +79,14 @@ class AscendSampler(ScheduleSampler):
         print(diffusion.num_timesteps)
         self._weights = self.create_weighted_tensor(diffusion.num_timesteps)
 
-    def create_weighted_tensor(self, n: int) -> th.Tensor:
+    def create_weighted_tensor(self, n: int) -> np.array:
         # Generate a range of values from 0 to 1
         values = th.linspace(0, 1, n)
 
         # Apply a transformation to make the values smaller at the beginning and larger at the end
         weights = 1 / (1 + th.exp(-10*(values-0.5)))
 
-        return th.Tensor([weights])
+        return np.array(weights)
 
     def weights(self):
         return self._weights
