@@ -7,7 +7,7 @@ python -m torch.distributed.launch --nproc_per_node=2 --master_port=12233 --use_
 --noise_schedule sqrt \
 --hidden_dim 128 \
 --bsz 512 \
---dataset ProtDebug \
+--dataset Conversation \
 --data_dir datasets/Conversation \
 --vocab bert \
 --seq_len 256 \
