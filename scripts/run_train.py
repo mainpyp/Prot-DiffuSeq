@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--noise_schedule', type=str, default='cosine', choices=['linear', 'cosine', 'sqrt', 'trunc_cos', 'trunc_lin', 'pw_lin'], help='the distribution of noises')
     parser.add_argument('--diff_steps', type=int, default=4000, help='diffusion steps')
-    parser.add_argument('--schedule_sampler', type=str, default='uniform', choices=['uniform', 'lossaware', 'fixstep'], help='schedule sampler of timesteps')
+    parser.add_argument('--schedule_sampler', type=str, default='uniform', choices=['uniform', 'lossaware', 'fixstep', 'ascend'], help='schedule sampler of timesteps')
 
     parser.add_argument('--seq_len', type=int, default=128, help='max len of input sequence')
     parser.add_argument('--hidden_t_dim', type=int, default=128, help='hidden size of time embedding')

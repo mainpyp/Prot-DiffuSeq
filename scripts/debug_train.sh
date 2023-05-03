@@ -1,0 +1,15 @@
+python -m torch.distributed.launch --nproc_per_node=2 --master_port=12233 --use_env run_train.py \
+--diff_steps 3000 \
+--lr 0.0001 \
+--learning_steps 1001 \
+--save_interval 100 \
+--seed 123 \
+--noise_schedule cosine \
+--hidden_dim 512 \
+--bsz 124 \
+--dataset ProtDebug \
+--data_dir datasets/ProtDebug \
+--vocab protbert \
+--seq_len 256 \
+--schedule_sampler ascend \
+--notes debug
