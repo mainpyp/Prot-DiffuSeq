@@ -18,6 +18,8 @@ def create_named_schedule_sampler(name, diffusion):
         return LossSecondMomentResampler(diffusion)
     elif name == "fixstep":
         return FixSampler(diffusion)
+    elif name == "ascend":
+        return AscendSampler(diffusion)
     else:
         raise NotImplementedError(f"unknown schedule sampler: {name}")
 
@@ -50,6 +52,9 @@ class ScheduleSampler(ABC):
         :return: a tuple (timesteps, weights):
                  - timesteps: a tensor of timestep indices.
                  - weights: a tensor of weights to scale the resulting losses.
+                 Example:
+                    indices_np: [1350   12  174  693 1888  982  540  720  421  842  436 1691]
+                    weights_np: [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
         """
         w = self.weights()
         p = w / np.sum(w)
@@ -57,8 +62,6 @@ class ScheduleSampler(ABC):
         indices = th.from_numpy(indices_np).long().to(device)
         weights_np = 1 / (len(p) * p[indices_np])
         weights = th.from_numpy(weights_np).float().to(device)
-        print(f"indices_np: {indices_np}")
-        print(f"weights_np: {weights_np}")
         return indices, weights
 
 
@@ -73,7 +76,16 @@ class UniformSampler(ScheduleSampler):
 class AscendSampler(ScheduleSampler):
     def __init__(self, diffusion):
         self.diffusion = diffusion
-        self._weights = np.ones([diffusion.num_timesteps])
+        self._weights = self.create_weighted_tensor(diffusion.num_timesteps)
+
+    def create_weighted_tensor(n: int) -> th.Tensor:
+        # Generate a range of values from 0 to 1
+        values = th.linspace(0, 1, n)
+
+        # Apply a transformation to make the values smaller at the beginning and larger at the end
+        weights = 1 / (1 + th.exp(-10*(values-0.5)))
+
+        return weights
 
     def weights(self):
         return self._weights
