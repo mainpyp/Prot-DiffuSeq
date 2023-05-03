@@ -169,6 +169,7 @@ def main():
 
         sample_shape = (x_start.shape[0], args.seq_len, args.hidden_dim)
 
+        # this is the sampling function (takes most of the time)
         samples = sample_fn(
             model,
             sample_shape,
@@ -186,8 +187,8 @@ def main():
 
         # print(samples[0].shape) # samples for each step
         print(f"samples \n{samples}")
-        print(f"sample shape: {sample.shape}")
-        
+        print(f"samples shape: {samples.shape}")
+
         sample = samples[-1]
         print(f"sample {sample}")
         print(f"sample shape: {sample.shape}")
