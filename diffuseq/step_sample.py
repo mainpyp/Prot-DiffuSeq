@@ -57,10 +57,20 @@ class ScheduleSampler(ABC):
         indices = th.from_numpy(indices_np).long().to(device)
         weights_np = 1 / (len(p) * p[indices_np])
         weights = th.from_numpy(weights_np).float().to(device)
+        print(f"indices_np: {indices_np}")
+        print(f"weights_np: {weights_np}")
         return indices, weights
 
 
 class UniformSampler(ScheduleSampler):
+    def __init__(self, diffusion):
+        self.diffusion = diffusion
+        self._weights = np.ones([diffusion.num_timesteps])
+
+    def weights(self):
+        return self._weights
+    
+class AscendSampler(ScheduleSampler):
     def __init__(self, diffusion):
         self.diffusion = diffusion
         self._weights = np.ones([diffusion.num_timesteps])
