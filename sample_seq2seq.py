@@ -185,8 +185,12 @@ def main():
         )
 
         # print(samples[0].shape) # samples for each step
-
+        print(f"samples \n{samples}")
+        print(f"sample shape: {sample.shape}")
+        
         sample = samples[-1]
+        print(f"sample {sample}")
+        print(f"sample shape: {sample.shape}")
 
         # CONTINUE HERE 02.05.2023
 
