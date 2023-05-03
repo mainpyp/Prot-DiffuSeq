@@ -629,14 +629,19 @@ class GaussianDiffusion:
         print("xstart: ", x_start)
         print(f"model_kwargs: {model_kwargs}")
         print(f"x_start shape: {x_start.shape}")
-        
+
+        #x_t shape: torch.Size([64, 256, 256])
+        #x start shape: torch.Size([64, 256, 256])
+        #model output shape:  torch.Size([64, 256, 256]) 
+        #target shape:  torch.Size([64, 256, 256]) xstart shape: torch.Size([64, 256, 256])
+        # model_kwargs: {}
+        # x_start shape: torch.Size([64, 256, 256])
         target = x_start
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
-
-
-        print("model output shape: ", model_output.shape, 
-              "\ntarget shape: ", target.shape, 
-              "xstart shape:", x_start.shape)
+        print(f"target mean: {target.mean()}\n"\
+              f"model_output mean: {model_output.mean()}\n"\
+              f"x_start mean: {x_start.mean()}\n"\
+              f"x_t mean: {x_t.mean()}\n")
        
         assert model_output.shape == target.shape == x_start.shape
 
