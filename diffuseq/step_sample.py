@@ -76,6 +76,7 @@ class UniformSampler(ScheduleSampler):
 class AscendSampler(ScheduleSampler):
     def __init__(self, diffusion):
         self.diffusion = diffusion
+        print(diffusion.num_timesteps)
         self._weights = self.create_weighted_tensor(diffusion.num_timesteps)
 
     def create_weighted_tensor(n: int) -> th.Tensor:
