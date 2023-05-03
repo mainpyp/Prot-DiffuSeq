@@ -86,7 +86,7 @@ class AscendSampler(ScheduleSampler):
         # Apply a transformation to make the values smaller at the beginning and larger at the end
         weights = 1 / (1 + th.exp(-10*(values-0.5)))
 
-        return th.Tensor(weights)
+        return th.Tensor([weights])
 
     def weights(self):
         return self._weights
