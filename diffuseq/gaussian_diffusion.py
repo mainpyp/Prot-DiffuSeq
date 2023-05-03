@@ -622,6 +622,17 @@ class GaussianDiffusion:
 
         terms = {}
 
+        # BACKWARD PASS (?)
+        print(f"{'#' * 50} BACKWARD PASS PARAMS")
+        print(f"x_t shape: {x_t.shape}")
+        print(f"x start shape: {x_start.shape}")
+        print("xstart: ", x_start)
+        print(f"model_kwargs: {model_kwargs}")
+        print(f"x_start shape: {x_start.shape}")
+        print("model output shape: ", model_output.shape, 
+              "\ntarget shape: ", target.shape, 
+              "xstart shape:", x_start.shape)
+        
         target = x_start
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
        
