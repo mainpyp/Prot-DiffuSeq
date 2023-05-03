@@ -630,7 +630,7 @@ class GaussianDiffusion:
         # print(f"model_kwargs: {model_kwargs}")
         # print(f"x_start shape: {x_start.shape}")
 
-        print(t)
+        #print(t)
         #x_t shape: torch.Size([64, 256, 256])
         #x start shape: torch.Size([64, 256, 256])
         #model output shape:  torch.Size([64, 256, 256]) 
