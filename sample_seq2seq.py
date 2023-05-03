@@ -189,14 +189,18 @@ def main():
         # sample shape: torch.Size([10, 256, 256])
         sample = samples[-1]
 
-        # print('decoding for seq2seq', )
-        # print(sample.shape)
         # pass through lm_head of the TransformerNetModel
         # logits not normalized or rather output before softmax
         logits = model.get_logits(sample)  # bsz, seqlen, vocab
+
+        print("logits ", logits)
+        print("len logits", len(logits))
+        print("logits shape", logits.shape)
+
+        # Returns the k (1) largest elements of the given 
+        # input tensor along a given dimension.
         cands = th.topk(logits, k=1, dim=-1)
-        print(f"cands: {cands}")
-        print(f"shape cands: {cands.shape}")
+        print(f"shape cands: {len(cands.shape)}")
 
         word_lst_recover = []
         word_lst_ref = []
