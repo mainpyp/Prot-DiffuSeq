@@ -8,8 +8,8 @@ python -m torch.distributed.launch --nproc_per_node=2 --master_port=12233 --use_
 --hidden_dim 512 \
 --bsz 124 \
 --dataset ProtDebug \
---data_dir datasets/ProtDebug \
---vocab protbert \
+--data_dir datasets/Conversation \
+--vocab bert \
 --seq_len 256 \
 --schedule_sampler ascend \
 --notes debug
