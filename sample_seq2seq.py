@@ -184,10 +184,10 @@ def main():
             x_start=x_start,
             gap=step_gap
         )
-
+        # samples is a list
         # print(samples[0].shape) # samples for each step
         print(f"samples \n{samples}")
-        print(f"samples shape: {samples.shape}")
+        print(f"samples shape: {len(samples)}")
 
         sample = samples[-1]
         print(f"sample {sample}")
