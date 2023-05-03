@@ -623,13 +623,14 @@ class GaussianDiffusion:
         terms = {}
 
         # BACKWARD PASS (?)
-        print(f"{'#' * 50} BACKWARD PASS PARAMS")
-        print(f"x_t shape: {x_t.shape}")
-        print(f"x start shape: {x_start.shape}")
-        print("xstart: ", x_start)
-        print(f"model_kwargs: {model_kwargs}")
-        print(f"x_start shape: {x_start.shape}")
+        # print(f"{'#' * 50} BACKWARD PASS PARAMS")
+        # print(f"x_t shape: {x_t.shape}")
+        # print(f"x start shape: {x_start.shape}")
+        # print("xstart: ", x_start)
+        # print(f"model_kwargs: {model_kwargs}")
+        # print(f"x_start shape: {x_start.shape}")
 
+        print(t)
         #x_t shape: torch.Size([64, 256, 256])
         #x start shape: torch.Size([64, 256, 256])
         #model output shape:  torch.Size([64, 256, 256]) 
@@ -638,10 +639,10 @@ class GaussianDiffusion:
         # x_start shape: torch.Size([64, 256, 256])
         target = x_start
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
-        print(f"target mean: {target.mean()}\n"\
-              f"model_output mean: {model_output.mean()}\n"\
-              f"x_start mean: {x_start.mean()}\n"\
-              f"x_t mean: {x_t.mean()}\n")
+        # target mean: 0.01418902538716793
+        # model_output mean: 0.002865137066692114
+        # x_start mean: 0.01418902538716793
+        # x_t mean: 0.012778299860656261  
        
         assert model_output.shape == target.shape == x_start.shape
 
