@@ -465,8 +465,6 @@ class GaussianDiffusion:
             mask=mask,
             x_start=x_start
         ):
-            print("sample added:", end="")
-            print(".", end="")
             final.append(sample['sample'])
         return final
 
