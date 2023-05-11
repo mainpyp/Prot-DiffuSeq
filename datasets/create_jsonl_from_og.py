@@ -27,10 +27,10 @@ def create_file(filename: str) -> None:
             if structure_string == None or seq_string == None:
                 continue
             
-            items = structure_string.split(',')
-            sequence = " ".join(list(items[-1].strip()))
-            structure =  " ".join(list(items[-1].strip()))
-            af_id = items[1]
+            structure_items = structure_string.split(",")
+            sequence = " ".join(list(seq_string.split(",")[-1].strip()))
+            structure =  " ".join(list(structure_items[-1].strip()))
+            af_id = structure_items[1]
 
             assert len(sequence) == len(structure), f"Missing AA or structure token for {sequence} in line {index}"
 
