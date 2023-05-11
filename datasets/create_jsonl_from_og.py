@@ -38,8 +38,8 @@ def create_file(filename: str) -> None:
             processed_lines.append(write_string)
             
             # empty the list every 1M lines and write to file
-            if index % 1_000_000 == 0:
-                print(f"Write in file index {index}")
+            if index % 250_000 == 0:
+                print(f" -> Write in file index {index}")
                 with open(output_filename, "a") as of:
                     of.writelines(processed_lines)
                 processed_lines = []
