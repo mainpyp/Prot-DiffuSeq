@@ -23,7 +23,7 @@ def create_file(filename: str) -> None:
     with open(filename) as f:
         f.readline()  # skip header
 
-        for index, (structure_string, seq_string) in tqdm.tqdm(enumerate(itertools.zip_longest(*[f]*2))):
+        for index, (structure_string, seq_string) in enumerate(itertools.zip_longest(*[f]*2)):
             if structure_string == None or seq_string == None:
                 continue
             
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     t0 = time.time()
 
     create_file(args.input_path)
-    
+
     d = time.time() - t0
     print("duration: %.2f s." % d)
     
