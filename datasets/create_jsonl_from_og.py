@@ -24,15 +24,17 @@ def create_file(filename: str) -> None:
         f.readline()  # skip header
 
         for index, (structure_string, seq_string) in tqdm.tqdm(enumerate(itertools.zip_longest(*[f]*2))):
-            if index == 0 or structure_string == None or seq_string == None:
+            if structure_string == None or seq_string == None:
                 continue
-
-            sequence = " ".join(list(seq_string.split(',')[-1].strip()))
-            structure =  " ".join(list(structure_string.split(',')[-1].strip()))
+            
+            items = structure_string.split(',')
+            sequence = " ".join(list(items[-1].strip()))
+            structure =  " ".join(list(items[-1].strip()))
+            af_id = items[1]
 
             assert len(sequence) == len(structure), f"Missing AA or structure token for {sequence} in line {index}"
 
-            write_string = f'{{"src": "{sequence}", "trg": "{structure}"}}\n'
+            write_string = f'{{"src": "{sequence}", "trg": "{structure}", "af_id": {af_id}}}\n'
             processed_lines.append(write_string)
     print("Done processing file")
 
