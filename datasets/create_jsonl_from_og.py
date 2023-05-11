@@ -36,11 +36,24 @@ def create_file(filename: str) -> None:
 
             write_string = f'{{"src": "{sequence}", "trg": "{structure}", "af_id": {af_id}}}\n'
             processed_lines.append(write_string)
-    print("Done processing file")
+            
+            # empty the list every 1M lines and write to file
+            if index % 1_000_000 == 0:
+                print(f"Write in file index {index}")
+                with open(output_filename, "a") as of:
+                    of.writelines(processed_lines)
+                processed_lines = []
+            
+        print("Last append")
+        with open(output_filename, "a") as of:
+                of.writelines(processed_lines)
+        print("Done processing file")
 
-    print("Write file")
-    with open(output_filename, "a") as of:
-        of.writelines(processed_lines)
 
 if __name__ == '__main__':
+    import time
+    t0 = time.time()
     create_file(args.input_path)
+    d = time.time() - t0
+    print("duration: %.2f s." % d)
+    
