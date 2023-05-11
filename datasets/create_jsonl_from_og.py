@@ -32,7 +32,8 @@ def create_file(filename: str) -> None:
             structure =  " ".join(list(structure_items[-1].strip()))
             af_id = structure_items[1]
 
-            assert len(sequence) == len(structure), f"Missing AA or structure token for {sequence} in line {index}"
+            assert len(sequence) == len(structure), \
+            f"Missing AA or structure token for {sequence} in line {index}"
 
             write_string = f'{{"src": "{sequence}", "trg": "{structure}", "af_id": "{af_id}"}}\n'
             processed_lines.append(write_string)
@@ -53,7 +54,9 @@ def create_file(filename: str) -> None:
 if __name__ == '__main__':
     import time
     t0 = time.time()
+
     create_file(args.input_path)
+    
     d = time.time() - t0
     print("duration: %.2f s." % d)
     
