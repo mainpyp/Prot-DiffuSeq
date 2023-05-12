@@ -84,6 +84,7 @@ def main():
     print(f"### Sampling...on {args.split}")
 
     ##### DATA #####
+    print("DATA DIR---> ", args.data_dir)
     data_valid = load_data_text(
         batch_size=args.batch_size,
         seq_len=args.seq_len,
