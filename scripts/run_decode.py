@@ -61,12 +61,16 @@ def convert_to_fasta(all_generated_files: list) -> list:
         print("Writing reference file to ", ref_path)
         with open(ref_path, "w") as f:
             for seq in jsonl:
+                if "af_id" not in seq:
+                    seq["af_id"] = "unknown"
                 f.write(f">{seq['af_id']}\n{remove_brackets(seq['reference'])}\n")
 
         rec_path = path.replace(".json", "_rec.fasta")
         print("Writing recovery file to ", rec_path)
         with open(rec_path, "w") as f:
             for seq in jsonl:
+                if "af_id" not in seq:
+                    seq["af_id"] = "unknown"
                 f.write(f">{seq['af_id']}\n{remove_brackets(seq['recover'])}\n")
         
         generated_fastas.append(ref_path)
