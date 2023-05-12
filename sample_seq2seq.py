@@ -85,6 +85,8 @@ def main():
 
     ##### DATA #####
     print("DATA DIR---> ", args.data_dir)
+    import sys
+    sys.exit(0)
     data_valid = load_data_text(
         batch_size=args.batch_size,
         seq_len=args.seq_len,
@@ -95,8 +97,6 @@ def main():
         model_emb=model_emb.cpu(),  # using the same embedding wight with tranining data
         loop=False
     )
-    print(data_valid)
-    print(next(data_valid))
 
     start_t = time.time()
 
