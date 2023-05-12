@@ -28,7 +28,8 @@ def get_efficient_knn(model_emb, text_emb):
     # text embed shape text emb shape: torch.Size([12800, 256])
     # model emb shape torch.Size([50, 256])
 
-    # emb norm shape torch.Size([50, 1])
+    # emb norm shape torch.Size([50, 1]) 
+    # sum of embedding vectors squared
     emb_norm = (model_emb**2).sum(-1).view(-1, 1) # vocab
 
     # text emb t shape torch.Size([256, 12800])
@@ -39,7 +40,8 @@ def get_efficient_knn(model_emb, text_emb):
 
     # dist shape torch.Size([50, 12800])
     dist = emb_norm + arr_norm.transpose(0, 1) - 2.0 * torch.mm(model_emb, text_emb_t) # (vocab, d) x (d, bsz*seqlen)
-    dist = torch.clamp(dist, 0.0, np.inf)
+    # negatives become 0
+    dist = torch.clamp(dist, 0.0, np.inf) 
 
     # topk returns the largest k elements of the given input tensor along a given dimension.
     topk_out = torch.topk(-dist, k=1, dim=0)
@@ -128,5 +130,5 @@ def denoised_fn_round(args, model, text_emb, t):
     rounded_tokens = indices[0]
     # print(rounded_tokens.shape)
     new_embeds = model(rounded_tokens).view(old_shape).to(old_device)
-    # new embeds shape torch.Size([bsz, 256, 256])
+    # new embeds shape torch.Size([min(bsz, n_testset), 256, 256])
     return new_embeds
