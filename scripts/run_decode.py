@@ -92,7 +92,7 @@ if __name__ == '__main__':
     for lst in glob.glob(args.model_dir):
         checkpoints = sorted(glob.glob(f"{lst}/{args.pattern}*.pt"))[::-1]
         print(checkpoints)
-        split = lambda x: "/".join(x.split('/')[-3:-1]).replace(".pt", "/")
+        split = lambda x: "/".join(x.split('/')[-3:]).replace(".pt", "/").replace("diffusion_models", out_dir)
         generations = [split(ckpt) for ckpt in checkpoints]
         print(generations)
     #### CONVERT GENERATED JSON TO FASTA ####
