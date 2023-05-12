@@ -89,16 +89,8 @@ if __name__ == '__main__':
     #generate_samples(args, out_dir=out_dir)
 
     #### GET ALL GENERATED FILES ####
-    args.model_path = ""
-    all_generated_files = sorted(glob.glob(f"../{out_dir}/*.json"))
-    model_base_name = os.path.basename(os.path.split(args.model_path)[0]) + f'.{os.path.split(args.model_path)[1]}'
-    out_dir = os.path.join(out_dir, f"{model_base_name.split('.ema')[0]}")
-    print(out_dir)
-
-    out_path = os.path.join(out_dir, f"ema{model_base_name.split('.ema')[1]}.samples")
-    print(out_path)
-    out_path = os.path.join(out_path, f"seed{args.seed2}_step{args.clamp_step}.json")
-    print(out_path)
+    checkpoints = sorted(glob.glob(f"{lst}/{args.pattern}*.pt"))[::-1]
+    print(checkpoints)
 
     #### CONVERT GENERATED JSON TO FASTA ####
     all_generated_fastas = convert_to_fasta(all_generated_files)
@@ -106,7 +98,5 @@ if __name__ == '__main__':
     ######################
     #### RUN ESM FOLD ####
     ######################
-
-
 
     print('#'*30, 'decoding finished...')
