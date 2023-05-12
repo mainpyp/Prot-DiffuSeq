@@ -219,7 +219,8 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
             line = json.loads(row)
             sentence_lst['src'].append(line['src'].strip())
             sentence_lst['trg'].append(line['trg'].strip())
-            sentence_lst['af_id'].append(line['af_id'].strip())
+            if 'af_id' in line.keys():
+                sentence_lst['af_id'].append(line['af_id'].strip())
 
     print('### Data samples...\n', sentence_lst['src'][:2], sentence_lst['trg'][:2], sentence_lst['af_id'][:2])
         
