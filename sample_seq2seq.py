@@ -84,7 +84,9 @@ def main():
     print(f"### Sampling...on {args.split}")
 
     ##### DATA #####
-    print("DATA DIR---> ", args.data_dir)
+    dataset_dir = os.path.join(args.data_dir, args.dataset + '.jsonl')
+    print("DATA DIR---> ", dataset_dir)
+
     import sys
     sys.exit(0)
     data_valid = load_data_text(
