@@ -201,9 +201,7 @@ def main():
         # input tensor along a given dimension.
         cands = th.topk(logits, k=1, dim=-1)
 
-        word_lst_recover = []
-        word_lst_ref = []
-        word_lst_source = []
+        
         dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
         logger.log(f"Extracting AF IDs")
         af_ids = []
@@ -213,7 +211,11 @@ def main():
                     logger.log(f"Dataset does not contain af_id. Aborting...")
                     break
                 af_ids.append(json.loads(line)["af_id"])
-        word_lst_af = []
+                
+        word_lst_af = af_ids
+        word_lst_recover = []
+        word_lst_ref = []
+        word_lst_source = []
 
         # tokenizer = load_tokenizer(args)
 
@@ -227,7 +229,6 @@ def main():
             len_x = args.seq_len - sum(input_mask).tolist()
             word_lst_source.append(tokenizer.decode_token(seq[:len_x]))
             word_lst_ref.append(tokenizer.decode_token(seq[len_x:]))
-            word_lst_af.append(tokenizer.decode_token(seq))
 
         for i in range(world_size):
             if i == rank:  # Write files sequentially
