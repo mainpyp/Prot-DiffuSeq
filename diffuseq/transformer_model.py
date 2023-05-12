@@ -118,8 +118,7 @@ class TransformerNetModel(nn.Module):
             # self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
             # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
             # self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
-
-
+            print('initializing BERT from scratch...')
             self.input_transformers = BertEncoder(config)
 
             self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
@@ -140,6 +139,7 @@ class TransformerNetModel(nn.Module):
 
     def get_logits(self, hidden_repr):
         if self.logits_mode == 1:
+            print("logits mode 1")
             return self.lm_head(hidden_repr)
         elif self.logits_mode == 2: # standard cosine similarity
             text_emb = hidden_repr
