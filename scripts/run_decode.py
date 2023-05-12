@@ -95,7 +95,7 @@ if __name__ == '__main__':
     #generate_samples(args, out_dir=out_dir)
 
     #### GET ALL GENERATED FILES ####
-    all_generated_files = sorted(glob.glob(f"{out_dir}/*.json"))
+    all_generated_files = sorted(glob.glob(f"../{out_dir}/*.json"))
 
     print(all_generated_files)
 
