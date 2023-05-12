@@ -225,7 +225,10 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
             if 'af_id' in line.keys():
                 sentence_lst['af_id'].append(line['af_id'].strip())
 
-    print('### Data samples...\n', sentence_lst['src'][:2], sentence_lst['trg'][:2], sentence_lst['af_id'][:2])
+    if "af_id" in sentence_lst.keys():
+        print('### Data samples...\n', sentence_lst['src'][:2], sentence_lst['trg'][:2], sentence_lst['af_id'][:2])
+    else:
+        print('### Data samples...\n', sentence_lst['src'][:2], sentence_lst['trg'][:2])
         
     # get tokenizer.
     vocab_dict = loaded_vocab
