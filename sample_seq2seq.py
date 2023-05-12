@@ -84,20 +84,6 @@ def main():
     print(f"### Sampling...on {args.split}")
 
     ##### DATA #####
-    dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
-    logger.log(f"Extracting AF IDs")
-    af_ids = []
-    with open(dataset_dir, 'r') as f:
-        for line in f:
-            if "af_id" not in line:
-                break
-            af_ids.append(json.loads(line)["af_id"])
-    print(af_ids)
-    len(af_ids)
-
-
-    import sys
-    sys.exit(0)
     data_valid = load_data_text(
         batch_size=args.batch_size,
         seq_len=args.seq_len,
@@ -218,6 +204,15 @@ def main():
         word_lst_recover = []
         word_lst_ref = []
         word_lst_source = []
+        dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
+        logger.log(f"Extracting AF IDs")
+        af_ids = []
+        with open(dataset_dir, 'r') as f:
+            for line in f:
+                if "af_id" not in line:
+                    logger.log(f"Dataset does not contain af_id. Aborting...")
+                    break
+                af_ids.append(json.loads(line)["af_id"])
         word_lst_af = []
 
         # tokenizer = load_tokenizer(args)
@@ -232,13 +227,17 @@ def main():
             len_x = args.seq_len - sum(input_mask).tolist()
             word_lst_source.append(tokenizer.decode_token(seq[:len_x]))
             word_lst_ref.append(tokenizer.decode_token(seq[len_x:]))
-            #word_lst_af.append(tokenizer.decode_token(seq))
+            word_lst_af.append(tokenizer.decode_token(seq))
 
         for i in range(world_size):
             if i == rank:  # Write files sequentially
                 fout = open(out_path, 'a')
-                for (recov, ref, src) in zip(word_lst_recover, word_lst_ref, word_lst_source):
-                    print(json.dumps({"recover": recov, "reference": ref, "source": src}), file=fout)
+                if len(af_ids) == len(word_lst_af):
+                    for (recov, ref, src, af) in zip(word_lst_recover, word_lst_ref, word_lst_source, word_lst_af):
+                        print(json.dumps({"recover": recov, "reference": ref, "source": src, "af_id": af}), file=fout)
+                else:
+                    for (recov, ref, src) in zip(word_lst_recover, word_lst_ref, word_lst_source):
+                        print(json.dumps({"recover": recov, "reference": ref, "source": src}), file=fout)
                 fout.close()
             dist.barrier()
         print("sample added to file")
