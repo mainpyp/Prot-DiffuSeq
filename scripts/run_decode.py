@@ -91,7 +91,9 @@ if __name__ == '__main__':
     #### GET ALL GENERATED FILES ####
     for lst in glob.glob(args.model_dir):
         checkpoints = sorted(glob.glob(f"{lst}/{args.pattern}*.pt"))[::-1]
-        generations = [f"{out_dir}/{os.path.basename(checkpoint).replace('.pt', '')}_seed{seed}_{args.split}.json" for checkpoint in checkpoints for seed in args.seeds]
+        print(checkpoints)
+        split = lambda x: "/".join(x.split('/')[-3:-2])
+        generations = [split(ckpt) for ckpt in checkpoints]
         print(generations)
     #### CONVERT GENERATED JSON TO FASTA ####
     all_generated_fastas = convert_to_fasta(all_generated_files)
