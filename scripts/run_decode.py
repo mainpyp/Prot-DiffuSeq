@@ -67,7 +67,7 @@ def convert_to_fasta(all_generated_files: list) -> list:
         print("Writing recovery file to ", rec_path)
         with open(rec_path, "w") as f:
             for seq in jsonl:
-                f.write(f">{seq['af_id']}\n{remove_brackets(seq['recovery'])}\n")
+                f.write(f">{seq['af_id']}\n{remove_brackets(seq['recover'])}\n")
         
         generated_fastas.append(ref_path)
         generated_fastas.append(rec_path)
