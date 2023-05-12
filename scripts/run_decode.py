@@ -20,7 +20,7 @@ def parse_arguments():
     
     return parser.parse_args()
 
-def generate_samples(args: argparse.Namespace):
+def generate_samples(args: argparse.Namespace, out_dir: str = 'generation_outputs'):
     """ This function is used to generate samples from all checkpoints 
     in a folder and all given seeds.
     """
@@ -28,7 +28,6 @@ def generate_samples(args: argparse.Namespace):
         print(lst)
         checkpoints = sorted(glob.glob(f"{lst}/{args.pattern}*.pt"))[::-1]
 
-        out_dir = 'generation_outputs'
         if not os.path.isdir(out_dir):
             print(f'creating {out_dir}...')
             os.mkdir(out_dir)
@@ -75,6 +74,12 @@ def convert_to_fasta(all_generated_files: list) -> list:
 
     return generated_fastas
 
+def switch_conda_envs(conda_env: str):
+    """ First deactivate and then activate the env"""
+    os.system(f"conda deactivate; conda activate {conda_env}")
+
+
+
 
 if __name__ == '__main__':
 
@@ -85,8 +90,9 @@ if __name__ == '__main__':
     os.chdir(dname)
 
     args = parse_arguments()
+    out_dir = 'generation_outputs'
 
-    generate_samples(args)
+    #generate_samples(args, out_dir=out_dir)
 
     #### GET ALL GENERATED FILES ####
     all_generated_files = sorted(glob.glob(f"{out_dir}/*.json"))
@@ -96,8 +102,11 @@ if __name__ == '__main__':
     #### CONVERT GENERATED JSON TO FASTA ####
     all_generated_fastas = convert_to_fasta(all_generated_files)
 
+    ######################
     #### RUN ESM FOLD ####
+    ######################
 
+    switch_conda_envs("mheinzinger_esmfold_CLI")
 
 
     print('#'*30, 'decoding finished...')
