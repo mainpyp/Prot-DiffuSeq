@@ -100,7 +100,9 @@ if __name__ == '__main__':
         all_generated_files = sorted(glob.glob(f"{generations[0]}*.json"))[::-1]
 
     #### CONVERT GENERATED JSON TO FASTA ####
+    print(all_generated_files)
     all_generated_fastas = convert_to_fasta(all_generated_files)
+    print(all_generated_fastas)
 
     ######################
     #### RUN ESM FOLD ####
