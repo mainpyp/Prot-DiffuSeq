@@ -23,23 +23,29 @@ def create_file(filename: str) -> None:
     with open(filename) as f:
         f.readline()  # skip header
 
-        for index, (structure_string, seq_string) in enumerate(itertools.zip_longest(*[f]*2)):
-            if structure_string == None or seq_string == None:
-                continue
+
+        processed_lines = []
+
+        seq = ""
+        struc = ""
+        for index, line in enumerate(f):
+            splitted = line.split(",")
+            if len(splitted) <= 1: continue
             
-            structure_items = structure_string.split(",")
-            sequence = " ".join(list(seq_string.split(",")[-1].strip()))
-            structure =  " ".join(list(structure_items[-1].strip()))
-            af_id = structure_items[1]
-
-            assert len(sequence) == len(structure), \
-            f"Missing AA or structure token for {sequence} in line {index}"
-
-            write_string = f'{{"src": "{sequence}", "trg": "{structure}", "af_id": "{af_id}"}}\n'
-            processed_lines.append(write_string)
+            id = splitted[1]
+            if index % 2 == 0:
+                seq = " ".join(list(splitted[-1].strip()))
+            else:
+                struc = " ".join(list(splitted[-1].strip()))
+            
+            if struc != "":
+                assert len(seq) == len(struc), f"Missing AA or structure token for {seq} in line {index}"
+                write_string = f'{{"src": "{struc}", "trg": "{seq}", "af_id": "{id}"}}\n'
+                processed_lines.append(write_string)
+                seq = struc = ""                
             
             # empty the list every 1M lines and write to file
-            if index % 250_000 == 0:
+            if index % 500_000 == 0:
                 print(f" -> Write in file index {index}")
                 with open(output_filename, "a") as of:
                     of.writelines(processed_lines)
