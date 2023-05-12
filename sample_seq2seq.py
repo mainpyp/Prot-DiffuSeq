@@ -85,7 +85,11 @@ def main():
 
     ##### DATA #####
     dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
-    print("DATA DIR---> ", dataset_dir)
+    logger.log(f"Extracting AF IDs")
+    with open(dataset_dir, 'r') as f:
+        af_ids = [json.loads(line)["af_id"] for line in f.readlines()] 
+    print(af_ids)
+
 
     import sys
     sys.exit(0)
