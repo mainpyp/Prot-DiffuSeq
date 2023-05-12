@@ -55,6 +55,7 @@ def convert_to_fasta(all_generated_files: list) -> list:
         print("Reading generation from ", path)
         with open(path, "r") as f:
             jsonl = [json.loads(line) for line in f]
+        
 
         # write reference and recovery to fasta files
         ref_path = path.replace(".json", "_ref.fasta")
@@ -90,7 +91,7 @@ if __name__ == '__main__':
     args = parse_arguments()
     out_dir = 'generation_outputs'
 
-    #generate_samples(args, out_dir=out_dir)
+    generate_samples(args, out_dir=out_dir)
 
     #### GET ALL GENERATED FILES ####
     all_generated_files = []
