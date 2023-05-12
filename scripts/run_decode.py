@@ -93,7 +93,7 @@ if __name__ == '__main__':
         checkpoints = sorted(glob.glob(f"{lst}/{args.pattern}*.pt"))[::-1]
         parse_path = lambda x: "/".join(x.split('/')[-3:]).replace(".pt", ".pt.samples/").replace("diffusion_models", out_dir)
         generations = [parse_path(ckpt) for ckpt in checkpoints]
-        print(sorted(glob.glob(f"../{generations[0]}*.pt"))[::-1])
+        print(sorted(glob.glob(f"../../{generations[0]}*.pt"))[::-1])
 
 
     #### CONVERT GENERATED JSON TO FASTA ####
