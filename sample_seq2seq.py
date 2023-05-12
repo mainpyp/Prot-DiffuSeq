@@ -56,6 +56,7 @@ def main():
     training_args['batch_size'] = args.batch_size
     args.__dict__.update(training_args)
 
+    ##### MODEL AND DIFFUSION #####
     logger.log("### Creating model and diffusion...")
     model, diffusion = create_model_and_diffusion(
         **args_to_dict(args, load_defaults_config().keys())
@@ -70,6 +71,7 @@ def main():
 
     model.eval().requires_grad_(False).to(dist_util.dev())
 
+    ##### TOKENIZER AND EMBEDDING #####
     tokenizer = load_tokenizer(args)
     model_emb = th.nn.Embedding(
         num_embeddings=tokenizer.vocab_size, 
@@ -81,7 +83,7 @@ def main():
 
     print(f"### Sampling...on {args.split}")
 
-    ## load data
+    ##### DATA #####
     data_valid = load_data_text(
         batch_size=args.batch_size,
         seq_len=args.seq_len,
@@ -92,6 +94,8 @@ def main():
         model_emb=model_emb.cpu(),  # using the same embedding wight with tranining data
         loop=False
     )
+    print(data_valid)
+    print(next(data_valid))
 
     start_t = time.time()
 
@@ -202,6 +206,7 @@ def main():
         word_lst_recover = []
         word_lst_ref = []
         word_lst_source = []
+        word_lst_af = []
 
         # tokenizer = load_tokenizer(args)
 
@@ -215,6 +220,7 @@ def main():
             len_x = args.seq_len - sum(input_mask).tolist()
             word_lst_source.append(tokenizer.decode_token(seq[:len_x]))
             word_lst_ref.append(tokenizer.decode_token(seq[len_x:]))
+            #word_lst_af.append(tokenizer.decode_token(seq))
 
         for i in range(world_size):
             if i == rank:  # Write files sequentially
