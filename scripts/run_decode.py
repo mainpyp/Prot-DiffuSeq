@@ -39,7 +39,8 @@ if __name__ == '__main__':
             print(f'creating {out_dir}...')
             os.mkdir(out_dir)
 
-
+        print(f"Generating samples for {len(checkpoints)} checkpoints and {len(args.seeds)} seeds...")
+        
         for checkpoint_one in checkpoints:
 
             assert os.path.isfile(checkpoint_one), f'{checkpoint_one} not found'
