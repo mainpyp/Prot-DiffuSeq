@@ -40,7 +40,7 @@ if __name__ == '__main__':
             os.mkdir(out_dir)
 
         print(f"Generating samples for {len(checkpoints)} checkpoints and {len(args.seeds)} seeds...")
-        
+
         for checkpoint_one in checkpoints:
 
             assert os.path.isfile(checkpoint_one), f'{checkpoint_one} not found'
@@ -51,6 +51,6 @@ if __name__ == '__main__':
                 f'--batch_size {args.bsz} --seed2 {seed} --split {args.split} ' \
                 f'--out_dir {out_dir} --top_p {args.top_p} '
                 print("Running: ", COMMAND)
-            
-            os.system(COMMAND)
+                
+                os.system(COMMAND)
     print('#'*30, 'decoding finished...')
