@@ -74,12 +74,6 @@ def convert_to_fasta(all_generated_files: list) -> list:
 
     return generated_fastas
 
-def switch_conda_envs(conda_env: str):
-    """ First deactivate and then activate the env"""
-    os.system(f"conda deactivate; conda activate {conda_env}")
-
-
-
 
 if __name__ == '__main__':
 
@@ -96,8 +90,14 @@ if __name__ == '__main__':
 
     #### GET ALL GENERATED FILES ####
     all_generated_files = sorted(glob.glob(f"../{out_dir}/*.json"))
+    model_base_name = os.path.basename(os.path.split(args.model_path)[0]) + f'.{os.path.split(args.model_path)[1]}'
+    out_dir = os.path.join(args.out_dir, f"{model_base_name.split('.ema')[0]}")
+    print(out_dir)
 
-    print(all_generated_files)
+    out_path = os.path.join(out_dir, f"ema{model_base_name.split('.ema')[1]}.samples")
+    print(out_path)
+    out_path = os.path.join(out_path, f"seed{args.seed2}_step{args.clamp_step}.json")
+    print(out_path)
 
     #### CONVERT GENERATED JSON TO FASTA ####
     all_generated_fastas = convert_to_fasta(all_generated_files)
@@ -106,7 +106,6 @@ if __name__ == '__main__':
     #### RUN ESM FOLD ####
     ######################
 
-    switch_conda_envs("mheinzinger_esmfold_CLI")
 
 
     print('#'*30, 'decoding finished...')
