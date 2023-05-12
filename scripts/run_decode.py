@@ -89,8 +89,9 @@ if __name__ == '__main__':
     #generate_samples(args, out_dir=out_dir)
 
     #### GET ALL GENERATED FILES ####
-    checkpoints = sorted(glob.glob(f"{lst}/{args.pattern}*.pt"))[::-1]
-    print(checkpoints)
+    for lst in glob.glob(args.model_dir):
+        checkpoints = sorted(glob.glob(f"{lst}/{args.pattern}*.pt"))[::-1]
+        print(checkpoints)
 
     #### CONVERT GENERATED JSON TO FASTA ####
     all_generated_fastas = convert_to_fasta(all_generated_files)
