@@ -92,7 +92,7 @@ if __name__ == '__main__':
     args.model_path = ""
     all_generated_files = sorted(glob.glob(f"../{out_dir}/*.json"))
     model_base_name = os.path.basename(os.path.split(args.model_path)[0]) + f'.{os.path.split(args.model_path)[1]}'
-    out_dir = os.path.join(args.out_dir, f"{model_base_name.split('.ema')[0]}")
+    out_dir = os.path.join(out_dir, f"{model_base_name.split('.ema')[0]}")
     print(out_dir)
 
     out_path = os.path.join(out_dir, f"ema{model_base_name.split('.ema')[1]}.samples")
