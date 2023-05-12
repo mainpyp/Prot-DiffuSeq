@@ -83,7 +83,7 @@ def infinite_loader(data_loader):
 
 def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     """ sentence_lst: 
-                    keys: 'src', 'trg', 'af_id'
+                    keys: 'src', 'trg', sometimes: 'af_id'
                     value: shape (bsz, len)
         vocab_dict: vocab_dict is a dict of word2id
     """
@@ -180,8 +180,11 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
 def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
 
     print('#'*30, '\nLoading dataset {} from {}...'.format(data_args.dataset, data_args.data_dir))
-
-    sentence_lst = {'src':[], 'trg': [], 'af_id': []}
+    
+    sentence_lst = {'src':[], 'trg': []}
+    if split == 'test':
+        sentence_lst = {'src':[], 'trg': [], 'af_id': []}
+    
      # TODO: This needs to be
     if split == 'train':
         print('### Loading form the TRAIN set...')
