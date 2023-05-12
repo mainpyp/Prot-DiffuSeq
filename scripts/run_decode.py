@@ -1,5 +1,6 @@
 import os, sys, glob
-import argparse
+import argparse, json
+from decode_utils import remove_brackets
 sys.path.append('.')
 sys.path.append('..')
 
@@ -19,17 +20,10 @@ def parse_arguments():
     
     return parser.parse_args()
 
-if __name__ == '__main__':
-
-    args = parse_arguments()
-
-    # set working dir to the upper folder
-    abspath = os.path.abspath(sys.argv[0])
-    dname = os.path.dirname(abspath)
-    dname = os.path.dirname(dname)
-    os.chdir(dname)
-
-    output_lst = []
+def generate_samples(args: argparse.Namespace):
+    """ This function is used to generate samples from all checkpoints 
+    in a folder and all given seeds.
+    """
     for lst in glob.glob(args.model_dir):
         print(lst)
         checkpoints = sorted(glob.glob(f"{lst}/{args.pattern}*.pt"))[::-1]
@@ -39,8 +33,8 @@ if __name__ == '__main__':
             print(f'creating {out_dir}...')
             os.mkdir(out_dir)
 
-        print(f"Generating samples for {len(checkpoints)} checkpoints and {len(args.seeds)} seeds...")
-
+        ##### GENERATE SAMPLES #####
+        print(f"\nGenerating samples for {len(checkpoints)} checkpoints and {len(args.seeds)} seeds...\n")
         for checkpoint_one in checkpoints:
 
             assert os.path.isfile(checkpoint_one), f'{checkpoint_one} not found'
@@ -53,4 +47,57 @@ if __name__ == '__main__':
                 print("Running: ", COMMAND)
                 
                 os.system(COMMAND)
+
+
+def convert_to_fasta(all_generated_files: list) -> list:
+    generated_fastas = []
+    for path in all_generated_files:
+        # load generation with keys ref, rec, source and af_id
+        print("Reading generation from ", path)
+        with open(path, "r") as f:
+            jsonl = [json.loads(line) for line in f]
+
+        # write reference and recovery to fasta files
+        ref_path = path.replace(".json", "_ref.fasta")
+        print("Writing reference file to ", ref_path)
+        with open(ref_path, "w") as f:
+            for seq in jsonl:
+                f.write(f">{seq['af_id']}\n{remove_brackets(seq['reference'])}\n")
+
+        rec_path = path.replace(".json", "_rec.fasta")
+        print("Writing recovery file to ", rec_path)
+        with open(rec_path, "w") as f:
+            for seq in jsonl:
+                f.write(f">{seq['af_id']}\n{remove_brackets(seq['recovery'])}\n")
+        
+        generated_fastas.append(ref_path)
+        generated_fastas.append(rec_path)
+
+    return generated_fastas
+
+
+if __name__ == '__main__':
+
+    # set working dir to the upper folder
+    abspath = os.path.abspath(sys.argv[0])
+    dname = os.path.dirname(abspath)
+    dname = os.path.dirname(dname)
+    os.chdir(dname)
+
+    args = parse_arguments()
+
+    generate_samples(args)
+
+    #### GET ALL GENERATED FILES ####
+    all_generated_files = sorted(glob.glob(f"{out_dir}/*.json"))
+
+    print(all_generated_files)
+
+    #### CONVERT GENERATED JSON TO FASTA ####
+    all_generated_fastas = convert_to_fasta(all_generated_files)
+
+    #### RUN ESM FOLD ####
+
+
+
     print('#'*30, 'decoding finished...')
