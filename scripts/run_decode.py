@@ -93,21 +93,19 @@ if __name__ == '__main__':
     #generate_samples(args, out_dir=out_dir)
 
     #### GET ALL GENERATED FILES ####
+    all_generated_files = []
     for lst in glob.glob(args.model_dir):
         checkpoints = sorted(glob.glob(f"{lst}/{args.pattern}*.pt"))[::-1]
         parse_path = lambda x: "/".join(x.split('/')[-3:]).replace(".pt", ".pt.samples/").replace("diffusion_models", out_dir)
         generations = [parse_path(ckpt) for ckpt in checkpoints]
-        all_generated_files = sorted(glob.glob(f"{generations[0]}*.json"))[::-1]
-        print(checkpoints)
-        print(generations)
-        print(all_generated_files)
-        all_generated_fastas = convert_to_fasta(all_generated_files)
-        print(all_generated_fastas)
+        all_generated_files += sorted(glob.glob(f"{generations[0]}*.json"))[::-1]
 
     #### CONVERT GENERATED JSON TO FASTA ####
-
-    
-   
+    print(checkpoints)
+    print(generations)
+    print(all_generated_files)
+    all_generated_fastas = convert_to_fasta(all_generated_files)
+    print(all_generated_fastas)
 
     ######################
     #### RUN ESM FOLD ####
