@@ -25,16 +25,15 @@ def create_correct_file(fasta_seq: str, fasta_struc: str) -> None:
     with open(fasta_seq) as f_seq, open(fasta_struc) as f_struc:
         for index, (seq_line, struc_line) in tqdm.tqdm(enumerate(zip(f_seq, f_struc))):
             if index == 0 or seq_line.startswith(">") or struc_line.startswith(">"):
+                af_id = seq_line.strip().replace(">", "") 
                 continue
 
             seq = seq_line.strip()
             struc = struc_line.strip()
 
-
-
             assert len(seq) == len(struc), f"Missing AA or structure token for {seq} in line {index}"
             add_whitespace = lambda x : " ".join(list(x))
-            write_string = f'{{"src": "{add_whitespace(struc)}", "trg": "{add_whitespace(seq)}"}}\n'
+            write_string = f'{{"src": "{add_whitespace(struc)}", "trg": "{add_whitespace(seq)}", "af_id": "{af_id}"}}\n'
             processed_lines.append(write_string)
     print("Done processing file")
 
