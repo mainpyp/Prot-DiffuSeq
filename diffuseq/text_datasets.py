@@ -1,6 +1,7 @@
 # import blobfile as bf
 import numpy as np
 from torch.utils.data import DataLoader, Dataset
+from torch.utils.data.distributed import DistributedSampler
 
 import torch
 import json
@@ -46,13 +47,30 @@ def load_data_text(
         model_emb=model_emb
     )
 
-    data_loader = DataLoader(
-        dataset,
-        batch_size=batch_size,  # 20,
-        # drop_last=True,
-        shuffle=not deterministic,
-        num_workers=0,
-    )
+    if split != 'test':
+        print("NOT TEST SET")
+        sampler = DistributedSampler(dataset)
+        data_loader = DataLoader(
+            dataset,
+            batch_size=batch_size,  # 20,
+            # drop_last=True,
+            sampler=sampler,
+            # shuffle=not deterministic,
+            num_workers=4,
+        )
+        
+    else:
+        print("TEST SET")
+        data_loader = DataLoader(
+            dataset,
+            batch_size=batch_size,  # 20,
+            # drop_last=True,
+            # sampler=sampler,
+            shuffle=not deterministic,
+            num_workers=4,
+        )
+        print(data_loader)
+
     if loop:
         return infinite_loader(data_loader)
     else:
@@ -65,7 +83,7 @@ def infinite_loader(data_loader):
 
 def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     """ sentence_lst: 
-                    keys: 'src', 'trg' 
+                    keys: 'src', 'trg', 'af_id'
                     value: shape (bsz, len)
         vocab_dict: vocab_dict is a dict of word2id
     """
@@ -163,7 +181,7 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
 
     print('#'*30, '\nLoading dataset {} from {}...'.format(data_args.dataset, data_args.data_dir))
 
-    sentence_lst = {'src':[], 'trg': []}
+    sentence_lst = {'src':[], 'trg': [], 'af_id': []}
      # TODO: This needs to be
     if split == 'train':
         print('### Loading form the TRAIN set...')
@@ -201,8 +219,9 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
             line = json.loads(row)
             sentence_lst['src'].append(line['src'].strip())
             sentence_lst['trg'].append(line['trg'].strip())
+            sentence_lst['af_id'].append(line['af_id'].strip())
 
-    print('### Data samples...\n', sentence_lst['src'][:2], sentence_lst['trg'][:2])
+    print('### Data samples...\n', sentence_lst['src'][:2], sentence_lst['trg'][:2], sentence_lst['af_id'][:2])
         
     # get tokenizer.
     vocab_dict = loaded_vocab
