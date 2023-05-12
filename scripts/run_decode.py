@@ -89,6 +89,7 @@ if __name__ == '__main__':
     #generate_samples(args, out_dir=out_dir)
 
     #### GET ALL GENERATED FILES ####
+    args.model_path = ""
     all_generated_files = sorted(glob.glob(f"../{out_dir}/*.json"))
     model_base_name = os.path.basename(os.path.split(args.model_path)[0]) + f'.{os.path.split(args.model_path)[1]}'
     out_dir = os.path.join(args.out_dir, f"{model_base_name.split('.ema')[0]}")
