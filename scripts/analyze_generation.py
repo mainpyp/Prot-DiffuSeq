@@ -4,12 +4,6 @@ model for each checkpoint are stored.
 
 --input_path: path to the generation folder
 
-
-
-
-# extract pLDDT
-python /mnt/home/mheinzinger/deepppi1tb/collabfold/parse_pLDDT.py /path/to/output/pdb    esmfold_pLDDT.csv
-
 /mnt/home/mheinzinger/deepppi1tb/foldseek/foldseek_latest/foldseek/bin/foldseek easy-search \
     /mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ \
     /path/to/output/pdb \
@@ -49,14 +43,20 @@ def create_esm_predictions(input_path: str) -> None:
         for seed in seeds:
 
             # create output pdb folder
+            fasta_path = os.path.join(checkpoint, seed, ".fasta")
             pdb_path = os.path.join(checkpoint, seed, "pdb_output")
+
 
             print("PDB output in: ", pdb_path)
             COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ESMFold/esm/scripts/fold.py ' \
-                    f' -i {seed}.fasta ' \
+                    f' -i {fasta_path} ' \
                     f'-o {pdb_path}'
             print("Running ESM prediction: ", COMMAND)
             
+            # os.system(COMMAND)
+            pLDDT_path = os.path.join(checkpoint, seed, "_esmfold_pLDDT.csv")
+            COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/collabfold/parse_pLDDT.py {pdb_path}    {pLDDT_path}'
+            print("Running pLDDT prediction: ", COMMAND)
             # os.system(COMMAND)
 
 
