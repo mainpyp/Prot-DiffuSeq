@@ -103,5 +103,5 @@ if __name__ == '__main__':
             all_generated_files += sorted(glob.glob(f"{gen}*.json"))[::-1]
 
     #### CONVERT GENERATED JSON TO FASTA ####
-    # convert_to_fasta(all_generated_files)
+    convert_to_fasta(all_generated_files)
     print('#'*30, 'decoding finished...')
