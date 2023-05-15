@@ -57,7 +57,7 @@ def create_esm_predictions(input_path: str) -> None:
                 # os.system(COMMAND)
 
                 pLDDT_path = os.path.join(checkpoint, seed + "_esmfold_pLDDT.csv")
-                assert os.path.isfile(pdb_path), f'{pdb_path} not found'
+                
                 COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/collabfold/parse_pLDDT.py {pdb_path}    {pLDDT_path}'
                 print("\n\nParsing pLDDT: ", COMMAND)
                 # os.system(COMMAND)
