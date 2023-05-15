@@ -71,8 +71,6 @@ def main():
     print("WORD LST AF", word_lst_af)
     print("LEN WORD LST AF", len(word_lst_af))
     print("LEN SET WORD LST AF", len(set(word_lst_af)))
-    import sys
-    sys.exit(0)
 
     ##### MODEL AND DIFFUSION #####
     logger.log("### Creating model and diffusion...")
