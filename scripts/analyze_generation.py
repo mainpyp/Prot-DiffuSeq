@@ -18,7 +18,6 @@ import os
 import sys
 
 
-
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_path', type=str, required=True)
@@ -26,38 +25,45 @@ def parse_arguments():
     return args
 
 
-
 def create_esm_predictions(input_path: str) -> None:
     """Creates predictions for the ESM model. By calling a different file."""
-    
+
     # list of checkpints (FOLDERS in dir)
     checkpoints = sorted(glob.glob(f"{input_path}/*.samples"))[::-1]
-    
+
     for checkpoint in checkpoints:
 
         assert os.path.isdir(checkpoint), f'{checkpoint} not found'
 
-        get_seed = lambda x: x.split("/")[-1].split(".")[0]
+        def get_seed(x): return x.split("/")[-1].split(".")[0]
         seeds = [get_seed(x) for x in glob.glob(f"{checkpoint}/*.fasta")]
         print(seeds)
         for seed in seeds:
 
             # create output pdb folder
             fasta_path = os.path.join(checkpoint, seed + ".fasta")
-            pdb_path = os.path.join(checkpoint, seed + "_pdb_output")
+            pdb_path = os.path.join(checkpoint, seed + "_pdb")
 
+            assert os.path.isfile(fasta_path), f'{fasta_path} not found'
 
-            print("\n\nPDB output in: ", pdb_path)
-            COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ESMFold/esm/scripts/fold.py ' \
+            # run ESMFold if not already done
+            if not os.path.isdir(pdb_path):
+                print("\n\nPDB output in: ", pdb_path)
+                COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ESMFold/esm/scripts/fold.py ' \
                     f' -i {fasta_path} ' \
                     f'-o {pdb_path}'
-            print("\n\nRunning ESM prediction: ", COMMAND)
-            
-            # os.system(COMMAND)
-            pLDDT_path = os.path.join(checkpoint, seed + "_esmfold_pLDDT.csv")
-            COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/collabfold/parse_pLDDT.py {pdb_path}    {pLDDT_path}'
-            print("\n\nRunning pLDDT prediction: ", COMMAND)
-            # os.system(COMMAND)
+                print("\n\nRunning ESM prediction: ", COMMAND)
+
+                os.system(COMMAND)
+
+                pLDDT_path = os.path.join(checkpoint, seed + "_esmfold_pLDDT.csv")
+                assert os.path.isfile(pdb_path), f'{pdb_path} not found'
+                COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/collabfold/parse_pLDDT.py {pdb_path}    {pLDDT_path}'
+                print("\n\nParsing pLDDT: ", COMMAND)
+                # os.system(COMMAND)
+            else:
+                print(
+                    f"ESM prediction for {seed} already exists. Please refer to {pdb_path} or delete this folder to generate new predictions.")
 
 
 if __name__ == "__main__":
