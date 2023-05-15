@@ -56,6 +56,24 @@ def main():
     training_args['batch_size'] = args.batch_size
     args.__dict__.update(training_args)
 
+
+    dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
+    logger.log(f"Extracting AF IDs")
+    af_ids = []
+    with open(dataset_dir, 'r') as f:
+        for line in f:
+            if "af_id" not in line:
+                logger.log(f"Dataset does not contain af_id. Aborting...")
+                break
+            af_ids.append(json.loads(line)["af_id"])
+            
+    word_lst_af = af_ids
+    print("WORD LST AF", word_lst_af)
+    print("LEN WORD LST AF", len(word_lst_af))
+    print("LEN SET WORD LST AF", len(set(word_lst_af)))
+    import sys
+    sys.exit(0)
+
     ##### MODEL AND DIFFUSION #####
     logger.log("### Creating model and diffusion...")
     model, diffusion = create_model_and_diffusion(
@@ -201,18 +219,6 @@ def main():
         # input tensor along a given dimension.
         cands = th.topk(logits, k=1, dim=-1)
 
-        
-        dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
-        logger.log(f"Extracting AF IDs")
-        af_ids = []
-        with open(dataset_dir, 'r') as f:
-            for line in f:
-                if "af_id" not in line:
-                    logger.log(f"Dataset does not contain af_id. Aborting...")
-                    break
-                af_ids.append(json.loads(line)["af_id"])
-                
-        word_lst_af = af_ids
         word_lst_recover = []
         word_lst_ref = []
         word_lst_source = []
