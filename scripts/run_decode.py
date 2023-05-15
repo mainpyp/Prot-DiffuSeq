@@ -103,14 +103,5 @@ if __name__ == '__main__':
             all_generated_files += sorted(glob.glob(f"{gen}*.json"))[::-1]
 
     #### CONVERT GENERATED JSON TO FASTA ####
-    print(checkpoints)
-    print(generations)
-    print(all_generated_files)
     all_generated_fastas = convert_to_fasta(all_generated_files)
-    print(all_generated_fastas)
-
-    ######################
-    #### RUN ESM FOLD ####
-    ######################
-
     print('#'*30, 'decoding finished...')
