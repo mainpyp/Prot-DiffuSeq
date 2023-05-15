@@ -54,13 +54,13 @@ def create_esm_predictions(input_path: str) -> None:
                     f'-o {pdb_path}'
                 print("\n#### Running ESM prediction:\n", COMMAND)
 
-                # os.system(COMMAND)
+                os.system(COMMAND)
 
                 pLDDT_path = os.path.join(checkpoint, seed + "_esmfold_pLDDT.csv")
                 
                 COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/collabfold/parse_pLDDT.py {pdb_path}    {pLDDT_path}'
                 print("\n#### Parsing pLDDT:\n", COMMAND)
-                # os.system(COMMAND)
+                os.system(COMMAND)
             else:
                 print(
                     f"ESM prediction for {seed} already exists. Please refer to {pdb_path} or delete this folder to generate new predictions.")
