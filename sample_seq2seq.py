@@ -242,7 +242,11 @@ def main():
                 print(f"len word lst ref: {len(word_lst_ref)}")
                 print(f"len word lst source: {len(word_lst_source)}")
                 print(f"len word lst af: {len(word_lst_af)}") 
-                print(f"word lst recover: {word_lst_recover}")                     
+                print(f"word lst recover: {word_lst_recover[:10]}")
+                print(f"word lst ref: {word_lst_ref[:10]}")
+                print(f"word lst source: {word_lst_source[:10]}")
+                print(f"word lst af: {word_lst_af[:10]}")
+                print(f"af set: {set(word_lst_af)}") 
                 if len(word_lst_af) == len(word_lst_recover):
                     for (recov, ref, src, af) in zip(word_lst_recover, word_lst_ref, word_lst_source, word_lst_af):
                         print(json.dumps({"recover": recov, "reference": ref, "source": src, "af_id": af}), file=fout)
