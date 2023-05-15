@@ -43,10 +43,11 @@ def create_esm_predictions(input_path: str) -> None:
 
         assert os.path.isdir(checkpoint), f'{checkpoint} not found'
 
-        seeds = list(glob.glob(f"{checkpoint}/*.json"))
-        print(seeds)
+        get_seed = lambda x: x.split("/")[-1].split(".")[0]
+        seeds = [get_seed(x) for x in glob.glob(f"{checkpoint}/*.fasta")]
+
         for seed in seeds:
-            
+
             # create output pdb folder
             pdb_path = os.path.join(checkpoint, seed, "pdb_output")
 
