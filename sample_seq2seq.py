@@ -236,8 +236,8 @@ def main():
 
         for i in range(world_size):
             if i == rank:  # Write files sequentially
-                fout = open(out_path, 'a')
-                if len(af_ids) == len(word_lst_af):
+                fout = open(out_path, 'a')  # appends to file
+                if len(word_lst_af) == len(word_lst_recover):
                     for (recov, ref, src, af) in zip(word_lst_recover, word_lst_ref, word_lst_source, word_lst_af):
                         print(json.dumps({"recover": recov, "reference": ref, "source": src, "af_id": af}), file=fout)
                 else:
