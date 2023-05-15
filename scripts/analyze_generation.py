@@ -54,7 +54,7 @@ def create_esm_predictions(input_path: str) -> None:
                     f'-o {pdb_path}'
                 print("\n\nRunning ESM prediction: ", COMMAND)
 
-                os.system(COMMAND)
+                # os.system(COMMAND)
 
                 pLDDT_path = os.path.join(checkpoint, seed + "_esmfold_pLDDT.csv")
                 assert os.path.isfile(pdb_path), f'{pdb_path} not found'
