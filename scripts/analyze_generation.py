@@ -41,7 +41,7 @@ def create_esm_predictions(input_path: str) -> None:
     
     for checkpoint in checkpoints:
 
-        assert os.path.isfile(checkpoint), f'{checkpoint} not found'
+        assert os.path.isdir(checkpoint), f'{checkpoint} not found'
 
         seeds = [x.split(".")[0] for x in glob.glob(f"{checkpoint}/*.json")]
 
