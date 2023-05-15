@@ -43,16 +43,16 @@ def create_esm_predictions(input_path: str) -> None:
 
         assert os.path.isdir(checkpoint), f'{checkpoint} not found'
 
-        seeds = [x.split(".")[0] for x in glob.glob(f"{checkpoint}/*.json")]
-
+        seeds = list(glob.glob(f"{checkpoint}/*.json"))
+        print(seeds)
         for seed in seeds:
-
+            
             # create output pdb folder
             pdb_path = os.path.join(checkpoint, seed, "pdb_output")
 
             print("PDB output in: ", pdb_path)
-            COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ESMFold/esm/scripts/fold.py' \
-                    f' -i {seed}.fasta' \
+            COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ESMFold/esm/scripts/fold.py ' \
+                    f' -i {seed}.fasta ' \
                     f'-o {pdb_path}'
             print("Running ESM prediction: ", COMMAND)
             
