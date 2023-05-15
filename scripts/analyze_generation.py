@@ -45,7 +45,7 @@ def create_esm_predictions(input_path: str) -> None:
 
         get_seed = lambda x: x.split("/")[-1].split(".")[0]
         seeds = [get_seed(x) for x in glob.glob(f"{checkpoint}/*.fasta")]
-
+        print(seeds)
         for seed in seeds:
 
             # create output pdb folder
