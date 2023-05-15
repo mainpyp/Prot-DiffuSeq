@@ -33,7 +33,7 @@ def parse_arguments():
 
 
 
-def create_esm_predictions(input_path: str, output_path: str) -> None:
+def create_esm_predictions(input_path: str) -> None:
     """Creates predictions for the ESM model. By calling a different file."""
     
     # list of checkpints (FOLDERS in dir)
