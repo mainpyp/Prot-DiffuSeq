@@ -28,7 +28,6 @@ import sys
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_path', type=str, required=True)
-    parser.add_argument('--pdb_path', type=str, required=True)
     args = parser.parse_args()
     return args
 
@@ -50,6 +49,8 @@ def create_esm_predictions(input_path: str, output_path: str) -> None:
 
             # create output pdb folder
             pdb_path = os.path.join(checkpoint, seed, "pdb_output")
+
+            print("PDB output in: ", pdb_path)
             COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ESMFold/esm/scripts/fold.py' \
                     f' -i {seed}.fasta' \
                     f'-o {pdb_path}'
