@@ -48,18 +48,18 @@ def create_esm_predictions(input_path: str) -> None:
 
             # run ESMFold if not already done
             if not os.path.isdir(pdb_path):
-                print("\n\nPDB output in: ", pdb_path)
+                print("\n#### PDB output in:\n", pdb_path)
                 COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ESMFold/esm/scripts/fold.py ' \
                     f' -i {fasta_path} ' \
                     f'-o {pdb_path}'
-                print("\n\nRunning ESM prediction: ", COMMAND)
+                print("\n#### Running ESM prediction:\n", COMMAND)
 
                 # os.system(COMMAND)
 
                 pLDDT_path = os.path.join(checkpoint, seed + "_esmfold_pLDDT.csv")
                 
                 COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/collabfold/parse_pLDDT.py {pdb_path}    {pLDDT_path}'
-                print("\n\nParsing pLDDT: ", COMMAND)
+                print("\n#### Parsing pLDDT:\n", COMMAND)
                 # os.system(COMMAND)
             else:
                 print(
