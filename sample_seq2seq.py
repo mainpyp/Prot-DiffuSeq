@@ -237,6 +237,12 @@ def main():
         for i in range(world_size):
             if i == rank:  # Write files sequentially
                 fout = open(out_path, 'a')  # appends to file
+                print(f"rank: {rank} writing to file")
+                print(f"len word lst recover: {len(word_lst_recover)}")
+                print(f"len word lst ref: {len(word_lst_ref)}")
+                print(f"len word lst source: {len(word_lst_source)}")
+                print(f"len word lst af: {len(word_lst_af)}") 
+                print(f"word lst recover: {word_lst_recover}")                     
                 if len(word_lst_af) == len(word_lst_recover):
                     for (recov, ref, src, af) in zip(word_lst_recover, word_lst_ref, word_lst_source, word_lst_af):
                         print(json.dumps({"recover": recov, "reference": ref, "source": src, "af_id": af}), file=fout)
