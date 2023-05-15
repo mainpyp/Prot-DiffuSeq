@@ -48,7 +48,7 @@ def create_esm_predictions(input_path: str) -> None:
 
             # run ESMFold if not already done
             if not os.path.isdir(pdb_path):
-                print("\n#### PDB output in:\n", pdb_path)
+                print(f"\n#### PDB output for seed {seed} in:\n{pdb_path}")
                 COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ESMFold/esm/scripts/fold.py ' \
                     f' -i {fasta_path} ' \
                     f'-o {pdb_path}'
