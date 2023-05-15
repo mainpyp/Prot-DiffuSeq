@@ -5,7 +5,5 @@
 datasets/*
 diffusion_models/
 diffusion_models/*
-generation_outputs/
-generation_outputs/*
 *.log
 *.pth
