@@ -43,8 +43,8 @@ def create_esm_predictions(input_path: str) -> None:
         for seed in seeds:
 
             # create output pdb folder
-            fasta_path = os.path.join(checkpoint, seed, ".fasta")
-            pdb_path = os.path.join(checkpoint, seed, "pdb_output")
+            fasta_path = os.path.join(checkpoint, seed + ".fasta")
+            pdb_path = os.path.join(checkpoint, seed + "_pdb_output")
 
 
             print("\n\nPDB output in: ", pdb_path)
@@ -54,7 +54,7 @@ def create_esm_predictions(input_path: str) -> None:
             print("\n\nRunning ESM prediction: ", COMMAND)
             
             # os.system(COMMAND)
-            pLDDT_path = os.path.join(checkpoint, seed, "_esmfold_pLDDT.csv")
+            pLDDT_path = os.path.join(checkpoint, seed + "_esmfold_pLDDT.csv")
             COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/collabfold/parse_pLDDT.py {pdb_path}    {pLDDT_path}'
             print("\n\nRunning pLDDT prediction: ", COMMAND)
             # os.system(COMMAND)
