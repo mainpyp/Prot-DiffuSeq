@@ -81,7 +81,7 @@ def run_foldseek(input_path: str):
             /path/to/foldseek_results/tmpFolder --format-output "query,target,pident,evalue,bits,alntmscore,lddt" \
             --exhaustive-search 1
             """
-            seed_ref = pdb_dir.split("/")[-1].split("_")[:-1]
+            seed_ref = "_".join(pdb_dir.split("/")[-1].split("_")[:-1])
             print("seed: ", seed_ref)
             output_aln = os.path.join(ckpt, f"{seed_ref}_aln.m8")
             output_tmp = os.path.join(ckpt, f"{seed_ref}_tmpFolder")
