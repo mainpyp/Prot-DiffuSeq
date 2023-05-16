@@ -10,6 +10,7 @@ def parse_arguments():
     parser.add_argument('--model_dir', type=str, default='', help='path to the folder of diffusion model')
     parser.add_argument('--n_gpus', type=int, default=1, help='number of gpus')
     parser.add_argument('--seeds', type=int, nargs='+', default=[101], help='random seed')
+    parser.add_argument('--generate', action='store_true', help='generate samples from all checkpoints in a folder and all given seeds')
     parser.add_argument('--step', type=int, default=2000, help='if less than diffusion training steps, like 1000, use ddim sampling')
 
     parser.add_argument('--bsz', type=int, default=50, help='batch size')
@@ -91,7 +92,8 @@ if __name__ == '__main__':
     args = parse_arguments()
     out_dir = 'generation_outputs'
 
-    # generate_samples(args, out_dir=out_dir)
+    if args.generate:
+        generate_samples(args, out_dir=out_dir)
 
     #### GET ALL GENERATED FILES ####
     all_generated_files = []
