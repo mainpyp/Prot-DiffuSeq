@@ -69,6 +69,8 @@ def run_foldseek(input_path: str, format_output: list, eval_threshold: float = 1
     # get all directories ending with pdb
     print(f"input_path: {input_path}")
     ckpts = sorted(glob.glob(f"{input_path}*.samples"))
+    format_output = ",".join(format_output)
+    print(f"format_output: {format_output}")
     for ckpt in ckpts:
         # get all pdb dirs
         pdb_dirs = sorted(glob.glob(f"{ckpt}/*_pdb"))
@@ -86,7 +88,6 @@ def run_foldseek(input_path: str, format_output: list, eval_threshold: float = 1
             print("seed: ", seed_ref)
             output_aln = os.path.join(ckpt, f"{seed_ref}_aln.m8")
             output_tmp = os.path.join(ckpt, f"{seed_ref}_tmpFolder")
-            format_output = ",".join(format_output)
             COMMAND = f'/mnt/home/mheinzinger/deepppi1tb/foldseek/foldseek_latest/foldseek/bin/foldseek easy-search ' \
                     f'/mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ ' \
                     f'{pdb_dir} ' \
