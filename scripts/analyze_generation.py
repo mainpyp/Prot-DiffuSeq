@@ -67,9 +67,18 @@ def create_esm_predictions(input_path: str) -> None:
             else:
                 print(
                     f"ESM prediction for {seed} already exists. Please refer to {pdb_path} or delete this folder to generate new predictions.")
+                
+                
+def run_foldseek(input_path: str):
+    """Runs foldseek on the generated pdb files."""
+    assert os.path.isdir(input_path), f'{input_path} not found'
+    # get all directories ending with pdb
+    pdb_dirs = sorted(glob.glob(f"{input_path}/*_pdb"))
+    print(pdb_dirs)
 
 
 if __name__ == "__main__":
     args = parse_arguments()
     print("#### Starting ESMFold prediction ####")
-    create_esm_predictions(args.input_path)
+    # create_esm_predictions(args.input_path)
+    run_foldseek(args.input_path)
