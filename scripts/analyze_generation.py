@@ -98,7 +98,7 @@ def run_foldseek(input_path: str, format_output: list):
             os.system(COMMAND)
 
 
-def parse_m8_file(input_path: str, format_output: list):
+def parse_m8_file(input_path: str, format_output: list, dry_run: bool = False):
 
     assert os.path.isdir(input_path), f'{input_path} not found'
 
@@ -122,8 +122,9 @@ def parse_m8_file(input_path: str, format_output: list):
             print(f"DF: {df.head()}")
             print(f"DF: {df.shape}")
 
-            print(f"Write parsed m8 file to {parsed_file_path}")
-            # df.to_csv(parsed_file_path, sep="\t", header=True)
+            if not dry_run:
+                print(f"Write parsed m8 file to {parsed_file_path}")
+                df.to_csv(parsed_file_path, sep="\t", header=True)
     
 
 
