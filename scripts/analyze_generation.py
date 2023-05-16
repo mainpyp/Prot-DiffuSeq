@@ -69,4 +69,5 @@ def create_esm_predictions(input_path: str) -> None:
 
 if __name__ == "__main__":
     args = parse_arguments()
+    print("#### Starting ESMFold prediction ####")
     create_esm_predictions(args.input_path)
