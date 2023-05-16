@@ -102,7 +102,6 @@ def parse_m8_file(input_path: str, format_output: list):
 
     assert os.path.isdir(input_path), f'{input_path} not found'
 
-    import pandas as pd
     # get all aln m8 files
     print(f"input_path: {input_path}")
     ckpts = sorted(glob.glob(f"{input_path}*.samples"))
@@ -126,10 +125,10 @@ def parse_m8_file(input_path: str, format_output: list):
 
 
 if __name__ == "__main__":
-    # args = parse_arguments()
+    args = parse_arguments()
     print("#### Starting ESMFold prediction ####")
     # create_esm_predictions(args.input_path)
     format_output = ["query", "target", "pident", "evalue", "bits", "alntmscore", "lddt"]
     # run_foldseek(args.input_path, format_output)
-    
+
     parse_m8_file(args.input_path, format_output)
