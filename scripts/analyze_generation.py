@@ -73,7 +73,7 @@ def run_foldseek(input_path: str):
     """Runs foldseek on the generated pdb files."""
     assert os.path.isdir(input_path), f'{input_path} not found'
     # get all directories ending with pdb
-    pdb_dirs = sorted(glob.glob(f"{input_path}/*_pdb"))
+    pdb_dirs = sorted(glob.glob(f"{input_path}*_pdb"))
     print(pdb_dirs)
 
 
