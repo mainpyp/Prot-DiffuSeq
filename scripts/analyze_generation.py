@@ -63,7 +63,7 @@ def create_esm_predictions(input_path: str) -> None:
                     f"ESM prediction for {seed} already exists. Please refer to {pdb_path} or delete this folder to generate new predictions.")
                 
                 
-def run_foldseek(input_path: str, format_output: list):
+def run_foldseek(input_path: str, format_output: list, eval_threshold: float = 100.):
     """Runs foldseek on the generated pdb files."""
     assert os.path.isdir(input_path), f'{input_path} not found'
     # get all directories ending with pdb
@@ -93,7 +93,8 @@ def run_foldseek(input_path: str, format_output: list):
                     f'{output_aln} ' \
                     f'{output_tmp} ' \
                     f'--format-output "{format_output}" ' \
-                    f'--exhaustive-search 1'
+                    f'--exhaustive-search 1' \
+                    f'-e {eval_threshold}'
             print("\n#### Running foldseek:\n", COMMAND, "\n", "-"*50)
             os.system(COMMAND)
 
@@ -134,9 +135,11 @@ def parse_m8_file(input_path: str, format_output: list, dry_run: bool = False):
 
 if __name__ == "__main__":
     args = parse_arguments()
+    
     print("#### Starting ESMFold prediction ####")
-    # create_esm_predictions(args.input_path)
+    create_esm_predictions(args.input_path)
+    
+    print("#### Starting foldseek ####")
     format_output = ["query", "target", "pident", "evalue", "bits", "alntmscore", "lddt"]
-    # run_foldseek(args.input_path, format_output)
-
+    run_foldseek(args.input_path, format_output, eval_threshold=100.)
     parse_m8_file(args.input_path, format_output)
