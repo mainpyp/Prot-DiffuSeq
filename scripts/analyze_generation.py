@@ -119,12 +119,16 @@ def parse_m8_file(input_path: str, format_output: list, dry_run: bool = False):
             if os.path.isfile(parsed_file_path):
                 print(f"WARNING: File {parsed_file_path} already exists and is overwritten. :(")
             
-            print(f"DF: {df.head()}")
-            print(f"DF: {df.shape}")
+            
 
             if not dry_run:
                 print(f"Write parsed m8 file to {parsed_file_path}")
+                print(f"DF: {df.shape}")
                 df.to_csv(parsed_file_path, sep="\t", header=True)
+            else:
+                print("DRY RUN")
+                print(f"DF: {df.head()}")
+                print(f"DF: {df.shape}")
     
 
 
