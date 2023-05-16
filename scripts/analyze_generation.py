@@ -20,7 +20,7 @@ import sys
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--input_path', type=str, required=True)
+    parser.add_argument('-i', '--input_path', type=str, required=True, help='path to the generation folder')
     args = parser.parse_args()
     return args
 
@@ -28,9 +28,11 @@ def parse_arguments():
 def create_esm_predictions(input_path: str) -> None:
     """Creates predictions for the ESM model. By calling a different file."""
 
-    # list of checkpints (FOLDERS in dir)
+    assert os.path.isdir(input_path), f'{input_path} not found'
+
+    # list of checkpoints (FOLDERS in dir)
     checkpoints = sorted(glob.glob(f"{input_path}/*.samples"))[::-1]
-    [print(f"ckpt: {x}") for x in checkpoints]
+    [print(f"CKPT: {x}") for x in checkpoints]
 
     for checkpoint in checkpoints:
 
