@@ -93,7 +93,7 @@ def run_foldseek(input_path: str, format_output: list, eval_threshold: float = 1
                     f'{output_aln} ' \
                     f'{output_tmp} ' \
                     f'--format-output "{format_output}" ' \
-                    f'--exhaustive-search 1' \
+                    f'--exhaustive-search 1 ' \
                     f'-e {eval_threshold}'
             print("\n#### Running foldseek:\n", COMMAND, "\n", "-"*50)
             os.system(COMMAND)
@@ -132,12 +132,28 @@ def parse_m8_file(input_path: str, format_output: list, dry_run: bool = False):
                 print(f"DF: {df.shape}")
     
 
+def run_colabfold(input_path: str, format_output: list, dry_run: bool = False):
+    
+        assert os.path.isdir(input_path), f'{input_path} not found'
+    
+        # get all aln m8 files
+        print(f"input_path: {input_path}")
+        ckpts = sorted(glob.glob(f"{input_path}*.samples"))
+        for ckpt in ckpts:
+            # get all pdb dirs
+            fastas = sorted(glob.glob(f"{ckpt}/*.fasta"))
+            for fasta in fastas:
+                COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/collabfold/run_colabfold.py ' \
+
+
+def compare():
+    pass
 
 if __name__ == "__main__":
     args = parse_arguments()
     
     print("#### Starting ESMFold prediction ####")
-    create_esm_predictions(args.input_path)
+    #create_esm_predictions(args.input_path)
     
     print("#### Starting foldseek ####")
     format_output = ["query", "target", "pident", "evalue", "bits", "alntmscore", "lddt"]
