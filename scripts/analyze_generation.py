@@ -81,10 +81,10 @@ def run_foldseek(input_path: str):
             /path/to/foldseek_results/tmpFolder --format-output "query,target,pident,evalue,bits,alntmscore,lddt" \
             --exhaustive-search 1
             """
-            seed = pdb_dir.split("/")[-1].split("_")[0]
-            print("seed: ", seed)
-            output_aln = os.path.join(ckpt, f"{seed}_aln.m8")
-            output_tmp = os.path.join(ckpt, f"{seed}_tmpFolder")
+            seed_ref = pdb_dir.split("/")[-1].split("_")[:-1]
+            print("seed: ", seed_ref)
+            output_aln = os.path.join(ckpt, f"{seed_ref}_aln.m8")
+            output_tmp = os.path.join(ckpt, f"{seed_ref}_tmpFolder")
             COMMAND = f'/mnt/home/mheinzinger/deepppi1tb/foldseek/foldseek_latest/foldseek/bin/foldseek easy-search ' \
                     f'/mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ ' \
                     f'{pdb_dir} ' \
