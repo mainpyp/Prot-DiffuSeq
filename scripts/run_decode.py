@@ -91,7 +91,7 @@ if __name__ == '__main__':
     args = parse_arguments()
     out_dir = 'generation_outputs'
 
-    generate_samples(args, out_dir=out_dir)
+    # generate_samples(args, out_dir=out_dir)
 
     #### GET ALL GENERATED FILES ####
     all_generated_files = []
