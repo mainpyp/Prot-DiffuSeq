@@ -93,7 +93,7 @@ def run_foldseek(input_path: str):
                     f'--format-output "query,target,pident,evalue,bits,alntmscore,lddt" ' \
                     f'--exhaustive-search 1'
             print("\n#### Running foldseek:\n", COMMAND, "\n", "-"*50)
-            #os.system(COMMAND)
+            os.system(COMMAND)
 
 
 if __name__ == "__main__":
