@@ -119,7 +119,7 @@ def parse_m8_file(input_path: str, format_output: list):
             parsed_file_path = aln_m8.replace("_aln", "_aln_parsed")
             if os.path.isfile(parsed_file_path):
                 print(f"WARNING: File {parsed_file_path} already exists and is overwritten. :(")
-                
+
             print(f"Write parsed m8 file to {parsed_file_path}")
             # df.to_csv(parsed_file_path, sep="\t", header=True)
     
@@ -131,5 +131,5 @@ if __name__ == "__main__":
     # create_esm_predictions(args.input_path)
     format_output = ["query", "target", "pident", "evalue", "bits", "alntmscore", "lddt"]
     # run_foldseek(args.input_path, format_output)
-
-    parse_m8_file("/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/diffuseq_ProtMediumCorrect_h256_lr1e-05_t6000_sqrt_lossaware_seed123_pm-correct-new-params20230419-17:39:32/ema_0.9999_100000.pt.samples/seed103_step0_ref_aln.m8", format_output)
+    
+    parse_m8_file(args.input_path, format_output)
