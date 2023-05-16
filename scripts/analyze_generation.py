@@ -133,22 +133,40 @@ def parse_m8_file(input_path: str, format_output: list, dry_run: bool = False):
                 print(f"DF: {df.shape}")
     
 
-def run_colabfold(input_path: str, format_output: list, dry_run: bool = False):
-    
-        assert os.path.isdir(input_path), f'{input_path} not found'
-    
-        # get all aln m8 files
-        print(f"input_path: {input_path}")
-        ckpts = sorted(glob.glob(f"{input_path}*.samples"))
-        for ckpt in ckpts:
-            # get all pdb dirs
-            fastas = sorted(glob.glob(f"{ckpt}/*.fasta"))
-            for fasta in fastas:
-                COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/collabfold/run_colabfold.py ' \
+def compare(input_path: str):
+    """This function gets a path for a training folder and compares for 
+    each checkpoint the results of foldseek and ESMFold.
+    Folder structure:
+    MODEL
+    |__ checkpoint1
+    |   |__ seed1.json
+    |   |__ seed1_ref|ref.fasta
+    |   |__ seed1_rec|ref_aln.m8
+    |   |__ seed1_rec|ref_aln_parsed.m8
+    |   |__ seed1_rec|ref_pdb_folder
+    |   |__ seed1_rec|ref_tmpFolder
 
+    This function compares the content of seed1_rec|ref_aln_parsed.m8 which are two files.
+    """
+    assert os.path.isdir(input_path), f'{input_path} not found'
 
-def compare():
-    pass
+    # get all aln m8 files
+    print(f"input_path: {input_path}")
+    ckpts = sorted(glob.glob(f"{input_path}*.samples"))
+    for ckpt in ckpts:
+        seed = ckpt.split("/")[-1]
+        plot_output = os.path.join(ckpt, f"{seed}_plots")
+        if not os.path.isdir(plot_output):
+            os.makedirs(plot_output)
+            pritn(f"Created {plot_output}")
+            
+        # get all pdb dirs
+        aln_m8s = sorted(glob.glob(f"{ckpt}/*aln_parsed.m8"))
+        
+        for aln_m8 in aln_m8s:
+            df = pd.read_csv(aln_m8, sep="\t", header=1)
+            print(df.head())
+
 
 if __name__ == "__main__":
     args = parse_arguments()
@@ -158,5 +176,6 @@ if __name__ == "__main__":
     
     print("#### Starting foldseek ####")
     format_output = ["query", "target", "pident", "evalue", "bits", "alntmscore", "lddt"]
-    run_foldseek(args.input_path, format_output, eval_threshold=100.)
-    parse_m8_file(args.input_path, format_output)
+    #run_foldseek(args.input_path, format_output, eval_threshold=100.)
+    #parse_m8_file(args.input_path, format_output)
+    compare(args.input_path)
