@@ -222,11 +222,8 @@ def main():
         for i in range(world_size):
             if i == rank:  # Write files sequentially
                 fout = open(out_path, 'a')  # appends to file    
-                """ The dataset is split into batches, so the length of the word_lst_recover is 50,
-                len word lst recover: 50
-                len word lst ref: 50
-                len word lst source: 50
-                len word lst af: 150"""
+                # The dataset is split into batches, so the length of the word_lst_recover is 50
+                print(f"i: {i}, rank: {rank}")
                 for (recov, ref, src) in zip(word_lst_recover, word_lst_ref, word_lst_source):
                     print(json.dumps({"recover": recov, "reference": ref, "source": src}), file=fout)
                 fout.close()
@@ -246,18 +243,21 @@ def main():
             af_ids.append(json.loads(line)["af_id"])
     
     if contains_af_id:
+        assert os.path.isfile(out_path), f"Output file {out_path} does not exist"
         with open(out_path, 'r') as f:
             lines = f.readlines()
+            print("lines: ", lines)
             lines = [json.loads(line) for line in lines]
+            print("json lines: ", lines)
 
             assert len(lines) == len(af_ids), f"Number of lines ({len(lines)}) does not match number of af_ids ({len(af_ids)})"
             
             for line in lines:
                 line["af_id"] = af_ids.pop(0)
 
-            with open(out_path, 'w') as f:
-                f.writelines(lines)
-            logger.log(f"Extracted AF IDs")
+        with open(out_path, 'w') as f:
+            f.writelines(lines)
+        logger.log(f"Extracted AF IDs")
     else: 
         print("No af_id found in dataset. Skipping extraction of af_ids")
     print('### Total takes {:.2f}s .....'.format(time.time() - start_t))
