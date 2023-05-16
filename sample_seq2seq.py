@@ -57,21 +57,6 @@ def main():
     args.__dict__.update(training_args)
 
 
-    dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
-    logger.log(f"Extracting AF IDs")
-    af_ids = []
-    with open(dataset_dir, 'r') as f:
-        for line in f:
-            if "af_id" not in line:
-                logger.log(f"Dataset does not contain af_id. Aborting...")
-                break
-            af_ids.append(json.loads(line)["af_id"])
-            
-    word_lst_af = af_ids
-    print("WORD LST AF", word_lst_af)
-    print("LEN WORD LST AF", len(word_lst_af))
-    print("LEN SET WORD LST AF", len(set(word_lst_af)))
-
     ##### MODEL AND DIFFUSION #####
     logger.log("### Creating model and diffusion...")
     model, diffusion = create_model_and_diffusion(
@@ -236,27 +221,45 @@ def main():
 
         for i in range(world_size):
             if i == rank:  # Write files sequentially
-                fout = open(out_path, 'a')  # appends to file
-                print(f"rank: {rank} writing to file")
-                print(f"len word lst recover: {len(word_lst_recover)}")
-                print(f"len word lst ref: {len(word_lst_ref)}")
-                print(f"len word lst source: {len(word_lst_source)}")
-                print(f"len word lst af: {len(word_lst_af)}") 
-                print(f"word lst recover: {word_lst_recover[:10]}")
-                print(f"word lst ref: {word_lst_ref[:10]}")
-                print(f"word lst source: {word_lst_source[:10]}")
-                print(f"word lst af: {word_lst_af[:10]}")
-                print(f"af set: {set(word_lst_af)}") 
-                if len(word_lst_af) == len(word_lst_recover):
-                    for (recov, ref, src, af) in zip(word_lst_recover, word_lst_ref, word_lst_source, word_lst_af):
-                        print(json.dumps({"recover": recov, "reference": ref, "source": src, "af_id": af}), file=fout)
-                else:
-                    for (recov, ref, src) in zip(word_lst_recover, word_lst_ref, word_lst_source):
-                        print(json.dumps({"recover": recov, "reference": ref, "source": src}), file=fout)
+                fout = open(out_path, 'a')  # appends to file    
+                """ The dataset is split into batches, so the length of the word_lst_recover is 50,
+                len word lst recover: 50
+                len word lst ref: 50
+                len word lst source: 50
+                len word lst af: 150"""
+                for (recov, ref, src) in zip(word_lst_recover, word_lst_ref, word_lst_source):
+                    print(json.dumps({"recover": recov, "reference": ref, "source": src}), file=fout)
                 fout.close()
             dist.barrier()
-        print("sample added to file")
+        
+    # Get AF IDs from test dataset
+    dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
+    logger.log(f"Extracting AF IDs")
+    af_ids = []
+    contains_af_id = True
+    with open(dataset_dir, 'r') as f:
+        for line in f:
+            if "af_id" not in line:
+                logger.log(f"Dataset does not contain af_id. Aborting...")
+                contains_af_id = False
+                break
+            af_ids.append(json.loads(line)["af_id"])
+    
+    if contains_af_id:
+        with open(out_path, 'r') as f:
+            lines = f.readlines()
+            lines = [json.loads(line) for line in lines]
 
+            assert len(lines) == len(af_ids), f"Number of lines ({len(lines)}) does not match number of af_ids ({len(af_ids)})"
+            
+            for line in lines:
+                line["af_id"] = af_ids.pop(0)
+
+            with open(out_path, 'w') as f:
+                f.writelines(lines)
+            logger.log(f"Extracted AF IDs")
+    else: 
+        print("No af_id found in dataset. Skipping extraction of af_ids")
     print('### Total takes {:.2f}s .....'.format(time.time() - start_t))
     print(f'### Written the decoded output to {out_path}')
 
