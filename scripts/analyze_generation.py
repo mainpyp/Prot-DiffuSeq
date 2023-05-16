@@ -78,7 +78,7 @@ def run_foldseek(input_path: str):
     print(f"ckpts: {ckpts}")
     for ckpt in ckpts:
         # get all pdb dirs
-        pdb_dirs = sorted(glob.glob(f"{ckpt}/*.pdb"))
+        pdb_dirs = sorted(glob.glob(f"{ckpt}/*_pdb"))
         print(f"pdb_dirs: {pdb_dirs}")
 
 
