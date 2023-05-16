@@ -158,7 +158,7 @@ def compare(input_path: str):
         plot_output = os.path.join(ckpt, f"{seed}_plots")
         if not os.path.isdir(plot_output):
             os.makedirs(plot_output)
-            pritn(f"Created {plot_output}")
+            print(f"Created {plot_output}")
             
         # get all pdb dirs
         aln_m8s = sorted(glob.glob(f"{ckpt}/*aln_parsed.m8"))
