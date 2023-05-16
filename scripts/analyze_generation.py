@@ -74,8 +74,12 @@ def run_foldseek(input_path: str):
     assert os.path.isdir(input_path), f'{input_path} not found'
     # get all directories ending with pdb
     print(f"input_path: {input_path}")
-    pdb_dirs = sorted(glob.glob(f"{input_path}*_pdb"))
-    print(pdb_dirs)
+    ckpts = sorted(glob.glob(f"{input_path}*.samples"))
+    print(f"ckpts: {ckpts}")
+    for ckpt in ckpts:
+        # get all pdb dirs
+        pdb_dirs = sorted(glob.glob(f"{ckpt}/*.pdb"))
+        print(f"pdb_dirs: {pdb_dirs}")
 
 
 if __name__ == "__main__":
