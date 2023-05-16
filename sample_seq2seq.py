@@ -248,16 +248,18 @@ def main():
         assert os.path.isfile(out_path), f"Output file {out_path} does not exist"
         with open(out_path, 'r') as f:
             lines = f.readlines()
-            print("lines: ", lines)
             lines = [json.loads(line) for line in lines]
-            print("json lines: ", lines)
 
             assert len(lines) == len(af_ids), f"Number of lines ({len(lines)}) does not match number of af_ids ({len(af_ids)})"
             
             for line in lines:
                 line["af_id"] = af_ids.pop(0)
+                print(line)
 
         with open(out_path, 'w') as f:
+            # converts to string
+            lines = [json.dumps(line) for line in lines]
+            print("json lines: ", lines)
             f.writelines(lines)
         logger.log(f'### Written the decoded output with af ids to {out_path}')
     else: 
