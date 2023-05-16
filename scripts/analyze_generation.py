@@ -20,7 +20,7 @@ import sys
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input_path', type=str, required=True)
+    parser.add_argument('-i', '--input_path', type=str, required=True)
     args = parser.parse_args()
     return args
 
@@ -30,6 +30,7 @@ def create_esm_predictions(input_path: str) -> None:
 
     # list of checkpints (FOLDERS in dir)
     checkpoints = sorted(glob.glob(f"{input_path}/*.samples"))[::-1]
+    [print(f"ckpt: {x}") for x in checkpoints]
 
     for checkpoint in checkpoints:
 
@@ -46,18 +47,18 @@ def create_esm_predictions(input_path: str) -> None:
 
             assert os.path.isfile(fasta_path), f'{fasta_path} not found'
 
-            # run ESMFold if not already done
+            
             if not os.path.isdir(pdb_path):
+                # run ESMFold if not already done
                 print(f"\n#### PDB output for {seed} in:\n{pdb_path}")
                 COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ESMFold/esm/scripts/fold.py ' \
                     f' -i {fasta_path} ' \
                     f'-o {pdb_path}'
                 print("\n#### Running ESM prediction:\n", COMMAND)
-
                 os.system(COMMAND)
 
+                # parse pLDDT
                 pLDDT_path = os.path.join(checkpoint, seed + "_esmfold_pLDDT.csv")
-                
                 COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/collabfold/parse_pLDDT.py {pdb_path}    {pLDDT_path}'
                 print("\n#### Parsing pLDDT:\n", COMMAND)
                 os.system(COMMAND)
