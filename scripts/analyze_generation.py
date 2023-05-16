@@ -6,6 +6,7 @@ model for each checkpoint are stored.
 """
 import argparse
 import glob
+import pandas as pd
 import json
 import os
 import sys
@@ -62,7 +63,7 @@ def create_esm_predictions(input_path: str) -> None:
                     f"ESM prediction for {seed} already exists. Please refer to {pdb_path} or delete this folder to generate new predictions.")
                 
                 
-def run_foldseek(input_path: str):
+def run_foldseek(input_path: str, format_output: list):
     """Runs foldseek on the generated pdb files."""
     assert os.path.isdir(input_path), f'{input_path} not found'
     # get all directories ending with pdb
@@ -85,19 +86,50 @@ def run_foldseek(input_path: str):
             print("seed: ", seed_ref)
             output_aln = os.path.join(ckpt, f"{seed_ref}_aln.m8")
             output_tmp = os.path.join(ckpt, f"{seed_ref}_tmpFolder")
+            format_output = ",".join(format_output)
             COMMAND = f'/mnt/home/mheinzinger/deepppi1tb/foldseek/foldseek_latest/foldseek/bin/foldseek easy-search ' \
                     f'/mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ ' \
                     f'{pdb_dir} ' \
                     f'{output_aln} ' \
                     f'{output_tmp} ' \
-                    f'--format-output "query,target,pident,evalue,bits,alntmscore,lddt" ' \
+                    f'--format-output "{format_output}" ' \
                     f'--exhaustive-search 1'
             print("\n#### Running foldseek:\n", COMMAND, "\n", "-"*50)
             os.system(COMMAND)
 
 
+def parse_m8_file(input_path: str, format_output: list):
+
+    assert os.path.isdir(input_path), f'{input_path} not found'
+
+    import pandas as pd
+    # get all aln m8 files
+    print(f"input_path: {input_path}")
+    ckpts = sorted(glob.glob(f"{input_path}*.samples"))
+    for ckpt in ckpts:
+        # get all pdb dirs
+        aln_m8s = sorted(glob.glob(f"{ckpt}/*aln.m8"))
+        for aln_m8 in aln_m8s:
+            df = pd.read_csv(aln_m8, sep="\t", header=None)
+            df.columns = format_output
+
+            # keep rows where query and target are the same
+            df = df[df["query"] == df["target"]]
+
+            parsed_file_path = aln_m8.replace("_aln", "_aln_parsed")
+            if os.path.isfile(parsed_file_path):
+                print(f"WARNING: File {parsed_file_path} already exists and is overwritten. :(")
+                
+            print(f"Write parsed m8 file to {parsed_file_path}")
+            # df.to_csv(parsed_file_path, sep="\t", header=True)
+    
+
+
 if __name__ == "__main__":
-    args = parse_arguments()
+    # args = parse_arguments()
     print("#### Starting ESMFold prediction ####")
     # create_esm_predictions(args.input_path)
-    run_foldseek(args.input_path)
+    format_output = ["query", "target", "pident", "evalue", "bits", "alntmscore", "lddt"]
+    # run_foldseek(args.input_path, format_output)
+
+    parse_m8_file("/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/diffuseq_ProtMediumCorrect_h256_lr1e-05_t6000_sqrt_lossaware_seed123_pm-correct-new-params20230419-17:39:32/ema_0.9999_100000.pt.samples/seed103_step0_ref_aln.m8", format_output)
