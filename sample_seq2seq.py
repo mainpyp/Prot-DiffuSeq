@@ -228,6 +228,8 @@ def main():
                     print(json.dumps({"recover": recov, "reference": ref, "source": src}), file=fout)
                 fout.close()
             dist.barrier()
+
+    logger.log(f'### Written the decoded output to: {out_path}')
         
     # Get AF IDs from test dataset
     dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
@@ -257,11 +259,11 @@ def main():
 
         with open(out_path, 'w') as f:
             f.writelines(lines)
-        logger.log(f"Extracted AF IDs")
+        logger.log(f'### Written the decoded output with af ids to {out_path}')
     else: 
         print("No af_id found in dataset. Skipping extraction of af_ids")
     print('### Total takes {:.2f}s .....'.format(time.time() - start_t))
-    print(f'### Written the decoded output to {out_path}')
+    
 
 
 if __name__ == "__main__":
