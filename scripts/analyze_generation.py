@@ -3,13 +3,6 @@ It takes as input the path to the generation folder where the generations of a
 model for each checkpoint are stored.
 
 --input_path: path to the generation folder
-
-/mnt/home/mheinzinger/deepppi1tb/foldseek/foldseek_latest/foldseek/bin/foldseek easy-search \
-    /mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ \
-    /path/to/output/pdb \
-    /path/to/foldseek_results/aln.m8 \
-    /path/to/foldseek_results/tmpFolder --format-output "query,target,pident,evalue,bits,alntmscore,lddt" \
-    --exhaustive-search 1
 """
 import argparse
 import glob
@@ -75,11 +68,32 @@ def run_foldseek(input_path: str):
     # get all directories ending with pdb
     print(f"input_path: {input_path}")
     ckpts = sorted(glob.glob(f"{input_path}*.samples"))
-    print(f"ckpts: {ckpts}")
     for ckpt in ckpts:
         # get all pdb dirs
         pdb_dirs = sorted(glob.glob(f"{ckpt}/*_pdb"))
-        print(f"pdb_dirs: {pdb_dirs}")
+        for pdb_dir in pdb_dirs:
+
+            """
+            /mnt/home/mheinzinger/deepppi1tb/foldseek/foldseek_latest/foldseek/bin/foldseek easy-search \
+            /mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ \
+            /path/to/output/pdb \
+            /path/to/foldseek_results/aln.m8 \
+            /path/to/foldseek_results/tmpFolder --format-output "query,target,pident,evalue,bits,alntmscore,lddt" \
+            --exhaustive-search 1
+            """
+            seed = pdb_dir.split("/")[-1].split("_")[0]
+            print("seed: ", seed)
+            output_aln = os.path.join(ckpt, f"{seed}_aln.m8")
+            output_tmp = os.path.join(ckpt, f"{seed}_tmpFolder")
+            COMMAND = f'/mnt/home/mheinzinger/deepppi1tb/foldseek/foldseek_latest/foldseek/bin/foldseek easy-search ' \
+                    f'/mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ ' \
+                    f'{pdb_dir} ' \
+                    f'{output_aln} ' \
+                    f'{output_tmp} ' \
+                    f'--format-output "query,target,pident,evalue,bits,alntmscore,lddt" ' \
+                    f'--exhaustive-search 1'
+            print("\n#### Running foldseek:\n", COMMAND, "\n", "-"*50)
+            #os.system(COMMAND)
 
 
 if __name__ == "__main__":
