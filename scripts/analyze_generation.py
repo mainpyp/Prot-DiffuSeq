@@ -118,6 +118,9 @@ def parse_m8_file(input_path: str, format_output: list):
             parsed_file_path = aln_m8.replace("_aln", "_aln_parsed")
             if os.path.isfile(parsed_file_path):
                 print(f"WARNING: File {parsed_file_path} already exists and is overwritten. :(")
+            
+            print(f"DF: {df.head()}")
+            print(f"DF: {df.shape}")
 
             print(f"Write parsed m8 file to {parsed_file_path}")
             # df.to_csv(parsed_file_path, sep="\t", header=True)
