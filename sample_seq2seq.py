@@ -258,7 +258,7 @@ def main():
 
         with open(out_path, 'w') as f:
             # converts to string
-            lines = [json.dumps(line) for line in lines]
+            lines = [json.dumps(line) + "\n" for line in lines]
             print("json lines: ", lines)
             f.writelines(lines)
         logger.log(f'### Written the decoded output with af ids to {out_path}')
