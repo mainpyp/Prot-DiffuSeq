@@ -120,7 +120,6 @@ class TransformerNetModel(nn.Module):
 
     def get_logits(self, hidden_repr):
         if self.logits_mode == 1:
-            print("logits mode 1")
             return self.lm_head(hidden_repr)
         elif self.logits_mode == 2: # standard cosine similarity
             text_emb = hidden_repr
