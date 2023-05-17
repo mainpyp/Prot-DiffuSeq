@@ -1,6 +1,7 @@
 from transformers import AutoConfig, RoFormerEncoder, RoFormerConfig
 # from transformers import BertEncoder
 from transformers.models.bert.modeling_bert import BertEncoder, BertModel
+from transformers.models.roformer.modeling_roformer import RoFormerEncoder, RoFormerModel
 import torch
 
 import numpy as np
