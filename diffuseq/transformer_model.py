@@ -87,29 +87,6 @@ class TransformerNetModel(nn.Module):
 
             del temp_bert.embeddings
             del temp_bert.pooler
-        
-        elif init_pretrained == 'roformer':
-            print('initializing from pretrained roformer...')
-            print(config)
-            # Initializing a RoFormer junnyu/roformer_chinese_base style configuration
-            configuration = RoFormerConfig()
-
-            # Initializing a model from the junnyu/roformer_chinese_base style configuration
-            temp_model = RoFormerModel(configuration)
-            
-            self.word_embedding = temp_model.embeddings.word_embeddings
-            with th.no_grad():
-                self.lm_head.weight = self.word_embedding.weight
-            # self.lm_head.weight.requires_grad = False
-            # self.word_embedding.weight.requires_grad = False
-            
-            self.input_transformers = temp_model.encoder
-            self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
-            self.position_embeddings = temp_model.embeddings.position_embeddings
-            self.LayerNorm = temp_model.embeddings.LayerNorm
-
-            del temp_model.embeddings
-            del temp_model.pooler
 
         elif init_pretrained == 'no':
             # To use RoFormer
@@ -120,6 +97,7 @@ class TransformerNetModel(nn.Module):
             # self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
             print('initializing BERT from scratch...')
             self.input_transformers = BertEncoder(config)
+            print(config)
 
             self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
             self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
