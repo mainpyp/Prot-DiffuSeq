@@ -43,7 +43,8 @@ class TransformerNetModel(nn.Module):
 
         if config is None:
             print("config is none (TransformerNetModel)")
-            config = AutoConfig.from_pretrained(config_name)
+            config = RoFormerConfig()
+            # this was og: config = AutoConfig.from_pretrained(config_name)
             config.hidden_dropout_prob = dropout
 
         self.input_dims = input_dims
@@ -96,7 +97,8 @@ class TransformerNetModel(nn.Module):
             # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
             # self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
             print('initializing BERT from scratch...')
-            self.input_transformers = BertEncoder(config)
+            self.input_transformers = RoFormerModel(config)
+            # this was og: self.input_transformers = BertEncoder(config)
             print(config)
             import sys
             sys.exit(0)
