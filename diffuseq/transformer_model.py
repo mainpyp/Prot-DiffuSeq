@@ -1,4 +1,4 @@
-from transformers import AutoConfig, RoFormerModel, RoFormerConfig
+from transformers import AutoConfig, RoFormerEncoder, RoFormerConfig
 # from transformers import BertEncoder
 from transformers.models.bert.modeling_bert import BertEncoder, BertModel
 import torch
@@ -97,7 +97,7 @@ class TransformerNetModel(nn.Module):
             # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
             # self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
             print('initializing BERT from scratch...')
-            self.input_transformers = RoFormerModel(config)
+            self.input_transformers = RoFormerEncoder(config)
             # this was og: self.input_transformers = BertEncoder(config)
             print(config)
 
