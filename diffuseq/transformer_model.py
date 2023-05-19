@@ -103,14 +103,13 @@ class TransformerNetModel(nn.Module):
             print(config)
 
             self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
+            # We are using RoFormer pos. embs.
             # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
+            print(f"USING RoFormerSinusoidalPositionalEmbedding")
+            print(self.position_embeddings.weight.shape)
             self.position_embeddings = RoFormerSinusoidalPositionalEmbedding(
                                         config.max_position_embeddings,
                                         config.hidden_size)
-            old_embeds = nn.Embedding(config.max_position_embeddings, config.hidden_size) # just for validation
-            print(f"USING RoFormerSinusoidalPositionalEmbedding")
-            print(self.position_embeddings.weight.shape)
-            print(f"Old Embeds: {old_embeds.weight.shape}")
             self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
         
         else:
@@ -160,10 +159,8 @@ class TransformerNetModel(nn.Module):
 
         seq_length = x.size(1)
         position_ids = self.position_ids[:, : seq_length ]
-        # print(emb_x.shape, emb_t.shape, self.position_embeddings)
-        print("From bug location: ", self.position_embeddings.weight.shape)
-        print("From bug location: ", position_ids)
-        print("From bug location: ", type(position_ids))
+        
+        # Before it was just postion_ids (RoFormer fix)
         emb_inputs = self.position_embeddings(position_ids[0]) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
         
         emb_inputs = self.dropout(self.LayerNorm(emb_inputs))
