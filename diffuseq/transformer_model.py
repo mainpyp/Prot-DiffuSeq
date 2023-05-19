@@ -106,8 +106,11 @@ class TransformerNetModel(nn.Module):
             # old: self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
             self.position_embeddings = RoFormerSinusoidalPositionalEmbedding(
                                         config.max_position_embeddings,
-                                        config.hidden_size // config.num_attention_heads,
-                                        )
+                                        config.hidden_size)
+            old_embeds = nn.Embedding(config.max_position_embeddings, config.hidden_size) # just for validation
+            print(f"USING RoFormerSinusoidalPositionalEmbedding")
+            print(self.position_embeddings.weight.shape)
+            print(f"Old Embeds: {old_embeds.weight.shape}")
             self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
         
         else:
