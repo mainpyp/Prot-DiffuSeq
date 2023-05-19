@@ -164,7 +164,7 @@ class TransformerNetModel(nn.Module):
         print("From bug location: ", self.position_embeddings.weight.shape)
         print("From bug location: ", position_ids)
         print("From bug location: ", type(position_ids))
-        emb_inputs = self.position_embeddings(position_ids) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
+        emb_inputs = self.position_embeddings(position_ids[0]) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
         
         emb_inputs = self.dropout(self.LayerNorm(emb_inputs))
 
