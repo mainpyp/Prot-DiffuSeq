@@ -106,7 +106,6 @@ class TransformerNetModel(nn.Module):
             # We are using RoFormer pos. embs.
             # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
             print(f"USING RoFormerSinusoidalPositionalEmbedding")
-            print(self.position_embeddings.weight.shape)
             self.position_embeddings = RoFormerSinusoidalPositionalEmbedding(
                                         config.max_position_embeddings,
                                         config.hidden_size)
