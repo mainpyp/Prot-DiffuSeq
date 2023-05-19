@@ -94,6 +94,8 @@ if __name__ == '__main__':
 
     if args.generate:
         generate_samples(args, out_dir=out_dir)
+    else:
+        print("Skipping generation because --generate not presented.")
 
     #### GET ALL GENERATED FILES ####
     all_generated_files = []
