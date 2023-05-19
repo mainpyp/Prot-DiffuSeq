@@ -1,7 +1,7 @@
 from transformers import AutoConfig, RoFormerConfig
 # from transformers import BertEncoder
 from transformers.models.bert.modeling_bert import BertEncoder, BertModel
-from transformers.models.roformer.modeling_roformer import RoFormerEncoder, RoFormerModel
+from transformers.models.roformer.modeling_roformer import RoFormerEncoder, RoFormerSinusoidalPositionalEmbedding
 import torch
 
 import numpy as np
@@ -103,7 +103,11 @@ class TransformerNetModel(nn.Module):
             print(config)
 
             self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
-            self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
+            # old: self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
+            self.position_embeddings = RoFormerSinusoidalPositionalEmbedding(
+                                        config.max_position_embeddings,
+                                        config.hidden_size // config.num_attention_heads,
+                                        )
             self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
         
         else:
