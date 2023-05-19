@@ -161,7 +161,7 @@ class TransformerNetModel(nn.Module):
         seq_length = x.size(1)
         position_ids = self.position_ids[:, : seq_length ]
         # print(emb_x.shape, emb_t.shape, self.position_embeddings)
-        print("From bug location: ", self.position_embeddings(position_ids).shape)
+        print("From bug location: ", self.position_embeddings.weight.shape)
         print("From bug location: ", position_ids)
         print("From bug location: ", type(position_ids))
         emb_inputs = self.position_embeddings(position_ids) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
