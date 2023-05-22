@@ -55,7 +55,7 @@ def load_data_text(
             batch_size=batch_size,  # 20,
             # drop_last=True,
             sampler=sampler,
-            # shuffle=not deterministic,
+            shuffle=True,
             num_workers=4,
         )
         
@@ -65,8 +65,8 @@ def load_data_text(
             dataset,
             batch_size=batch_size,  # 20,
             # drop_last=True,
-            # sampler=sampler,
-            shuffle=not deterministic,
+            sampler=sampler, # this was commented out
+            shuffle=True,
             num_workers=4,
         )
         print(data_loader)
@@ -145,7 +145,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     tokenized_datasets = tokenized_datasets.map(
         merge_and_mask,
         batched=True,
-        num_proc=1,
+        num_proc=4,
         keep_in_memory=False,
         load_from_cache_file=True,
         desc=f"merge and mask",
