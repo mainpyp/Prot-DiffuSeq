@@ -55,7 +55,7 @@ def load_data_text(
             batch_size=batch_size,  # 20,
             # drop_last=True,
             sampler=sampler,
-            shuffle=True,
+            # shuffle=True,
             num_workers=4,
         )
         
@@ -65,7 +65,7 @@ def load_data_text(
             dataset,
             batch_size=batch_size,  # 20,
             # drop_last=True,
-            sampler=sampler, # this was commented out
+            # sampler=sampler, # this was commented out
             shuffle=True,
             num_workers=4,
         )
