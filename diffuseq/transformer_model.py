@@ -57,6 +57,7 @@ class TransformerNetModel(nn.Module):
 
         self.word_embedding = nn.Embedding(vocab_size, self.input_dims)
         self.lm_head = nn.Linear(self.input_dims, vocab_size)
+        print(f"Vocab size: {'-'*20}> {vocab_size}")
         with th.no_grad():
             self.lm_head.weight = self.word_embedding.weight
 
