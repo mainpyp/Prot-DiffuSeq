@@ -175,6 +175,7 @@ def main():
         # this is the sampling function (takes most of the time)
         # len samples (list) 2k (len of diffusion steps t (?))
         print(f"Beginning sampling on {sample_shape[0]} sequences...")
+        start_batch = time.time()
         samples = sample_fn(
             model,
             sample_shape,
@@ -189,7 +190,8 @@ def main():
             x_start=x_start,
             gap=step_gap
         )
-        print("Sampling done...")
+        end_batch = time.time()
+        print(f"Sampling done in {end_batch - start_batch} seconds.")
         
         # sample shape: torch.Size([10, 256, 256])
         sample = samples[-1]
