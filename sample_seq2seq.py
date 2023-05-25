@@ -174,6 +174,7 @@ def main():
 
         # this is the sampling function (takes most of the time)
         # len samples (list) 2k (len of diffusion steps t (?))
+        print(f"Beginning sampling on {sample_shape[0]} sequences...")
         samples = sample_fn(
             model,
             sample_shape,
@@ -188,6 +189,7 @@ def main():
             x_start=x_start,
             gap=step_gap
         )
+        print("Sampling done...")
         
         # sample shape: torch.Size([10, 256, 256])
         sample = samples[-1]
@@ -254,7 +256,6 @@ def main():
             
             for line in lines:
                 line["af_id"] = af_ids.pop(0)
-                print(line)
 
         with open(out_path, 'w') as f:
             # converts to string
