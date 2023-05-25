@@ -13,7 +13,7 @@ def parse_arguments():
     parser.add_argument('--generate', action='store_true', help='generate samples from all checkpoints in a folder and all given seeds')
     parser.add_argument('--step', type=int, default=2000, help='if less than diffusion training steps, like 1000, use ddim sampling')
 
-    parser.add_argument('--bsz', type=int, default=50, help='batch size')
+    parser.add_argument('--bsz', type=int, default=5, help='batch size')
     parser.add_argument('--split', type=str, default='test', choices=['train', 'valid', 'test'], help='dataset split used to decode')
 
     parser.add_argument('--top_p', type=int, default=-1, help='top p used in sampling, default is off')
