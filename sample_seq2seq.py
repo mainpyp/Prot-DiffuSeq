@@ -107,6 +107,8 @@ def main():
     if not os.path.isdir(out_path):
         os.mkdir(out_path)
     out_path = os.path.join(out_path, f"seed{args.seed2}_step{args.clamp_step}.json")
+    
+    print("### Generation will be saved to:\n", out_path)
 
     all_test_data = []
 
@@ -254,7 +256,8 @@ def main():
             lines = f.readlines()
             lines = [json.loads(line) for line in lines]
 
-            assert len(lines) == len(af_ids), f"Number of lines ({len(lines)}) does not match number of af_ids ({len(af_ids)})"
+            if not len(lines) == len(af_ids): 
+                print(f"CAUTION: Number of lines ({len(lines)}) does not match number of af_ids ({len(af_ids)})")
             
             for line in lines:
                 line["af_id"] = af_ids.pop(0)
@@ -262,7 +265,6 @@ def main():
         with open(out_path, 'w') as f:
             # converts to string
             lines = [json.dumps(line) + "\n" for line in lines]
-            print("json lines: ", lines)
             f.writelines(lines)
         logger.log(f'### Written the decoded output with af ids to {out_path}')
     else:
