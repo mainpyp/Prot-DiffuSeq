@@ -109,6 +109,10 @@ def main():
     out_path = os.path.join(out_path, f"seed{args.seed2}_step{args.clamp_step}.json")
     
     print("### Generation will be saved to:\n", out_path)
+    
+    if os.path.isfile(out_path):
+        print("### File already exists. Please delete it first if you want to force generation.")
+        return
 
     all_test_data = []
 
