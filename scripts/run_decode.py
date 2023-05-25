@@ -96,6 +96,8 @@ if __name__ == '__main__':
         generate_samples(args, out_dir=out_dir)
     else:
         print("Skipping generation because --generate not presented.")
+        
+    assert os.path.isdir(args.model_dir), f"Model directory not found: {args.model_dir}"
 
     #### GET ALL GENERATED FILES ####
     all_generated_files = []
