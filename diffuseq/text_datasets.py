@@ -107,6 +107,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
+        batch_size=500,
         num_proc=1,
         remove_columns=['src', 'trg'],
         keep_in_memory=False,
