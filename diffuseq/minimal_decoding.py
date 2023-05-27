@@ -44,11 +44,8 @@ def tokenizing(sentence_lst, vocab_dict):
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
-        num_proc=4,
-        keep_in_memory=False,
         remove_columns=['src', 'trg'],
-        load_from_cache_file=True,
-        desc="Running tokenizer on dataset",
+        desc="Running tokenizer on dataset"
     )
     
     print('### tokenized_datasets', tokenized_datasets)
