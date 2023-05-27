@@ -45,7 +45,7 @@ def tokenizing(sentence_lst, vocab_dict):
         tokenize_function,
         batched=True,
         num_proc=4,
-        keep_in_memory=True,
+        keep_in_memory=False,
         remove_columns=['src', 'trg'],
         load_from_cache_file=True,
         desc="Running tokenizer on dataset",
