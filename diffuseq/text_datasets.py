@@ -107,12 +107,19 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
-        batch_size=500,
-        num_proc=1,
+        num_proc=4,
         remove_columns=['src', 'trg'],
-        keep_in_memory=False,
         load_from_cache_file=True,
         desc="Running tokenizer on dataset",
+        # THIS WAS MINE v
+        # tokenize_function,
+        # batched=True,
+        # batch_size=500,
+        # num_proc=1,
+        # remove_columns=['src', 'trg'],
+        # keep_in_memory=False,
+        # load_from_cache_file=True,
+        # desc="Running tokenizer on dataset",
     )
     print('### tokenized_datasets', tokenized_datasets)
     print('### tokenized_datasets shape', tokenized_datasets.shape)
