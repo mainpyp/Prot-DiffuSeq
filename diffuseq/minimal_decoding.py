@@ -35,8 +35,8 @@ def tokenizing(sentence_lst, vocab_dict):
     raw_datasets = Dataset2.from_dict(sentence_lst)
 
     def tokenize_function(examples):
-        input_id_x = tokenizer(examples['src'], add_special_tokens=True, truncation=True, max_length=128)['input_ids']
-        input_id_y = tokenizer(examples['trg'], add_special_tokens=True, truncation=True, max_length=128)['input_ids']
+        input_id_x = tokenizer(examples['src'], add_special_tokens=True, truncation=True, max_length=512)['input_ids']
+        input_id_y = tokenizer(examples['trg'], add_special_tokens=True, truncation=True, max_length=512)['input_ids']
         result_dict = {'input_id_x': input_id_x, 'input_id_y': input_id_y}
 
         return result_dict
