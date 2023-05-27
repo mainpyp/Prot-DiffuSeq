@@ -107,7 +107,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
-        num_proc=4,
+        #num_proc=4,
         remove_columns=['src', 'trg'],
         keep_in_memory=False,
         load_from_cache_file=True,
@@ -145,7 +145,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     tokenized_datasets = tokenized_datasets.map(
         merge_and_mask,
         batched=True,
-        num_proc=4,
+        #num_proc=1,
         keep_in_memory=False,
         load_from_cache_file=True,
         desc=f"merge and mask",
@@ -162,7 +162,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     lm_datasets = tokenized_datasets.map(
         pad_function,
         batched=True,
-        num_proc=4,
+        #num_proc=4,
         keep_in_memory=False,
         load_from_cache_file=True,
         desc=f"padding",
