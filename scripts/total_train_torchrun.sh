@@ -1,14 +1,14 @@
 torchrun --nnodes=1 --nproc_per_node=8 run_train.py \
---diff_steps 4000 \
---lr 0.0001 \
---learning_steps 5001 \
---save_interval 1000 \
+--diff_steps 3000 \
+--lr 0.00001 \
+--learning_steps 1000001 \
+--save_interval 5000 \
 --seed 102 \
 --noise_schedule sqrt \
---hidden_dim 128 \
---bsz 256 \
+--hidden_dim 1028 \
+--bsz 512 \
 --dataset ProtTotal \
---data_dir datasets/ProtTotalCorrect \
+--data_dir datasets/ProtTotal \
 --vocab protbert \
 --seq_len 128 \
 --schedule_sampler lossaware \

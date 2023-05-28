@@ -45,14 +45,16 @@ def tokenizing(sentence_lst, vocab_dict):
         tokenize_function,
         batched=True,
         remove_columns=['src', 'trg'],
+        keep_in_memory=True,
         desc="Running tokenizer on dataset"
     )
     
     print('### tokenized_datasets', tokenized_datasets)
     
 if __name__ == "__main__":
-    path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/datasets/ProtMinimalSeqToStruc/train.jsonl"
+    path = "../datasets/ProtTotal/train.jsonl"
     print(f"loading from {path}")
+    path = "../datasets/ProtTotal/train1M.jsonl"
     print(f"\nCreate sentence list")
     sentence_list = get_sentence_list(path)
     print("\nCreate tokenizer")
