@@ -12,6 +12,7 @@ import datasets
 from datasets import Dataset as Dataset2
 
 
+
 def get_sentence_list(path):
     sentence_lst = {'src':[], 'trg': []}
     with open(path, 'r') as f_reader:
@@ -48,7 +49,7 @@ def tokenizing(sentence_lst, vocab_dict):
         keep_in_memory=True,
         desc="Running tokenizer on dataset"
     )
-    
+    tokenized_datasets.push_to_hub("adrianhenkel/testdataset")
     print('### tokenized_datasets', tokenized_datasets)
     
 if __name__ == "__main__":
