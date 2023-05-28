@@ -96,8 +96,6 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
 
     try:
         tokenized_datasets = load_dataset("adrianhenkel/testdataset")["train"]
-        assert tokenized_datasets.shape["train"][0] == len(sentence_lst['src']) == len(sentence_lst['trg']), \
-        "The number of sentences in the dataset is not equal to the number of sentences in the sentence_lst"
     except:
          # Dataset2 is the the dataset from huggingface and not from torch.utils.data
         raw_datasets = Dataset2.from_dict(sentence_lst)
@@ -131,7 +129,10 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     print('### tokenized_datasets shape', tokenized_datasets.shape)
     print('### tokenized_datasets...example', tokenized_datasets['input_id_x'][0])
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
-
+    
+    assert tokenized_datasets.shape["train"][0] == len(sentence_lst['src']) == len(sentence_lst['trg']), \
+        "The number of sentences in the dataset is not equal to the number of sentences in the sentence_lst"
+    
     def merge_and_mask(group_lst):
         lst = []
         mask = []
