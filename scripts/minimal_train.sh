@@ -1,0 +1,15 @@
+python3 -m torch.distributed.launch --nproc_per_node=2 --master_port=12233 --use_env run_train.py \
+--diff_steps 2000 \
+--lr 0.0001 \
+--learning_steps 4001 \
+--save_interval 2000 \
+--seed 102 \
+--noise_schedule sqrt \
+--hidden_dim 128 \
+--bsz 128 \
+--dataset ProtSmall \
+--data_dir datasets/ProtMinimalStrucToSeq/ \
+--vocab protbert \
+--seq_len 128 \
+--schedule_sampler lossaware \
+--notes MinimalRunFromEnroot
