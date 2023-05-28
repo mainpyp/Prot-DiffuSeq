@@ -60,6 +60,7 @@ class myTokenizer():
         if isinstance(self.tokenizer, dict):
             input_ids = [[0] + [self.tokenizer.get(x, self.tokenizer['[UNK]']) for x in seq.split()] + [1] for seq in sentences]
         elif isinstance(self.tokenizer, PreTrainedTokenizerFast):
+            print("Using PreTrainedTokenizerFast")
             input_ids = self.tokenizer(sentences, add_special_tokens=True, truncation=True, max_length=self.args.seq_len)['input_ids']
         else:
             assert False, "invalid type of vocab_dict"
@@ -88,7 +89,7 @@ def load_model_emb(args, tokenizer):
     path_save_ind = path_save + ".done"
     if int(os.environ['LOCAL_RANK']) == 0:
         if os.path.exists(path_save):
-            print('reload the random embeddings', model)
+            print(f'\nreload the random embeddings{model} from {path_save}')
             model.load_state_dict(torch.load(path_save))
         else:
             print('initializing the random embeddings', model)
