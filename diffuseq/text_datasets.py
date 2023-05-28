@@ -10,6 +10,7 @@ import tqdm
 import psutil
 import datasets
 from datasets import Dataset as Dataset2
+from datasets import load_dataset
 
 def load_data_text(
     batch_size, 
@@ -90,35 +91,42 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
 
     # Process.memory_info is expressed in bytes, so convert to megabytes
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
-    raw_datasets = Dataset2.from_dict(sentence_lst)
-    print(raw_datasets)
-    print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
+    
+    
 
-    def tokenize_function(examples):
-        input_id_x = vocab_dict.encode_token(examples['src'])
-        input_id_y = vocab_dict.encode_token(examples['trg'])
-        result_dict = {'input_id_x': input_id_x, 'input_id_y': input_id_y}
+    try:
+        tokenized_datasets = load_dataset("adrianhenkel/testdataset")
+        assert tokenized_datasets.shape["train"][0] == len(sentence_lst['src']) == len(sentence_lst['trg']), \
+        "The number of sentences in the dataset is not equal to the number of sentences in the sentence_lst"
+    except:
+         # Dataset2 is the the dataset from huggingface and not from torch.utils.data
+        raw_datasets = Dataset2.from_dict(sentence_lst)
+        del sentence_lst
+        print(raw_datasets)
+        print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
 
-        return result_dict
+        def tokenize_function(examples):
+            input_id_x = vocab_dict.encode_token(examples['src'])
+            input_id_y = vocab_dict.encode_token(examples['trg'])
+            result_dict = {'input_id_x': input_id_x, 'input_id_y': input_id_y}
 
-    # print('### type sentence_lst', type(sentence_lst))
-    # print('### type raw_datasets', type(raw_datasets))
-    # print('### vocab_dict', vocab_dict)
-    tokenized_datasets = raw_datasets.map(
-        tokenize_function,
-        batched=True,
-        remove_columns=['src', 'trg'],
-        desc="Running tokenizer on dataset",
-        # THIS WAS MINE v
-        # tokenize_function,
-        # batched=True,
-        # batch_size=500,
-        # num_proc=1,
-        # remove_columns=['src', 'trg'],
-        # keep_in_memory=False,
-        # load_from_cache_file=True,
-        # desc="Running tokenizer on dataset",
-    )
+            return result_dict
+        
+        tokenized_datasets = raw_datasets.map(
+            tokenize_function,
+            batched=True,
+            remove_columns=['src', 'trg'],
+            desc="Running tokenizer on dataset",
+            # THIS WAS MINE v
+            # tokenize_function,
+            # batched=True,
+            # batch_size=500,
+            # num_proc=1,
+            # remove_columns=['src', 'trg'],
+            # keep_in_memory=False,
+            # load_from_cache_file=True,
+            # desc="Running tokenizer on dataset",
+        )
     print('### tokenized_datasets', tokenized_datasets)
     print('### tokenized_datasets shape', tokenized_datasets.shape)
     print('### tokenized_datasets...example', tokenized_datasets['input_id_x'][0])
@@ -197,24 +205,6 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
         path = f'{data_args.data_dir}/test.jsonl'
     else:
         assert False, "invalid split for dataset"
-
-    # TODO: take care of that shit!
-    # processed_lines = []
-    # with open(path) as f:
-    #     f.readline()  # skip header
-    #
-    #     for index, (structure_string, seq_string) in tqdm.tqdm(enumerate(itertools.zip_longest(*[f] * 2))):
-    #         if index == 0 or structure_string == None or seq_string == None:
-    #             continue
-    #
-    #         sequence = " ".join(list(seq_string.split(',')[-1].strip()))
-    #         structure = " ".join(list(structure_string.split(',')[-1].strip()))
-    #
-    #         assert len(sequence) == len(structure), f"Missing AA or structure token for {sequence} in line {index}"
-    #
-    #         write_string = f'{{"src": "{sequence}", "trg": "{structure}"}}\n'
-    #         processed_lines.append(write_string)
-    # print("Done processing file")
 
 
     with open(path, 'r') as f_reader:
