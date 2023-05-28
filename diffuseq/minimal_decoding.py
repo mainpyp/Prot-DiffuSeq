@@ -55,7 +55,7 @@ def tokenizing(sentence_lst, vocab_dict):
 if __name__ == "__main__":
     path = "../datasets/ProtTotal/train.jsonl"
     print(f"loading from {path}")
-    path = "../datasets/ProtTotal/train1M.jsonl"
+    path = "../datasets/ProtTotal/train.jsonl"
     print(f"\nCreate sentence list")
     sentence_list = get_sentence_list(path)
     print("\nCreate tokenizer")
