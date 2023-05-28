@@ -95,7 +95,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     
 
     try:
-        tokenized_datasets = load_dataset("adrianhenkel/testdataset")
+        tokenized_datasets = load_dataset("adrianhenkel/testdataset")["train"]
         assert tokenized_datasets.shape["train"][0] == len(sentence_lst['src']) == len(sentence_lst['trg']), \
         "The number of sentences in the dataset is not equal to the number of sentences in the sentence_lst"
     except:
