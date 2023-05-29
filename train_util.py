@@ -173,9 +173,11 @@ class TrainLoop:
         while (
             not self.learning_steps
             or self.step + self.resume_step < self.learning_steps
-        ):
+        ):  
+            print("START BATCH")
             batch, cond = next(self.data)
             
+            print("RUN STEP")
             self.run_step(batch, cond)
             if self.step % self.log_interval == 0:
                 logger.dumpkvs()
