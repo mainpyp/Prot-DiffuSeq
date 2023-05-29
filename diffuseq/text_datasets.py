@@ -153,23 +153,6 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
 
             lst.append(src + [vocab_dict.sep_token_id] + trg)
             mask.append([0]*(len(src)+1))
-   #     for i in range(len(group_lst['input_id_x'])):
-  #          end_token = group_lst['input_id_x'][i][-1]
- #           src = group_lst['input_id_x'][i][:-1]
-#            trg = group_lst['input_id_y'][i][:-1]
-            #print(f"Sequence length: {seq_len}")
-           # while len(src) + len(trg) > seq_len - 3:  # 3 for [CLS], [SEP], [SEP]
-          #      if len(src)>len(trg): 
-         #           src.pop()
-        #        elif len(src)<len(trg):
-       #             trg.pop()
-      #          else:
-     #               src.pop()
-    #                trg.pop()
-   #         src.append(end_token)
-  #          trg.append(end_token)
- #           lst.append(src + [vocab_dict.sep_token_id] + trg)
-#            mask.append([0]*(len(src)+1))
         group_lst['input_ids'] = lst
         group_lst['input_mask'] = mask
         return group_lst
@@ -273,8 +256,8 @@ class TextDataset(Dataset):
             return arr, out_kwargs
 
 def _collate_batch_helper(examples, pad_token_id, max_length, return_mask=False):
-    result = torch.full([len(examples), max_length], pad_token_id, dtype=torch.int64).tolist()
-    mask_ = torch.full([len(examples), max_length], pad_token_id, dtype=torch.int64).tolist()
+    result = torch.full([len(examples), max_length], pad_token_id, dtype=torch.int8).tolist()
+    mask_ = torch.full([len(examples), max_length], pad_token_id, dtype=torch.int8).tolist()
     for i, example in enumerate(examples):
         curr_len = min(len(example), max_length)
         result[i][:curr_len] = example[:curr_len]
