@@ -94,7 +94,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
     
     
 
-    if preload is not None and split == 'train':
+    if preload and split == 'train':
         print("#"*72)
         print("# LOADING DATASET FROM THE HUB, SET PRELOAD TO NONE TO DISABLE THAT BEHAVIOUR #")
         print("#"*72)
