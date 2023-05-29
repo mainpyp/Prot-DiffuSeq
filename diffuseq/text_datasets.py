@@ -95,15 +95,17 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     
 
     try:
-        print(f"FREE UP SPACE: DELETING SENTECE LIST")
-        del sentence_lst
-
         print("#"*72)
         print("# LOADING DATASET FROM THE HUB, SET BAD PATH TO DISABLE THAT BEHAVIOUR #")
         print("#"*72)
         
-        tokenized_datasets = load_dataset("adrianhenkel/tokenized-total-512-reduced", cache_dir="/datacontainer/.cache")["train"]
+        tokenized_datasets = load_dataset("BADPATHadrianhenkel/tokenized-total-512-reduced", cache_dir="/datacontainer/.cache")["train"]
+        
         print(f"LOADING COMPLETE: {tokenized_datasets}")
+        
+        print(f"FREE UP SPACE: DELETING SENTECE LIST")
+        del sentence_lst
+        
     except:
          # Dataset2 is the the dataset from huggingface and not from torch.utils.data
         raw_datasets = Dataset2.from_dict(sentence_lst)
