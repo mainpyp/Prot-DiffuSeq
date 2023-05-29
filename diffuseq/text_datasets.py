@@ -95,7 +95,15 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     
 
     try:
-        tokenized_datasets = load_dataset("adrianhenkel/testdataset")["train"]
+        print(f"FREE UP SPACE: DELETING SENTECE LIST")
+        del sentence_lst
+
+        print("#"*72)
+        print("# LOADING DATASET FROM THE HUB, SET BAD PATH TO DISABLE THAT BEHAVIOUR #")
+        print("#"*72)
+        
+        tokenized_datasets = load_dataset("adrianhenkel/tokenized-total-512-reduced", cache_dir="/datacontainer/.cache")["train"]
+        print(f"LOADING COMPLETE: {tokenized_datasets}")
     except:
          # Dataset2 is the the dataset from huggingface and not from torch.utils.data
         raw_datasets = Dataset2.from_dict(sentence_lst)
@@ -127,32 +135,41 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
         )
     print('### tokenized_datasets', tokenized_datasets)
     print('### tokenized_datasets shape', tokenized_datasets.shape)
-    print('### tokenized_datasets...example', tokenized_datasets['input_id_x'][0])
+    # print('### tokenized_datasets...example', tokenized_datasets['input_id_x'][0][0])
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
-    
-    assert tokenized_datasets.shape["train"][0] == len(sentence_lst['src']) == len(sentence_lst['trg']), \
-        "The number of sentences in the dataset is not equal to the number of sentences in the sentence_lst"
     
     def merge_and_mask(group_lst):
         lst = []
         mask = []
+
+        half_size = (seq_len - 3) // 2
         for i in range(len(group_lst['input_id_x'])):
             end_token = group_lst['input_id_x'][i][-1]
-            src = group_lst['input_id_x'][i][:-1]
-            trg = group_lst['input_id_y'][i][:-1]
-            while len(src) + len(trg) > seq_len - 3:  # 3 for [CLS], [SEP], [SEP]
-                if len(src)>len(trg): 
-                    src.pop()
-                elif len(src)<len(trg):
-                    trg.pop()
-                else:
-                    src.pop()
-                    trg.pop()
+            
+            src = group_lst['input_id_x'][i][:half_size]
+            trg = group_lst['input_id_y'][i][:half_size]
             src.append(end_token)
             trg.append(end_token)
 
             lst.append(src + [vocab_dict.sep_token_id] + trg)
             mask.append([0]*(len(src)+1))
+   #     for i in range(len(group_lst['input_id_x'])):
+  #          end_token = group_lst['input_id_x'][i][-1]
+ #           src = group_lst['input_id_x'][i][:-1]
+#            trg = group_lst['input_id_y'][i][:-1]
+            #print(f"Sequence length: {seq_len}")
+           # while len(src) + len(trg) > seq_len - 3:  # 3 for [CLS], [SEP], [SEP]
+          #      if len(src)>len(trg): 
+         #           src.pop()
+        #        elif len(src)<len(trg):
+       #             trg.pop()
+      #          else:
+     #               src.pop()
+    #                trg.pop()
+   #         src.append(end_token)
+  #          trg.append(end_token)
+ #           lst.append(src + [vocab_dict.sep_token_id] + trg)
+#            mask.append([0]*(len(src)+1))
         group_lst['input_ids'] = lst
         group_lst['input_mask'] = mask
         return group_lst

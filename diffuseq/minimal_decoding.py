@@ -49,13 +49,13 @@ def tokenizing(sentence_lst, vocab_dict):
         keep_in_memory=True,
         desc="Running tokenizer on dataset"
     )
-    tokenized_datasets.push_to_hub("adrianhenkel/testdataset")
+    tokenized_datasets.push_to_hub("adrianhenkel/fulldataset")
     print('### tokenized_datasets', tokenized_datasets)
     
 if __name__ == "__main__":
     path = "../datasets/ProtTotal/train.jsonl"
     print(f"loading from {path}")
-    path = "../datasets/ProtTotal/train.jsonl"
+#    path = "../datasets/ProtTotal/valid.jsonl"
     print(f"\nCreate sentence list")
     sentence_list = get_sentence_list(path)
     print("\nCreate tokenizer")

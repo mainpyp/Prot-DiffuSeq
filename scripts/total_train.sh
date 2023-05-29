@@ -1,15 +1,15 @@
-python -m torch.distributed.launch --nproc_per_node=2 --master_port=12233 --use_env run_train.py \
---diff_steps 4000 \
---lr 0.0001 \
---learning_steps 5001 \
---save_interval 1000 \
+python -m torch.distributed.launch --nproc_per_node=1 --master_port=12233 --use_env run_train.py \
+--diff_steps 3000 \
+--lr 0.00001 \
+--learning_steps 50001 \
+--save_interval 2500 \
 --seed 102 \
 --noise_schedule sqrt \
---hidden_dim 128 \
+--hidden_dim 1024 \
 --bsz 256 \
 --dataset ProtTotal \
---data_dir datasets/ProtTotalCorrect \
+--data_dir datasets/ProtTotal \
 --vocab protbert \
---seq_len 128 \
+--seq_len 256 \
 --schedule_sampler lossaware \
---notes ProtTotalFirstRealRun
+--notes ProtTotalLowLRZ

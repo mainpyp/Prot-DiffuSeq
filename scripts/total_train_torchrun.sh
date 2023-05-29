@@ -10,6 +10,6 @@ torchrun --nnodes=1 --nproc_per_node=8 run_train.py \
 --dataset ProtTotal \
 --data_dir datasets/ProtTotal \
 --vocab protbert \
---seq_len 128 \
+--seq_len 512 \
 --schedule_sampler lossaware \
 --notes ProtTotalFirstRealRun
