@@ -82,7 +82,7 @@ def infinite_loader(data_loader):
     while True:
         yield from data_loader
 
-def helper_tokenize(sentence_lst, vocab_dict, seq_len):
+def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, split: str = None):
     """ sentence_lst: 
                     keys: 'src', 'trg', sometimes: 'af_id'
                     value: shape (bsz, len)
@@ -94,20 +94,24 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
     
     
 
-    try:
+    if preload is not None and split == 'train':
         print("#"*72)
-        print("# LOADING DATASET FROM THE HUB, SET BAD PATH TO DISABLE THAT BEHAVIOUR #")
+        print("# LOADING DATASET FROM THE HUB, SET PRELOAD TO NONE TO DISABLE THAT BEHAVIOUR #")
         print("#"*72)
-        
-        tokenized_datasets = load_dataset("BADPATHadrianhenkel/tokenized-total-512-reduced", cache_dir="/datacontainer/.cache")["train"]
-        
-        print(f"LOADING COMPLETE: {tokenized_datasets}")
         
         print(f"FREE UP SPACE: DELETING SENTECE LIST")
         del sentence_lst
         
-    except:
+        tokenized_datasets = load_dataset("adrianhenkel/tokenized-total-512-reduced", 
+                                          cache_dir="/datacontainer/.cache")["train"]
+        
+        print(f"LOADING COMPLETE: {tokenized_datasets}")
+    else:
          # Dataset2 is the the dataset from huggingface and not from torch.utils.data
+        print("#"*72)
+        print(f"# CREATING DATASET FROM SCRATCH {preload}#")
+        print("#"*72)
+         
         raw_datasets = Dataset2.from_dict(sentence_lst)
         del sentence_lst
         print(raw_datasets)
@@ -125,19 +129,10 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len):
             batched=True,
             remove_columns=['src', 'trg'],
             desc="Running tokenizer on dataset",
-            # THIS WAS MINE v
-            # tokenize_function,
-            # batched=True,
-            # batch_size=500,
-            # num_proc=1,
-            # remove_columns=['src', 'trg'],
-            # keep_in_memory=False,
-            # load_from_cache_file=True,
-            # desc="Running tokenizer on dataset",
         )
+        
     print('### tokenized_datasets', tokenized_datasets)
     print('### tokenized_datasets shape', tokenized_datasets.shape)
-    # print('### tokenized_datasets...example', tokenized_datasets['input_id_x'][0][0])
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
     
     def merge_and_mask(group_lst):
@@ -226,7 +221,7 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
     # get tokenizer.
     vocab_dict = loaded_vocab
 
-    train_dataset = helper_tokenize(sentence_lst, vocab_dict, seq_len)
+    train_dataset = helper_tokenize(sentence_lst, vocab_dict, seq_len, preload=False, split=split)
     del sentence_lst
     return train_dataset
 
