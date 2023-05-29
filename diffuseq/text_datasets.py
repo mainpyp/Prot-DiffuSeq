@@ -96,7 +96,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
 
     if preload and split == 'train':
         print("#"*72)
-        print("# LOADING DATASET FROM THE HUB, SET PRELOAD TO NONE TO DISABLE THAT BEHAVIOUR #")
+        print(f"# LOADING DATASET FROM THE HUB, SET PRELOAD TO NONE TO DISABLE THAT BEHAVIOUR ({split}) #")
         print("#"*72)
         
         print(f"FREE UP SPACE: DELETING SENTECE LIST")
@@ -109,7 +109,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
     else:
          # Dataset2 is the the dataset from huggingface and not from torch.utils.data
         print("#"*72)
-        print(f"# CREATING DATASET FROM SCRATCH {preload}#")
+        print(f"# CREATING DATASET FROM SCRATCH PRELOAD: {preload} ({split})#")
         print("#"*72)
          
         raw_datasets = Dataset2.from_dict(sentence_lst)
