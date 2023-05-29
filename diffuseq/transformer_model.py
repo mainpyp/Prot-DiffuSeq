@@ -43,10 +43,12 @@ class TransformerNetModel(nn.Module):
         super().__init__()
 
         if config is None:
-            print("config is none (TransformerNetModel)")
+            print("config is none (TransformerNetModel) loading default RoFormer config...")
             config = RoFormerConfig()
-            # this was og: config = AutoConfig.from_pretrained(config_name)
             config.hidden_dropout_prob = dropout
+            config.num_hidden_layers = 48
+            config.num_attention_heads = 32
+            
 
         self.input_dims = input_dims
         self.hidden_t_dim = hidden_t_dim
@@ -98,7 +100,9 @@ class TransformerNetModel(nn.Module):
             # self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
             # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
             # self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
-            print('initializing BERT from scratch...')
+            
+            
+            print('initializing ROFORMER from scratch...')
             self.input_transformers = RoFormerEncoder(config)
             # this was og: self.input_transformers = BertEncoder(config)
             print(config)
