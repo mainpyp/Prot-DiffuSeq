@@ -40,7 +40,7 @@ def main():
 
     tokenizer = load_tokenizer(args)
     model_weight, tokenizer = load_model_emb(args, tokenizer)
-
+    print("LOAD TRAIN DATA")
     data = load_data_text(
         batch_size=args.batch_size,
         seq_len=args.seq_len,
@@ -48,8 +48,10 @@ def main():
         loaded_vocab=tokenizer,
         model_emb=model_weight # use model's weights as init
     )
+    print("CALL ONE DATA")
     next(data)
 
+    print("LOAD VALID DATA")
     data_valid = load_data_text(
         batch_size=args.batch_size,
         seq_len=args.seq_len,
