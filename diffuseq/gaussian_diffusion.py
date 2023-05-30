@@ -598,7 +598,6 @@ class GaussianDiffusion:
         :return: a dict with the key "loss" containing a tensor of shape [N].
                  Some mean or variance settings may also have other keys.
         """
-        print("\tSTART CALCULATING LOSS")
         x_start_fix = x_start # save the orignal x_0
         assert 'input_ids' in model_kwargs
         input_ids_x = model_kwargs.pop('input_ids').to(t.device) # shape: bsz, seqlen
