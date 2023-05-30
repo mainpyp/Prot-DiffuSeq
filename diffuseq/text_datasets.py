@@ -5,6 +5,7 @@ from torch.utils.data.distributed import DistributedSampler
 
 import torch
 import json
+import gc
 import itertools
 import tqdm
 import psutil
@@ -101,6 +102,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
         
         print(f"FREE UP SPACE: DELETING SENTECE LIST")
         del sentence_lst
+        gc.collect()
         
         tokenized_datasets = load_dataset("adrianhenkel/tokenized-total-512-reduced", 
                                           cache_dir="/datacontainer/.cache")["train"]
@@ -114,6 +116,8 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
          
         raw_datasets = Dataset2.from_dict(sentence_lst)
         del sentence_lst
+        gc.collect()
+        
         print(raw_datasets)
         print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
 
@@ -190,8 +194,7 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
     sentence_lst = {'src':[], 'trg': []}
     if split == 'test':
         sentence_lst = {'src':[], 'trg': [], 'af_id': []}
-    
-     # TODO: This needs to be
+
     if split == 'train':
         print('### Loading form the TRAIN set...')
         path = f'{data_args.data_dir}/train.jsonl'
@@ -223,6 +226,7 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
 
     train_dataset = helper_tokenize(sentence_lst, vocab_dict, seq_len, preload=True, split=split)
     del sentence_lst
+    
     return train_dataset
 
 
