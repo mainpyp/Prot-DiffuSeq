@@ -598,13 +598,11 @@ class GaussianDiffusion:
         :return: a dict with the key "loss" containing a tensor of shape [N].
                  Some mean or variance settings may also have other keys.
         """
-        print("\tSTART CALCULATING LOSS")
         x_start_fix = x_start # save the orignal x_0
         assert 'input_ids' in model_kwargs
         input_ids_x = model_kwargs.pop('input_ids').to(t.device) # shape: bsz, seqlen
         input_ids_mask = model_kwargs.pop('input_mask').to(t.device)
         x_start_mean = model.model.module.get_embeds(input_ids_x)
-        
         std = _extract_into_tensor(self.sqrt_one_minus_alphas_cumprod,
                                    th.tensor([0]).to(x_start_mean.device),
                                    x_start_mean.shape)
@@ -614,11 +612,9 @@ class GaussianDiffusion:
 
         if noise is None:
             noise = th.randn_like(x_start)
-
         # shape: bsz, seqlen, embedding
         # FORWARD DIFFUSION STEP
         x_t = self.q_sample(x_start, t, noise=noise, mask=input_ids_mask) # reparametrization trick.
-        print("DONE FORWARD DIFFUSION STEP")
         get_logits = model.model.module.get_logits
 
         terms = {}
@@ -657,8 +653,10 @@ class GaussianDiffusion:
         terms["mse"] = th.where(t0_mask, t0_loss, terms["mse"])
 
         # tT_mask = (t == self.num_timesteps - 1)
+        print("GET OUT MEAN NEW")
         out_mean, _, _ = self.q_mean_variance(x_start, th.LongTensor([self.num_timesteps - 1]).to(x_start.device))
         tT_loss =  mean_flat(out_mean ** 2)
+        print("DONE GET OUT MEAN NEW")
         #print(f"x_start: {x_start.shape}, x_t: {x_t.shape}, model_out_x_start: {model_out_x_start.shape}, out_mean: {out_mean.shape}")
         #print(f"input ids shape: {input_ids_x.shape}")
         #print(f"input ids: {input_ids_x[0]}")
