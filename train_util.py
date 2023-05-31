@@ -179,6 +179,7 @@ class TrainLoop:
             
             print("RUN STEP")
             self.run_step(batch, cond)
+            print("END RUN STEP NEW")
             if self.step % self.log_interval == 0:
                 logger.dumpkvs()
             if self.eval_data is not None and self.step % self.eval_interval == 0:
@@ -236,15 +237,21 @@ class TrainLoop:
 
 
     def forward_backward(self, batch, cond):
+        print("IN FORWARD BACKWARD NEW")
         zero_grad(self.model_params)
         # gradient accumulation
         for i in range(0, batch.shape[0], self.microbatch):
+            print("MICRO NEW")
             micro = batch[i : i + self.microbatch].to(dist_util.dev())
+            print("MICRO COND NEW")
             micro_cond = {
                 k: v[i : i + self.microbatch].to(dist_util.dev())
                 for k, v in cond.items()
             }
+            print("LAST BATCH NEW")
             last_batch = (i + self.microbatch) >= batch.shape[0]
+            
+            print("SAMPLE NEW")
             t, weights = self.schedule_sampler.sample(micro.shape[0], dist_util.dev())
             # print(micro_cond.keys())
             compute_losses = functools.partial(
@@ -256,25 +263,35 @@ class TrainLoop:
             )
 
             if last_batch or not self.use_ddp:
+                print("LAST BATCH OR NOT USE DDP NEW")
                 losses = compute_losses()
             else:
+                print("ELSE NEW")
                 with self.ddp_model.no_sync():
                     losses = compute_losses()
 
             if isinstance(self.schedule_sampler, LossAwareSampler):
+                print("LOSS AWARE SAMPLER NEW")
                 self.schedule_sampler.update_with_local_losses(
                     t, losses["loss"].detach()
                 )
+                print("LOSS AWARE SAMPLER UPDATE WITH LOCAL LOSSES NEW")
 
             loss = (losses["loss"] * weights).mean()
             log_loss_dict(
                 self.diffusion, t, {k: v * weights for k, v in losses.items()}
             )
+            
             if self.use_fp16:
+                print("USE FP16 NEW")
                 loss_scale = 2 ** self.lg_loss_scale
+                print("LOSS SCALE NEW")
                 (loss * loss_scale).backward()
+                print("BACKWARD NEW")
             else:
+                print("ELSE NEW")
                 loss.backward()
+                print("BACKWARD ELSE NEW")
 
     def optimize_fp16(self):
         if any(not th.isfinite(p.grad).all() for p in self.model_params):

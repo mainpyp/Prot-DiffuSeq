@@ -52,6 +52,7 @@ def load_data_text(
     if split != 'test':
         print("NOT TEST SET")
         sampler = DistributedSampler(dataset)
+        print("created sampler NEW")
         data_loader = DataLoader(
             dataset,
             batch_size=batch_size,  # 20,
@@ -60,6 +61,7 @@ def load_data_text(
             # shuffle=True,
             num_workers=1,
         )
+        print("created data loader NEW")
         
     else:
         print("TEST SET")
@@ -71,12 +73,12 @@ def load_data_text(
             shuffle=True,
             num_workers=1,
         )
-        print(data_loader)
 
     if loop:
+        print("LOOPING NEW")
         return infinite_loader(data_loader)
     else:
-        # print(data_loader)
+        print("NOT LOOPING NEW")
         return iter(data_loader)
 
 def infinite_loader(data_loader):
@@ -135,10 +137,6 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
             remove_columns=['src', 'trg'],
             desc="Running tokenizer on dataset",
         )
-        print(f"{'#' * 100}")
-        print(tokenized_datasets)
-        print(tokenized_datasets[0])
-        print(tokenized_datasets[0]["input_id_x"])
         
         
         
@@ -250,8 +248,9 @@ class TextDataset(Dataset):
 
     def __getitem__(self, idx):
         with torch.no_grad():
-
+            print("git item Text dataset")
             input_ids = self.text_datasets['train'][idx]['input_ids']
+            print("git item Text dataset done")
             hidden_state = self.model_emb(torch.tensor(input_ids))
 
             # obtain the input vectors, only used when word embedding is fixed (not trained end-to-end)
