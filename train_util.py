@@ -26,7 +26,6 @@ from diffuseq.step_sample import LossAwareSampler, UniformSampler
 # 20-21 within the first ~1K steps of training.
 INITIAL_LOG_LOSS_SCALE = 20.0
 
-# change from server
 
 class TrainLoop:
     def __init__(
@@ -196,6 +195,7 @@ class TrainLoop:
             self.save()
 
     def run_step(self, batch, cond):
+        print('run step on batch')
         self.forward_backward(batch, cond)
         if self.use_fp16:
             self.optimize_fp16()
