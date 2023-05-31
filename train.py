@@ -69,7 +69,6 @@ def main():
     model, diffusion = create_model_and_diffusion(
         **args_to_dict(args, load_defaults_config().keys())
     )
-    # print('#'*30, 'cuda', dist_util.dev())
     model.to(dist_util.dev()) #  DEBUG **
     # model.cuda() #  DEBUG **
 
