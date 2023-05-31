@@ -105,7 +105,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
         gc.collect()
         
         tokenized_datasets = load_dataset("adrianhenkel/tokenized-total-512-reduced", 
-                                          cache_dir="/datacontainer/.cache")["train"]
+                                          cache_dir="/datacontainer/.cache", split="train")
         
         print(f"LOADING COMPLETE: {tokenized_datasets}")
     else:
@@ -224,7 +224,7 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
     # get tokenizer.
     vocab_dict = loaded_vocab
 
-    train_dataset = helper_tokenize(sentence_lst, vocab_dict, seq_len, preload=True, split=split)
+    train_dataset = helper_tokenize(sentence_lst, vocab_dict, seq_len, preload=False, split=split)
     del sentence_lst
     
     return train_dataset
