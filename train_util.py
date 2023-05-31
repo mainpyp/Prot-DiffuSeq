@@ -176,13 +176,16 @@ class TrainLoop:
         ):  
             batch, cond = next(self.data)
             
+            if self.step % 10 == 0:
+                print('step', self.step)
+                
             self.run_step(batch, cond)
             if self.step % self.log_interval == 0:
                 logger.dumpkvs()
             if self.eval_data is not None and self.step % self.eval_interval == 0:
+                print('eval on validation set')
                 batch_eval, cond_eval = next(self.eval_data)
                 self.forward_only(batch_eval, cond_eval)
-                print('eval on validation set')
                 logger.dumpkvs()
             if self.step > 0 and self.step % self.save_interval == 0:
                 self.save()
@@ -195,7 +198,6 @@ class TrainLoop:
             self.save()
 
     def run_step(self, batch, cond):
-        print('run step on batch')
         self.forward_backward(batch, cond)
         if self.use_fp16:
             self.optimize_fp16()
