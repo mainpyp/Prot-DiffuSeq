@@ -85,7 +85,7 @@ def infinite_loader(data_loader):
     while True:
         yield from data_loader
 
-def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, split: str = None):
+def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, split: str = None):
     """ sentence_lst: 
                     keys: 'src', 'trg', sometimes: 'af_id'
                     value: shape (bsz, len)
