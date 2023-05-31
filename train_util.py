@@ -175,12 +175,9 @@ class TrainLoop:
             not self.learning_steps
             or self.step + self.resume_step < self.learning_steps
         ):  
-            print("START BATCH")
             batch, cond = next(self.data)
             
-            print("RUN STEP")
             self.run_step(batch, cond)
-            print("END RUN STEP NEW")
             if self.step % self.log_interval == 0:
                 logger.dumpkvs()
             if self.eval_data is not None and self.step % self.eval_interval == 0:
@@ -238,21 +235,16 @@ class TrainLoop:
 
 
     def forward_backward(self, batch, cond):
-        print("IN FORWARD BACKWARD NEW")
         zero_grad(self.model_params)
         # gradient accumulation
         for i in range(0, batch.shape[0], self.microbatch):
-            print("MICRO NEW")
             micro = batch[i : i + self.microbatch].to(dist_util.dev())
-            print("MICRO COND NEW")
             micro_cond = {
                 k: v[i : i + self.microbatch].to(dist_util.dev())
                 for k, v in cond.items()
             }
-            print("LAST BATCH NEW")
             last_batch = (i + self.microbatch) >= batch.shape[0]
             
-            print("SAMPLE NEW")
             t, weights = self.schedule_sampler.sample(micro.shape[0], dist_util.dev())
             # print(micro_cond.keys())
             compute_losses = functools.partial(
@@ -264,7 +256,6 @@ class TrainLoop:
             )
 
             if last_batch or not self.use_ddp:
-                print("LAST BATCH OR NOT USE DDP NEW")
                 losses = compute_losses()
             else:
                 with self.ddp_model.no_sync():
