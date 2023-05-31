@@ -618,6 +618,7 @@ class GaussianDiffusion:
         # shape: bsz, seqlen, embedding
         # FORWARD DIFFUSION STEP
         x_t = self.q_sample(x_start, t, noise=noise, mask=input_ids_mask) # reparametrization trick.
+        print("DONE FORWARD DIFFUSION STEP")
         get_logits = model.model.module.get_logits
 
         terms = {}
@@ -638,7 +639,9 @@ class GaussianDiffusion:
         # model_kwargs: {}
         # x_start shape: torch.Size([64, 256, 256])
         target = x_start
+        print("MODEL PASS")
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
+        print("DONE MODEL PASS")
         # target mean: 0.01418902538716793
         # model_output mean: 0.002865137066692114
         # x_start mean: 0.01418902538716793
@@ -665,6 +668,7 @@ class GaussianDiffusion:
         # assert (model.lm_head.weight == model.word_embedding.weight).all()
 
         terms["loss"] = terms["mse"] + decoder_nll + tT_loss
+        print("DONE CALCULATING LOSS")
         # here you can add custom eval metrics
         # terms["test_term"] = 420
 
