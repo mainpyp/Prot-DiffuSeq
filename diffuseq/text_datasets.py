@@ -58,8 +58,7 @@ def load_data_text(
             # drop_last=True,
             sampler=sampler,
             # shuffle=True,
-            streaming=True,
-            num_workers=8,
+            num_workers=1,
         )
         
     else:
@@ -70,7 +69,7 @@ def load_data_text(
             # drop_last=True,
             # sampler=sampler, # this was commented out
             shuffle=True,
-            num_workers=4,
+            num_workers=1,
         )
         print(data_loader)
 
@@ -123,6 +122,8 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
         print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
 
         def tokenize_function(examples):
+            print(examples)
+            print(examples['src'])
             input_id_x = vocab_dict.encode_token(examples['src'])
             input_id_y = vocab_dict.encode_token(examples['trg'])
             result_dict = {'input_id_x': input_id_x, 'input_id_y': input_id_y}
@@ -135,6 +136,8 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
             remove_columns=['src', 'trg'],
             desc="Running tokenizer on dataset",
         )
+        print(f"{'#' * 100}")
+        print(tokenized_datasets["train"][0]["input_id_x"])
         
     print('### tokenized_datasets', tokenized_datasets)
     print('### tokenized_datasets shape', tokenized_datasets.shape)
