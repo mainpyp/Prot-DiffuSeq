@@ -123,7 +123,6 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
 
         def tokenize_function(examples):
             print(examples)
-            print(examples['src'])
             input_id_x = vocab_dict.encode_token(examples['src'])
             input_id_y = vocab_dict.encode_token(examples['trg'])
             result_dict = {'input_id_x': input_id_x, 'input_id_y': input_id_y}
