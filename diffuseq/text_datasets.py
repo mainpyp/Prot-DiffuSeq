@@ -58,6 +58,7 @@ def load_data_text(
             # drop_last=True,
             sampler=sampler,
             # shuffle=True,
+            streaming=True,
             num_workers=8,
         )
         
