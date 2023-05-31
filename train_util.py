@@ -266,13 +266,16 @@ class TrainLoop:
                 print("LAST BATCH OR NOT USE DDP NEW")
                 losses = compute_losses()
             else:
+                print("ELSE NEW")
                 with self.ddp_model.no_sync():
                     losses = compute_losses()
 
             if isinstance(self.schedule_sampler, LossAwareSampler):
+                print("LOSS AWARE SAMPLER NEW")
                 self.schedule_sampler.update_with_local_losses(
                     t, losses["loss"].detach()
                 )
+                print("LOSS AWARE SAMPLER UPDATE WITH LOCAL LOSSES NEW")
 
             loss = (losses["loss"] * weights).mean()
             log_loss_dict(
@@ -280,10 +283,15 @@ class TrainLoop:
             )
             
             if self.use_fp16:
+                print("USE FP16 NEW")
                 loss_scale = 2 ** self.lg_loss_scale
+                print("LOSS SCALE NEW")
                 (loss * loss_scale).backward()
+                print("BACKWARD NEW")
             else:
+                print("ELSE NEW")
                 loss.backward()
+                print("BACKWARD ELSE NEW")
 
     def optimize_fp16(self):
         if any(not th.isfinite(p.grad).all() for p in self.model_params):
