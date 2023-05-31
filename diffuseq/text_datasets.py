@@ -136,7 +136,11 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = False, sp
             desc="Running tokenizer on dataset",
         )
         print(f"{'#' * 100}")
-        print(tokenized_datasets["train"][0]["input_id_x"])
+        print(tokenized_datasets)
+        print(tokenized_datasets[0])
+        print(tokenized_datasets[0]["input_id_x"])
+        
+        
         
     print('### tokenized_datasets', tokenized_datasets)
     print('### tokenized_datasets shape', tokenized_datasets.shape)
