@@ -2,7 +2,7 @@ import copy
 import functools
 import os
 
-import accelerate
+from accelerate import Accelerator
 import blobfile as bf
 import numpy as np
 import torch as th
@@ -52,6 +52,7 @@ class TrainLoop:
         eval_data=None,
         eval_interval=-1,
     ):
+        self.accelerator = Accelerator()
         self.model = model
         self.diffusion = diffusion
         self.data = data
@@ -105,6 +106,9 @@ class TrainLoop:
             self.ema_params = [
                 copy.deepcopy(self.master_params) for _ in range(len(self.ema_rate))
             ]
+        print("Preparing Accelerator")
+        self.model, self.opt, self.data, self.eval_data =  \
+            self.accelerator.prepare(self.model, self.opt, self.data, self.eval_data)
 
         if th.cuda.is_available(): # DEBUG **
             self.use_ddp = True
@@ -171,8 +175,6 @@ class TrainLoop:
         self.model.convert_to_fp16()
 
     def run_loop(self):
-        accelerator = Accelerator()
-        self.model, self.opt, self.data, self.eval_data = accelerator.prepare(self.model, self.opt, self.data, self.eval_data)
         while (
             not self.learning_steps
             or self.step + self.resume_step < self.learning_steps
@@ -280,7 +282,7 @@ class TrainLoop:
                 loss_scale = 2 ** self.lg_loss_scale
                 (loss * loss_scale).backward()
             else:
-                loss.backward()
+                self.accelerator.backward(loss)
 
     def optimize_fp16(self):
         if any(not th.isfinite(p.grad).all() for p in self.model_params):
