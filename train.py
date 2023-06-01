@@ -69,8 +69,6 @@ def main():
     model, diffusion = create_model_and_diffusion(
         **args_to_dict(args, load_defaults_config().keys())
     )
-    model.to(dist_util.dev()) #  DEBUG **
-    # model.cuda() #  DEBUG **
 
     pytorch_total_params = sum(p.numel() for p in model.parameters())
 

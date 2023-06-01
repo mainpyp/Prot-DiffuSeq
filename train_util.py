@@ -2,6 +2,7 @@ import copy
 import functools
 import os
 
+import accelerate
 import blobfile as bf
 import numpy as np
 import torch as th
@@ -170,6 +171,8 @@ class TrainLoop:
         self.model.convert_to_fp16()
 
     def run_loop(self):
+        accelerator = Accelerator()
+        self.model, self.opt, self.data, self.eval_data = accelerator.prepare(self.model, self.opt, self.data, self.eval_data)
         while (
             not self.learning_steps
             or self.step + self.resume_step < self.learning_steps
@@ -209,9 +212,9 @@ class TrainLoop:
         with th.no_grad():
             zero_grad(self.model_params)
             for i in range(0, batch.shape[0], self.microbatch):
-                micro = batch[i: i + self.microbatch].to(dist_util.dev())
+                micro = batch[i: i + self.microbatch]
                 micro_cond = {
-                    k: v[i: i + self.microbatch].to(dist_util.dev())
+                    k: v[i: i + self.microbatch]
                     for k, v in cond.items()
                 }
                 last_batch = (i + self.microbatch) >= batch.shape[0]
@@ -240,9 +243,9 @@ class TrainLoop:
         zero_grad(self.model_params)
         # gradient accumulation
         for i in range(0, batch.shape[0], self.microbatch):
-            micro = batch[i : i + self.microbatch].to(dist_util.dev())
+            micro = batch[i : i + self.microbatch]
             micro_cond = {
-                k: v[i : i + self.microbatch].to(dist_util.dev())
+                k: v[i : i + self.microbatch]
                 for k, v in cond.items()
             }
             last_batch = (i + self.microbatch) >= batch.shape[0]

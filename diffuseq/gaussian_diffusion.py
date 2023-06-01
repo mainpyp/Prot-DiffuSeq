@@ -600,11 +600,11 @@ class GaussianDiffusion:
         """
         x_start_fix = x_start # save the orignal x_0
         assert 'input_ids' in model_kwargs
-        input_ids_x = model_kwargs.pop('input_ids').to(t.device) # shape: bsz, seqlen
-        input_ids_mask = model_kwargs.pop('input_mask').to(t.device)
+        input_ids_x = model_kwargs.pop('input_ids') # shape: bsz, seqlen
+        input_ids_mask = model_kwargs.pop('input_mask')
         x_start_mean = model.model.module.get_embeds(input_ids_x)
         std = _extract_into_tensor(self.sqrt_one_minus_alphas_cumprod,
-                                   th.tensor([0]).to(x_start_mean.device),
+                                   th.tensor([0]),
                                    x_start_mean.shape)
         
         # x_start_mean + std * noise
@@ -651,7 +651,7 @@ class GaussianDiffusion:
         terms["mse"] = th.where(t0_mask, t0_loss, terms["mse"])
 
         # tT_mask = (t == self.num_timesteps - 1)
-        out_mean, _, _ = self.q_mean_variance(x_start, th.LongTensor([self.num_timesteps - 1]).to(x_start.device))
+        out_mean, _, _ = self.q_mean_variance(x_start, th.LongTensor([self.num_timesteps - 1]))
         tT_loss =  mean_flat(out_mean ** 2)
         #print(f"x_start: {x_start.shape}, x_t: {x_t.shape}, model_out_x_start: {model_out_x_start.shape}, out_mean: {out_mean.shape}")
         #print(f"input ids shape: {input_ids_x.shape}")
@@ -868,7 +868,7 @@ def _extract_into_tensor(arr, timesteps, broadcast_shape):
                             dimension equal to the length of timesteps.
     :return: a tensor of shape [batch_size, 1, ...] where the shape has K dims.
     """
-    res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()
+    res = th.from_numpy(arr)[timesteps].float()
     while len(res.shape) < len(broadcast_shape):
         res = res[..., None]
     return res.expand(broadcast_shape)

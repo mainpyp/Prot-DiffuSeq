@@ -9,7 +9,7 @@ import numpy as np
 def get_knn(model_emb, text_emb, dist='cos'):
     """This function is apparently not used since it is called in round_func"""
     if dist == 'cos':
-        adjacency = model_emb @ text_emb.transpose(1, 0).to(model_emb.device)
+        adjacency = model_emb @ text_emb.transpose(1, 0)
     elif dist == 'l2':
         # here we calculate the difference between model and text embedding 
         # this is saved as adjacency
@@ -70,7 +70,7 @@ def rounding_func(text_emb_lst, model, tokenizer, emb_scale_factor=1.0):
         else:
             text_emb = text_emb
         val, indices = get_knn((down_proj_emb2 if dist == 'cos' else model_emb),
-                                text_emb.to(model_emb.device), dist=dist)
+                                text_emb, dist=dist)
     
         decoded_out_lst.append(tokenizer.decode_token(indices[0]))
 
@@ -126,9 +126,9 @@ def denoised_fn_round(args, model, text_emb, t):
     else:
         text_emb = text_emb
     # val, indices = get_knn(model_emb, text_emb.to(model_emb.device), dist=dist)
-    val, indices = get_efficient_knn(model_emb, text_emb.to(model_emb.device))
+    val, indices = get_efficient_knn(model_emb, text_emb)
     rounded_tokens = indices[0]
     # print(rounded_tokens.shape)
-    new_embeds = model(rounded_tokens).view(old_shape).to(old_device)
+    new_embeds = model(rounded_tokens).view(old_shape)
     # new embeds shape torch.Size([min(bsz, n_testset), 256, 256])
     return new_embeds
