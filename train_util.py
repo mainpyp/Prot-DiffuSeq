@@ -272,12 +272,12 @@ class TrainLoop:
             log_loss_dict(
                 self.diffusion, t, {k: v * weights for k, v in losses.items()}
             )
-            
-            if self.use_fp16:
-                loss_scale = 2 ** self.lg_loss_scale
-                (loss * loss_scale).backward()
-            else:
-                loss.backward()
+        print("CALL BACKWARD AFTER LOOP")
+        if self.use_fp16:
+            loss_scale = 2 ** self.lg_loss_scale
+            (loss * loss_scale).backward()
+        else:
+            loss.backward()
 
     def optimize_fp16(self):
         if any(not th.isfinite(p.grad).all() for p in self.model_params):
