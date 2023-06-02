@@ -7,18 +7,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from dataset_utils import remove_brackets
 
-# helper class of amino acids
-from enum import Enum
-
-
-class AminoAcids(Enum):
-    polar = [*"STYNQ"]
-    non_polar = [*"GAVCPLIMWF"]
-    pos_charged = [*"KRH"]
-    neg_charged = [*"DE"]
-    aromatic = [*"FYW"]
-    special = [*"X"]
-
 
 # the subytitution matrix for BLOSUM62
 # https://en.wikipedia.org/wiki/BLOSUM
