@@ -1,15 +1,16 @@
-python -m torch.distributed.launch --nproc_per_node=3 --master_port=12233 --use_env run_train.py \
---diff_steps 6000 \
---lr 0.00001 \
---learning_steps 1000001 \
---save_interval 10000 \
---seed 123 \
---noise_schedule sqrt \
---hidden_dim 256 \
---bsz 256 \
---dataset ProtMediumCorrect \
---data_dir datasets/ProtMediumCorrect \
---vocab protbert \
---seq_len 256 \
---schedule_sampler lossaware \
---notes pm-correct-new-params
+python -m torch.distributed.launch --nproc_per_node=8 --master_port=12235 --use_env run_train.py \
+	--diff_steps 3000 \
+	--lr 0.00001 \
+	--learning_steps 100001 \
+	--save_interval 500 \
+	--seed 123 \
+	--noise_schedule sqrt \
+	--hidden_dim 1024 \
+	--bsz 1024 \
+	--dataset ProtMediumLRZ \
+	--data_dir datasets/ProtMediumLRZ \
+	--vocab protbert \
+	--seq_len 256 \
+	--schedule_sampler lossaware \
+	--resume_checkpoint diffusion_models/diffuseq_ProtTotal_h1024_lr1e-05_t3000_sqrt_lossaware_seed102_ProtTotalFinalRun25620230531-23\:49\:24/ema_0.9999_014000.pt \
+	--notes PmMediumResumeTestLRZ
