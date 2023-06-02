@@ -34,10 +34,11 @@ def setup_dist():
         port = _find_free_port()
         os.environ["MASTER_PORT"] = str(port)
         os.environ['LOCAL_RANK'] = str(0)
-        if 'OMP_NUM_THREADS' not in os.environ:
-            os.environ["OMP_NUM_THREADS"] = str(int(multiprocessing.cpu_count() / 8))
-        else:
-            print('OMP_NUM_THREADS is already set to', os.environ["OMP_NUM_THREADS"])
+        print('v' * 100)
+        print('OMP NUM THREADS WAS: ', os.environ["OMP_NUM_THREADS"])
+        os.environ["OMP_NUM_THREADS"] = str(int(multiprocessing.cpu_count() / 8))
+        print('OMP_NUM_THREADS is set to', os.environ["OMP_NUM_THREADS"])
+        print('^' * 100)
     
     dist.init_process_group(backend=backend, init_method="env://")
 
