@@ -18,6 +18,11 @@ def setup_dist():
     Setup a distributed process group.
     """
     if dist.is_initialized():
+        print('v' * 100)
+        print('OMP NUM THREADS WAS: ', os.environ["OMP_NUM_THREADS"])
+        os.environ["OMP_NUM_THREADS"] = str(int(multiprocessing.cpu_count() / 8))
+        print('OMP_NUM_THREADS is set to', os.environ["OMP_NUM_THREADS"])
+        print('^' * 100)
         return
 
     backend = "gloo" if not th.cuda.is_available() else "nccl"
@@ -34,11 +39,7 @@ def setup_dist():
         port = _find_free_port()
         os.environ["MASTER_PORT"] = str(port)
         os.environ['LOCAL_RANK'] = str(0)
-        print('v' * 100)
-        print('OMP NUM THREADS WAS: ', os.environ["OMP_NUM_THREADS"])
-        os.environ["OMP_NUM_THREADS"] = str(int(multiprocessing.cpu_count() / 8))
-        print('OMP_NUM_THREADS is set to', os.environ["OMP_NUM_THREADS"])
-        print('^' * 100)
+        
     
     dist.init_process_group(backend=backend, init_method="env://")
 
