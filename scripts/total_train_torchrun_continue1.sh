@@ -12,5 +12,5 @@ python -m torch.distributed.launch --nproc_per_node=8 --master_port=12233 --use_
 	--vocab protbert \
 	--seq_len 256 \
 	--schedule_sampler lossaware \
-	--resume
+	--resume_checkpoint diffusion_models/diffuseq_ProtTotal_h1024_lr1e-05_t3000_sqrt_lossaware_seed102_ProtTotalFinalRun25620230531-23\:49\:24/ema_0.9999_014000.pt \
 	--notes ProtTotalFinalRun256Continue
