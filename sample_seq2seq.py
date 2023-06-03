@@ -66,8 +66,8 @@ def main():
     )
 
     state_dict = dist_util.load_state_dict(args.model_path, map_location="cpu")
-    print(args.model_path)
-    print(state_dict.keys())
+    # because of DDP to accelerate, the model is wrapped by DDP, so we need to remove the "module." prefix
+    state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
     model.load_state_dict(
         state_dict
     )
