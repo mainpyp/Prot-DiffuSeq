@@ -115,6 +115,7 @@ class TrainLoop:
 
         if th.cuda.is_available(): # DEBUG **
             self.use_ddp = False
+            self.ddp_model = self.model
             # print(dist_util.dev())
             # self.ddp_model = DDP(
             #     self.model,
