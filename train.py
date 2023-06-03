@@ -19,6 +19,7 @@ from basic_utils import (
 from train_util import TrainLoop
 from transformers import set_seed
 import wandb
+import accelerate
 
 ### custom your wandb setting here ###
 # os.environ["WANDB_API_KEY"] = ""
@@ -34,7 +35,8 @@ def create_argparser():
 def main():
     args = create_argparser().parse_args()
     set_seed(args.seed) 
-    dist_util.setup_dist()
+    # dist_util.setup_dist()
+    accelerator = Accelerator()
     logger.configure()
     logger.log("### Creating data loader...")
 
