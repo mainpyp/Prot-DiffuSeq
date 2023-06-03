@@ -287,7 +287,7 @@ class TrainLoop:
                 loss_scale = 2 ** self.lg_loss_scale
                 (loss * loss_scale).backward()
             else:
-                loss.backward()
+                self.accelerator.backward(loss)
 
     def optimize_fp16(self):
         if any(not th.isfinite(p.grad).all() for p in self.model_params):
