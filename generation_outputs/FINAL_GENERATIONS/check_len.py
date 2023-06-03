@@ -4,7 +4,8 @@ import re
 import os
 import numpy as np
 import pandas as pd
-from generation_outputs.dataset_utils import remove_brackets, dummy_aligner
+from collections import Counter
+#from generation_outputs.dataset_utils import remove_brackets, dummy_aligner
 
 # change working directory to this directory
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -98,17 +99,76 @@ def plot_pearson_len(dataframes: dict, step_labels: list, colors: list) -> None:
     plt.show()
     
 
+def get_global_counter(df: pd.DataFrame):
+    glob_c_recover = Counter()
+    glob_c_reference = Counter()
+    for index, row in df.iterrows():
+        c_recover = Counter(row.recover)
+        c_reference = Counter(row.reference)
+        del c_recover[" "], c_reference[" "]
+        glob_c_recover += c_recover
+        glob_c_reference += c_reference
+
+    return glob_c_recover, glob_c_reference
+
+# calculate the pearson correlation based of two counter dicts
+def dict_correlation(c1: Counter, c2: Counter) -> float:
+    keys = list(c1.keys() | c2.keys())
+    import numpy as np
+    corrs = np.corrcoef([c1.get(k, 0) for k in keys], [c2.get(k, 0) for k in keys])
+    return corrs
+
+
 def compare_aa_distribution(dataframes: dict, step_labels: list, colors: list) -> None:
     """ Compare the amino acid distribution between the reference and the recovered sequence
     """
-    for path in dataframes:
-        df = dataframes[path]
-        
-        
-        
-
-if __name__ == "__main__":
     
+    # plot with as many subfigures as there are dataframes
+    fig, axs = plt.subplots(len(dataframes) // 4, 2, figsize=(10, 15))
+    
+    for i, (ax, title, path) in enumerate(zip(axs.reshape(-1), step_labels, dataframes)):
+        if i % 2 == 0:
+            continue
+        df = dataframes[path]
+        glob_c_recover, glob_c_reference = get_global_counter(df)
+        
+        glob_c_recover = sorted(glob_c_recover.items())
+        glob_c_reference = sorted(glob_c_reference.items())
+        
+        x_rec = [x[0] for x in glob_c_recover]
+        y_rec = [x[1] for x in glob_c_recover]
+        
+        x_ref = [x[0] for x in glob_c_reference]
+        y_ref = [x[1] for x in glob_c_reference]
+        
+        # plot as barplot the two distributions
+        ax.bar(x_rec, y_rec, color="blue", alpha=0.5, label="recover")
+        ax.bar(x_ref, y_ref, color="red", alpha=0.5, label="reference")
+        ax.set_title(title)
+    
+    # set shared x and y labels
+    fig.text(0.5, 0.04, 'Amino acid', ha='center')
+    fig.text(0.04, 0.5, 'Frequency', va='center', rotation='vertical')
+    # set global legend
+    fig.legend(["recover", "reference"], loc="upper right")
+    plt.tight_layout()
+    plt.show()
+        
+        
+        
+        
+        # corrs = pd.DataFrame(columns=["step", "spearman", "pearson"])
+        
+        # 
+        # pcorr = pearson_correlation(glob_c_recover, glob_c_reference)
+
+        
+def plot_correlations(models_path):
+    ...
+    
+        
+        
+if __name__ == "__main__":
     paths = get_paths("seed101")
     step_labels = from_path_to_step_K(paths)
     
@@ -116,7 +176,8 @@ if __name__ == "__main__":
     
     # list of 50 different colors
     colors = plt.cm.rainbow(np.linspace(0, 1, len(dataframes)))
-    #plot_pearson_len(dataframes, step_labels, colors)
+    # plot_pearson_len(dataframes, step_labels, colors)
+    
     compare_aa_distribution(dataframes, step_labels, colors)
 
     

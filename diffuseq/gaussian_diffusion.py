@@ -255,7 +255,7 @@ class GaussianDiffusion:
             _extract_into_tensor(self.sqrt_alphas_cumprod, t, x_start.shape) * x_start
             + _extract_into_tensor(self.sqrt_one_minus_alphas_cumprod, t, x_start.shape)
             * noise
-        )  # 
+        )
 
         if mask == None:
             return x_t
@@ -870,6 +870,8 @@ def _extract_into_tensor(arr, timesteps, broadcast_shape):
     """
     res = th.from_numpy(arr).to(device=timesteps.device)[timesteps].float()
     while len(res.shape) < len(broadcast_shape):
+        # l = np.ndarray([2, 2]) Output: (2, 2)
+        # arr = l[..., None]     Output: (2, 2, 1)
         res = res[..., None]
     return res.expand(broadcast_shape)
 

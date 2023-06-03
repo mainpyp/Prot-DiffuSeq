@@ -260,6 +260,7 @@ class TrainLoop:
             if last_batch or not self.use_ddp:
                 losses = compute_losses()
             else:
+                # gradient accumulation
                 with self.ddp_model.no_sync():
                     losses = compute_losses()
 

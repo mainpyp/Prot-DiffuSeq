@@ -25,6 +25,9 @@ def get_knn(model_emb, text_emb, dist='cos'):
     return topk_out.values, topk_out.indices
 
 def get_efficient_knn(model_emb, text_emb):
+    # COMPARES THE TEXT EMBEDDING TO THE MODEL EMBEDDING
+    # THE ONE WITH THE LOWEST DISTANCE IS THE MOST SIMILAR ONE
+    # -> THE TOKEN REPRSENTATION
     # text embed shape text emb shape: torch.Size([12800, 256])
     # model emb shape torch.Size([50, 256])
 
@@ -127,8 +130,12 @@ def denoised_fn_round(args, model, text_emb, t):
         text_emb = text_emb
     # val, indices = get_knn(model_emb, text_emb.to(model_emb.device), dist=dist)
     val, indices = get_efficient_knn(model_emb, text_emb.to(model_emb.device))
+    
+    # get_efficient_knn returns the most similar token to the text embedding
+    # this is a list so the first element is taken
     rounded_tokens = indices[0]
     # print(rounded_tokens.shape)
     new_embeds = model(rounded_tokens).view(old_shape).to(old_device)
     # new embeds shape torch.Size([min(bsz, n_testset), 256, 256])
+    # addition (not confirmed) (bsz, seqlen, dim)
     return new_embeds

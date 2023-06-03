@@ -57,6 +57,7 @@ class TransformerNetModel(nn.Module):
         self.logits_mode = logits_mode
         self.hidden_size = config.hidden_size
 
+        # each token is represented by a vector of size `input_dims`
         self.word_embedding = nn.Embedding(vocab_size, self.input_dims)
         self.lm_head = nn.Linear(self.input_dims, vocab_size)
         print(f"Vocab size: {'-'*20}> {vocab_size}")
