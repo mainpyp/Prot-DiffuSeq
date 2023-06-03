@@ -45,6 +45,7 @@ def main():
     print("LOAD TRAIN DATA")
     data = load_data_text(
         batch_size=args.batch_size,
+        accelerator=accelerator,
         seq_len=args.seq_len,
         data_args = args,
         loaded_vocab=tokenizer,
@@ -57,6 +58,7 @@ def main():
     data_valid = load_data_text(
         batch_size=args.batch_size,
         seq_len=args.seq_len,
+        accelerator=accelerator,
         data_args=args,
         split='valid',
         deterministic=True,

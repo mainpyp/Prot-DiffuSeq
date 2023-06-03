@@ -92,6 +92,7 @@ def main():
     ##### DATA #####
     data_valid = load_data_text(
         batch_size=args.batch_size,
+        accelerator=accelerator,
         seq_len=args.seq_len,
         deterministic=True,
         data_args=args,
