@@ -19,7 +19,7 @@ from basic_utils import (
 from train_util import TrainLoop
 from transformers import set_seed
 import wandb
-import accelerate import Accelerator
+from accelerate import Accelerator
 
 ### custom your wandb setting here ###
 # os.environ["WANDB_API_KEY"] = ""
