@@ -13,6 +13,7 @@ import torch.distributed as dist
 from transformers import set_seed
 from diffuseq.rounding import denoised_fn_round
 from diffuseq.text_datasets import load_data_text
+from accelerate import Accelerator
 
 # from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 
@@ -40,8 +41,9 @@ def create_argparser():
 @th.no_grad()
 def main():
     args = create_argparser().parse_args()
+    accelerator = Accelerator()
 
-    dist_util.setup_dist()
+    # dist_util.setup_dist()
     logger.configure()
 
     world_size = dist.get_world_size() or 1
@@ -95,6 +97,8 @@ def main():
         model_emb=model_emb.cpu(),  # using the same embedding wight with tranining data
         loop=False
     )
+    
+    model, data_valid = accelerator.prepare(model, data_valid)
 
     start_t = time.time()
 
@@ -133,7 +137,7 @@ def main():
     except StopIteration:
         print('### End of reading iteration...')
 
-    model_emb.to(dist_util.dev())
+    # model_emb.to(dist_util.dev())
 
     if idx % world_size and rank >= idx % world_size:
         # Dummy data for Remainder : for dist.barrier()
