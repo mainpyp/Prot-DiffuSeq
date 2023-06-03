@@ -65,9 +65,13 @@ def main():
         **args_to_dict(args, load_defaults_config().keys())
     )
 
+    state_dict = dist_util.load_state_dict(args.model_path, map_location="cpu")
+    print(args.model_path)
+    print(state_dict.keys())
     model.load_state_dict(
-        dist_util.load_state_dict(args.model_path, map_location="cpu")
+        state_dict
     )
+    exit()
 
     pytorch_total_params = sum(p.numel() for p in model.parameters())
     logger.log(f'### The parameter count is {pytorch_total_params}')
