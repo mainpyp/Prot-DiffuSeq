@@ -142,7 +142,7 @@ class TrainLoop:
                 logger.log(f"loading model from checkpoint: {resume_checkpoint}...")
                 self.model.load_state_dict(
                     dist_util.load_state_dict(
-                        actual_model_path(resume_checkpoint), map_location=dist_util.dev()
+                        actual_model_path(resume_checkpoint), map_location="cpu" #(acclerate) dist_util.dev()
                     )
                 )
 
