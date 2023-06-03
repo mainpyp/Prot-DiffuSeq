@@ -140,11 +140,12 @@ class TrainLoop:
                 logger.log(f"loading model from checkpoint: {resume_checkpoint}...")
                 self.model.load_state_dict(
                     dist_util.load_state_dict(
-                        actual_model_path(resume_checkpoint), map_location=dist_util.dev()
+                        actual_model_path(resume_checkpoint)
                     )
                 )
 
         dist_util.sync_params(self.model.parameters())
+        
 
     def _load_ema_parameters(self, rate):
         ema_params = copy.deepcopy(self.master_params)
