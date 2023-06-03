@@ -159,8 +159,11 @@ class TrainLoop:
                 logger.log(f"loading EMA from checkpoint: {ema_checkpoint}...")
                 state_dict = dist_util.load_state_dict(
                     actual_model_path(ema_checkpoint), map_location=dist_util.dev()
-                )["state_dict"]
+                )
+                print(state_dict)
+                print(state_dict.keys())
                 ema_params = self._state_dict_to_master_params(state_dict)
+                print("ema_params", ema_params)
 
         dist_util.sync_params(ema_params)
         return ema_params
@@ -173,9 +176,7 @@ class TrainLoop:
             state_dict = dist_util.load_state_dict(
                 actual_model_path(main_checkpoint), map_location=dist_util.dev()
             )
-            print("state_dict", state_dict)
-            print(state_dict.keys())
-            self.opt.load_state_dict(state_dict["state_dict"])
+            self.opt.load_state_dict(state_dict)
 
     def _setup_fp16(self):
         self.master_params = make_master_params(self.model_params)
