@@ -36,7 +36,7 @@ def main():
     args = create_argparser().parse_args()
     set_seed(args.seed) 
     # dist_util.setup_dist()
-    accelerator = Accelerator()
+    accelerator = Accelerator(device_placement=False)
     logger.configure()
     logger.log("### Creating data loader...")
 
