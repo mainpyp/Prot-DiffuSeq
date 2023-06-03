@@ -135,6 +135,7 @@ def compare_aa_distribution(dataframes: dict, step_labels: list, colors: list) -
         glob_c_recover = sorted(glob_c_recover.items())
         glob_c_reference = sorted(glob_c_reference.items())
         
+        # keep order of amino acids
         x_rec = [x[0] for x in glob_c_recover]
         y_rec = [x[1] for x in glob_c_recover]
         
