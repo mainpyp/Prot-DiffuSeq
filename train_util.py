@@ -111,16 +111,17 @@ class TrainLoop:
             self.accelerator.prepare(self.model, self.opt, self.data, self.eval_data)
 
         if th.cuda.is_available(): # DEBUG **
-            self.use_ddp = True
+            #  changed this for accelerate
+            self.use_ddp = False # this was true before
             print(dist_util.dev())
-            self.ddp_model = DDP(
-                self.model,
-                device_ids=[dist_util.dev()],
-                output_device=dist_util.dev(),
-                broadcast_buffers=False,
-                bucket_cap_mb=128,
-                find_unused_parameters=False,
-            )
+            # self.ddp_model = DDP(
+            #     self.model,
+            #     device_ids=[dist_util.dev()],
+            #     output_device=dist_util.dev(),
+            #     broadcast_buffers=False,
+            #     bucket_cap_mb=128,
+            #     find_unused_parameters=False,
+            # )
         else:
             if dist.get_world_size() > 1:
                 logger.warn(
@@ -128,7 +129,7 @@ class TrainLoop:
                     "Gradients will not be synchronized properly!"
                 )
             self.use_ddp = False
-            self.ddp_model = self.model
+             # self.ddp_model = self.model
 
     def _load_and_sync_parameters(self):
         resume_checkpoint = find_resume_checkpoint() or self.resume_checkpoint
@@ -224,7 +225,7 @@ class TrainLoop:
                 # print(micro_cond.keys())
                 compute_losses = functools.partial(
                     self.diffusion.training_losses,
-                    self.ddp_model,
+                    self.model, # this was ddp_model before (accelerate)
                     micro,
                     t,
                     model_kwargs=micro_cond,
@@ -256,7 +257,7 @@ class TrainLoop:
             # print(micro_cond.keys())
             compute_losses = functools.partial(
                 self.diffusion.training_losses,
-                self.ddp_model,
+                self.model, # this was ddp_model before (accelerate)
                 micro,
                 t,
                 model_kwargs=micro_cond,
