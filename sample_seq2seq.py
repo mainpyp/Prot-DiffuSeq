@@ -66,7 +66,7 @@ def main():
     )
 
     model.load_state_dict(
-        dist_util.load_state_dict(args.model_path, map_location="cpu", strict=False)
+        dist_util.load_state_dict(args.model_path, map_location="cpu")
     )
 
     pytorch_total_params = sum(p.numel() for p in model.parameters())
