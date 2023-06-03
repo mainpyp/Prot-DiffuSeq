@@ -75,7 +75,7 @@ def main():
     pytorch_total_params = sum(p.numel() for p in model.parameters())
     logger.log(f'### The parameter count is {pytorch_total_params}')
 
-    model.eval().requires_grad_(False) # .to(dist_util.dev())
+    model.eval().requires_grad_(False).to(dist_util.dev())
 
     ##### TOKENIZER AND EMBEDDING #####
     tokenizer = load_tokenizer(args)
@@ -158,13 +158,13 @@ def main():
                 dist.barrier()
             continue
 
-        input_ids_x = cond.pop('input_ids') # .to(dist_util.dev())
+        input_ids_x = cond.pop('input_ids').to(dist_util.dev())
         x_start = model.get_embeds(input_ids_x)
         input_ids_mask = cond.pop('input_mask')
         input_ids_mask_ori = input_ids_mask
 
         noise = th.randn_like(x_start) # init random noise
-        input_ids_mask = th.broadcast_to(input_ids_mask.unsqueeze(dim=-1), x_start.shape) # .to(dist_util.dev())
+        input_ids_mask = th.broadcast_to(input_ids_mask.unsqueeze(dim=-1), x_start.shape).to(dist_util.dev())
         # only on sequence embedding noise
         x_noised = th.where(input_ids_mask == 0, x_start, noise)  # replaces sequence embedding with noise
         model_kwargs = {}
