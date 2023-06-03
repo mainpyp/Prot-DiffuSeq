@@ -94,9 +94,9 @@ class TrainLoop:
         self.opt = AdamW(self.master_params, lr=self.lr, weight_decay=self.weight_decay)
         
         # prepare stuff for accelerate
-        # self.data, self.eval_data, self.model, self.opt = accelerator.prepare(
-        #     self.data, self.eval_data, self.model, self.opt
-        # )
+        self.data, self.eval_data, self.model, self.opt = accelerator.prepare(
+            self.data, self.eval_data, self.model, self.opt
+        )
         
         if self.resume_step:
             # self._load_optimizer_state()
