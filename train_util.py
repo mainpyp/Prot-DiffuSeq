@@ -160,10 +160,7 @@ class TrainLoop:
                 state_dict = dist_util.load_state_dict(
                     actual_model_path(ema_checkpoint), map_location=dist_util.dev()
                 )
-                print(state_dict)
-                print(state_dict.keys())
                 ema_params = self._state_dict_to_master_params(state_dict)
-                print("ema_params", ema_params)
 
         dist_util.sync_params(ema_params)
         return ema_params
@@ -396,7 +393,7 @@ class TrainLoop:
         return state_dict
 
     def _state_dict_to_master_params(self, state_dict):
-        params = [state_dict[name] for name, _ in self.model.named_parameters()]
+        params = [state_dict[name.replace("module.", "")] for name, _ in self.model.named_parameters()]
         if self.use_fp16:
             return make_master_params(params)
         else:
