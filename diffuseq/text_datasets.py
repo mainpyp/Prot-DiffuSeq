@@ -16,7 +16,6 @@ from datasets import load_dataset
 def load_data_text(
     batch_size, 
     seq_len, 
-    accelerator,
     deterministic=False, 
     data_args=None, 
     model_emb=None,
@@ -42,7 +41,7 @@ def load_data_text(
 
     print('#'*30, '\nLoading text data...')
 
-    training_data = get_corpus(data_args, seq_len, split=split, loaded_vocab=loaded_vocab, accelerator=accelerator)
+    training_data = get_corpus(data_args, seq_len, split=split, loaded_vocab=loaded_vocab)
 
     dataset = TextDataset(
         training_data,
@@ -83,7 +82,7 @@ def infinite_loader(data_loader):
     while True:
         yield from data_loader
 
-def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, split: str = None, accelerator=None):
+def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, split: str = None):
     """ sentence_lst: 
                     keys: 'src', 'trg', sometimes: 'af_id'
                     value: shape (bsz, len)
@@ -129,14 +128,12 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
 
             return result_dict
         
-        
-        with accelerator.main_process_first():
-            tokenized_datasets = raw_datasets.map(
-                tokenize_function,
-                batched=True,
-                remove_columns=['src', 'trg'],
-                desc="Running tokenizer on dataset",
-            )
+        tokenized_datasets = raw_datasets.map(
+            tokenize_function,
+            batched=True,
+            remove_columns=['src', 'trg'],
+            desc="Running tokenizer on dataset",
+        )
         
         
         
@@ -162,12 +159,12 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
         group_lst['input_ids'] = lst
         group_lst['input_mask'] = mask
         return group_lst
-    with accelerator.main_process_first():
-        tokenized_datasets = tokenized_datasets.map(
-            merge_and_mask,
-            batched=True,
-            desc=f"merge and mask",
-        )
+    
+    tokenized_datasets = tokenized_datasets.map(
+        merge_and_mask,
+        batched=True,
+        desc=f"merge and mask",
+    )
     
     def pad_function(group_lst):
         max_length = seq_len
@@ -176,12 +173,12 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
         return group_lst
 
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
-    with accelerator.main_process_first():
-        lm_datasets = tokenized_datasets.map(
-            pad_function,
-            batched=True,
-            desc=f"padding",
-        )
+
+    lm_datasets = tokenized_datasets.map(
+        pad_function,
+        batched=True,
+        desc=f"padding",
+    )
 
     print(lm_datasets, 'padded dataset')
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
@@ -192,7 +189,7 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
     return raw_datasets
 
 
-def get_corpus(data_args, seq_len, split='train', loaded_vocab=None, accelerator=None):
+def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
 
     print('#'*30, '\nLoading dataset {} from {}...'.format(data_args.dataset, data_args.data_dir))
     
@@ -229,7 +226,7 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None, accelerator
     # get tokenizer.
     vocab_dict = loaded_vocab
 
-    train_dataset = helper_tokenize(sentence_lst, vocab_dict, seq_len, preload=False, split=split, accelerator=accelerator)
+    train_dataset = helper_tokenize(sentence_lst, vocab_dict, seq_len, preload=False, split=split)
     del sentence_lst
     
     return train_dataset
