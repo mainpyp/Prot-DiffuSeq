@@ -71,7 +71,7 @@ def main():
     model, diffusion = create_model_and_diffusion(
         **args_to_dict(args, load_defaults_config().keys())
     )
-    model.to(dist_util.dev()) #  DEBUG **
+    # model.to(dist_util.dev()) #  DEBUG **
     # model.cuda() #  DEBUG **
 
     pytorch_total_params = sum(p.numel() for p in model.parameters())
@@ -83,12 +83,12 @@ def main():
     with open(f'{args.checkpoint_path}/training_args.json', 'w') as f:
         json.dump(args.__dict__, f, indent=2)
 
-    if ('LOCAL_RANK' not in os.environ) or (int(os.environ['LOCAL_RANK']) == 0):
-        wandb.init(
-            project=os.getenv("WANDB_PROJECT", "DiffuSeq"),
-            name=args.checkpoint_path,
-        )
-        wandb.config.update(args.__dict__, allow_val_change=True)
+    # if ('LOCAL_RANK' not in os.environ) or (int(os.environ['LOCAL_RANK']) == 0):
+    #     wandb.init(
+    #         project=os.getenv("WANDB_PROJECT", "DiffuSeq"),
+    #         name=args.checkpoint_path,
+    #     )
+    #     wandb.config.update(args.__dict__, allow_val_change=True)
 
     logger.log("### Training...")
 
