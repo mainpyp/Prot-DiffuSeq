@@ -71,7 +71,6 @@ def main():
     model.load_state_dict(
         state_dict
     )
-    exit()
 
     pytorch_total_params = sum(p.numel() for p in model.parameters())
     logger.log(f'### The parameter count is {pytorch_total_params}')
