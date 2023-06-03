@@ -93,6 +93,7 @@ def main():
     logger.log("### Training...")
 
     TrainLoop(
+        accelerator=accelerator,
         model=model,
         diffusion=diffusion,
         data=data,

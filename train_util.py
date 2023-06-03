@@ -31,6 +31,7 @@ class TrainLoop:
     def __init__(
         self,
         *,
+        accelerator,
         model,
         diffusion,
         data,
@@ -51,6 +52,7 @@ class TrainLoop:
         eval_data=None,
         eval_interval=-1,
     ):
+        self.accelerator = accelerator
         self.model = model
         self.diffusion = diffusion
         self.data = data
@@ -90,6 +92,12 @@ class TrainLoop:
             self._setup_fp16()
 
         self.opt = AdamW(self.master_params, lr=self.lr, weight_decay=self.weight_decay)
+        
+        # prepare stuff for accelerate
+        self.data, self.eval_data, self.model, self.opt = accelerator.prepare(
+            self.data, self.eval_data, self.model, self.opt
+        )
+        
         if self.resume_step:
             # self._load_optimizer_state()
             frac_done = (self.step + self.resume_step) / self.learning_steps
