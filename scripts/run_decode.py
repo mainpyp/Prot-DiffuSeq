@@ -40,7 +40,7 @@ def generate_samples(args: argparse.Namespace, out_dir: str = 'generation_output
             assert os.path.isfile(checkpoint_one), f'{checkpoint_one} not found'
 
             for seed in args.seeds:
-                COMMAND = f'python -m torch.distributed.launch --nproc_per_node={args.n_gpus} --master_port={12233 + int(seed)} --use_env sample_seq2seq.py ' \
+                COMMAND = f'accelerate launch --multi_gpu sample_seq2seq.py ' \
                 f'--model_path {checkpoint_one} --step {args.step} ' \
                 f'--batch_size {args.bsz} --seed2 {seed} --split {args.split} ' \
                 f'--out_dir {out_dir} --top_p {args.top_p} '
