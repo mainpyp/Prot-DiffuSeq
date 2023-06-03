@@ -41,7 +41,7 @@ def create_argparser():
 def main():
     args = create_argparser().parse_args()
 
-    dist_util.setup_dist()
+    # dist_util.setup_dist()
     logger.configure()
 
     world_size = dist.get_world_size() or 1
