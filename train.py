@@ -73,7 +73,7 @@ def main():
     model, diffusion = create_model_and_diffusion(
         **args_to_dict(args, load_defaults_config().keys())
     )
-   #  model.to(dist_util.dev()) #  DEBUG **
+    #  model.to(dist_util.dev()) #  DEBUG **
     # model.cuda() #  DEBUG **
 
     pytorch_total_params = sum(p.numel() for p in model.parameters())
@@ -91,9 +91,11 @@ def main():
             name=args.checkpoint_path,
         )
         wandb.config.update(args.__dict__, allow_val_change=True)
-
+    
+    print("WAIT FOR EVERYONE")
+    accelerator.wait_for_everyone()
+    
     logger.log("### Training...")
-
     TrainLoop(
         accelerator=accelerator,
         model=model,
