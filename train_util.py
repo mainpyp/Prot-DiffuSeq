@@ -173,7 +173,9 @@ class TrainLoop:
             state_dict = dist_util.load_state_dict(
                 actual_model_path(main_checkpoint), map_location=dist_util.dev()
             )
-            self.opt.load_state_dict(state_dict)
+            print("state_dict", state_dict)
+            print(state_dict.keys())
+            self.opt.load_state_dict(state_dict["state_dict"])
 
     def _setup_fp16(self):
         self.master_params = make_master_params(self.model_params)
