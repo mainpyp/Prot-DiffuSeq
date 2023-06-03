@@ -158,7 +158,7 @@ class TrainLoop:
             if dist.get_rank() == 0:
                 logger.log(f"loading EMA from checkpoint: {ema_checkpoint}...")
                 state_dict = dist_util.load_state_dict(
-                    actual_model_path(ema_checkpoint), map_location=dist_util.dev()
+                    actual_model_path(ema_checkpoint)['state_dict'], map_location=dist_util.dev()
                 )
                 ema_params = self._state_dict_to_master_params(state_dict)
 
@@ -169,6 +169,7 @@ class TrainLoop:
         main_checkpoint = find_resume_checkpoint() or self.resume_checkpoint
         if bf.exists(main_checkpoint):
             logger.log(f"loading optimizer state from checkpoint: {main_checkpoint}")
+            
             state_dict = dist_util.load_state_dict(
                 actual_model_path(main_checkpoint), map_location=dist_util.dev()
             )
