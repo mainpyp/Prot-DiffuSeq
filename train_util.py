@@ -87,7 +87,7 @@ class TrainLoop:
 
         self.checkpoint_path = checkpoint_path # DEBUG **
 
-        # self._load_and_sync_parameters()
+        self._load_and_sync_parameters()
         if self.use_fp16:
             self._setup_fp16()
 
@@ -147,7 +147,7 @@ class TrainLoop:
                     )
                 )
 
-        dist_util.sync_params(self.model.parameters())
+        # dist_util.sync_params(self.model.parameters())
 
     def _load_ema_parameters(self, rate):
         ema_params = copy.deepcopy(self.master_params)
