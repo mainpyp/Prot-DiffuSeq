@@ -141,10 +141,11 @@ class TrainLoop:
             self.resume_step = parse_resume_step_from_filename(resume_checkpoint)
             if dist.get_rank() == 0:
                 logger.log(f"loading model from checkpoint: {resume_checkpoint}...")
+                state_dict = dist_util.load_state_dict(resume_checkpoint, map_location="cpu")
+                # because of DDP to accelerate, the model is wrapped by DDP, so we need to remove the "module." prefix
+                state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
                 self.model.load_state_dict(
-                    dist_util.load_state_dict(
-                        actual_model_path(resume_checkpoint), map_location="cpu" #(acclerate) dist_util.dev()
-                    )
+                    state_dict
                 )
 
         # dist_util.sync_params(self.model.parameters())
