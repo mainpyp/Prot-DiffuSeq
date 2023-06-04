@@ -394,7 +394,7 @@ class TrainLoop:
         return state_dict
 
     def _state_dict_to_master_params(self, state_dict):
-        params = [state_dict[name.replace("module.", "")] for name, _ in self.model.named_parameters()]
+        params = [state_dict[name] for name, _ in self.model.named_parameters()]
         if self.use_fp16:
             return make_master_params(params)
         else:
