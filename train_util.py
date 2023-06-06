@@ -267,7 +267,7 @@ class TrainLoop:
                 k: v[i : i + self.microbatch].to(dist_util.dev())
                 for k, v in cond.items()
             }
-             print("#" * 200)
+            print("#" * 200)
             print(cond.keys())
             print("\n\n", cond)
             print("#" * 200)
