@@ -558,9 +558,11 @@ class GaussianDiffusion:
         # print(logits.shape)
         print("LOGITS VIEW")
         print(logits.view(-1, logits.size(-1)))
+        print(logits.view(-1, logits.size(-1)).shape)
         print("INPUT IDS VIEW")
         print(input_ids.view(-1))
         print(input_ids.view(-1).shape)
+        # input ids shape = [bsz * seqlen]
         loss_fct = th.nn.CrossEntropyLoss(reduction='none')
         decoder_nll = loss_fct(logits.view(-1, logits.size(-1)), input_ids.view(-1)).view(input_ids.shape)
         print("DECODER NLL")
@@ -573,6 +575,7 @@ class GaussianDiffusion:
         # print(decoder_nll.shape)
         if mask != None:
             print("FINAL DECODER NLL")
+            
             decoder_nll = decoder_nll.sum(dim=-1)/mask.sum(dim=-1)
             print(decoder_nll.shape)
             print(decoder_nll)
