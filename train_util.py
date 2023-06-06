@@ -115,7 +115,7 @@ class TrainLoop:
             ]
 
         if th.cuda.is_available(): # DEBUG **
-            self.use_ddp = False
+            self.use_ddp = True
             self.ddp_model = self.model
             # print(dist_util.dev())
             # self.ddp_model = DDP(
@@ -247,7 +247,7 @@ class TrainLoop:
                 if last_batch or not self.use_ddp:
                     losses = compute_losses()
                 else:
-                    with self.ddp_model.no_sync():
+                    with self.accelerator.no_sync():
                         losses = compute_losses()
 
                 log_loss_dict(
