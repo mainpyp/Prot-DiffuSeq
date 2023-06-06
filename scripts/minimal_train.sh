@@ -1,15 +1,15 @@
-python3 -m torch.distributed.launch --nproc_per_node=8 --master_port=12250 --use_env run_train.py \
---diff_steps 4000 \
---lr 0.0001 \
---learning_steps 20001 \
---save_interval 2000 \
---seed 102 \
---noise_schedule sqrt \
---hidden_dim 128 \
---bsz 256 \
---dataset ProtSmall \
---data_dir datasets/ProtMinimalStrucToSeq/ \
---vocab protbert \
---seq_len 256 \
---schedule_sampler lossaware \
---notes MinimalRunTestIfWorksWithSmallerModeResetParams
+accelerate launch --multi_gpu run_train.py \
+	--diff_steps 3000 \
+	--lr 0.00001 \
+	--learning_steps 1000001 \
+	--save_interval 1000 \
+	--seed 102 \
+	--noise_schedule sqrt \
+	--hidden_dim 1024 \
+	--bsz 32 \
+	--dataset ProtMinimal \
+	--data_dir datasets/ProtMinimal \
+	--vocab protbert \
+	--seq_len 1024 \
+	--schedule_sampler lossaware \
+	--notes ProtMinimalDebugAccelerate
