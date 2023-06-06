@@ -217,12 +217,13 @@ class TrainLoop:
             self.save()
 
     def run_step(self, batch, cond):
-        self.forward_backward(batch, cond)
-        if self.use_fp16:
-            self.optimize_fp16()
-        else:
-            self.optimize_normal()
-        self.log_step()
+        with self.accelerator.accumulate(self.model):
+            self.forward_backward(batch, cond)
+            if self.use_fp16:
+                self.optimize_fp16()
+            else:
+                self.optimize_normal()
+            self.log_step()
 
     def forward_only(self, batch, cond):
         with th.no_grad():
@@ -256,6 +257,7 @@ class TrainLoop:
 
 
     def forward_backward(self, batch, cond):
+        
         zero_grad(self.model_params)
         
         t, weights = self.schedule_sampler.sample(batch.shape[0], dist_util.dev())
