@@ -560,6 +560,8 @@ class GaussianDiffusion:
         # logits torch.Size([bsz * seqlen, vocab size]) (logits.view(-1, logits.size(-1)).shape)
         # logits has one value for each word in the vocab
         loss_fct = th.nn.CrossEntropyLoss(reduction='none')
+        print("CROSS ENTROPY INPUT")
+        print(logits.view(-1, logits.size(-1)), "\n\n\n" ,input_ids.view(-1))
         decoder_nll = loss_fct(logits.view(-1, logits.size(-1)), input_ids.view(-1)).view(input_ids.shape)
         print("DECODER NLL")
         print(decoder_nll[0])
