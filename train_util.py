@@ -9,6 +9,7 @@ import torch.distributed as dist
 from torch.nn.parallel.distributed import DistributedDataParallel as DDP
 from torch.optim import AdamW
 import io
+import time
 
 from diffuseq.utils import dist_util, logger
 from diffuseq.utils.fp16_util import (
@@ -181,6 +182,7 @@ class TrainLoop:
         self.model.model.convert_to_fp16()
 
     def run_loop(self):
+        start_time = time.time()
         while (
             not self.learning_steps
             or self.step + self.resume_step < self.learning_steps
@@ -188,7 +190,13 @@ class TrainLoop:
             batch, cond = next(self.data)
             
             if self.step % 10 == 0:
-                print('step', self.step)
+                # I want to print the time in seconds until this point is reached again
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+                # estimated time for 1000 steps
+                
+                print(f'step {self.step} in {elapsed_time:.3f} sec, est. 1000 steps: {elapsed_time*100:.3f} seconds, est. next ckpt: {elapsed_time * ((1000 - self.step) / 10):.3f} seconds')
+                start_time = time.time()
                 
             self.run_step(batch, cond)
             if self.step % self.log_interval == 0:
