@@ -641,7 +641,6 @@ class GaussianDiffusion:
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
         print(model_output)
         print(model_output.shape)
-        exit()
         # target mean: 0.01418902538716793
         # model_output mean: 0.002865137066692114
         # x_start mean: 0.01418902538716793
@@ -653,6 +652,8 @@ class GaussianDiffusion:
 
         model_out_x_start = self._x0_helper(model_output, x_t, t)['pred_xstart'] # predicted_xstart = model_output
         t0_mask = (t == 0)
+        print(f"t0 mask: {t0_mask}")
+        exit()
         t0_loss = mean_flat((x_start_mean - model_out_x_start) ** 2)
         terms["mse"] = th.where(t0_mask, t0_loss, terms["mse"])
 
