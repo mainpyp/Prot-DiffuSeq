@@ -165,8 +165,9 @@ class TransformerNetModel(nn.Module):
         seq_length = x.size(1)
         position_ids = self.position_ids[:, : seq_length ]
         
-        # Before it was just postion_ids (RoFormer fix)
-        emb_inputs = self.position_embeddings(position_ids[0]) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
+        # Before it was just postion_ids (RoFormer fix) 
+        # add input embeddings and position embeddings and time embeddings
+        emb_inputs = self.position_embeddings(position_ids) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
         
         emb_inputs = self.dropout(self.LayerNorm(emb_inputs))
 
