@@ -95,6 +95,8 @@ class TrainLoop:
         self.opt = AdamW(self.master_params, lr=self.lr, weight_decay=self.weight_decay)
         
         # prepare stuff for accelerate
+        print("#" * 100)
+        print(f"type model: {type(self.model)}")
         self.data, self.eval_data, self.model, self.opt = accelerator.prepare(
             self.data, self.eval_data, self.model, self.opt
         )
