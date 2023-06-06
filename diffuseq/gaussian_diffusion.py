@@ -614,7 +614,10 @@ class GaussianDiffusion:
             noise = th.randn_like(x_start)
         # shape: bsz, seqlen, embedding
         # FORWARD DIFFUSION STEP
-        x_t = self.q_sample(x_start, t, noise=noise, mask=input_ids_mask) # reparametrization trick.
+        x_t = self.q_sample(x_start, t, noise=noise, mask=input_ids_mask) # reparametrization trick
+        print(x_t)
+        print(x_t.shape)
+        print("\n\n\n")
         get_logits = model.model.module.get_logits
 
         terms = {}
@@ -636,6 +639,9 @@ class GaussianDiffusion:
         # x_start shape: torch.Size([64, 256, 256])
         target = x_start
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
+        print(model_output)
+        print(model_output.shape)
+        exit()
         # target mean: 0.01418902538716793
         # model_output mean: 0.002865137066692114
         # x_start mean: 0.01418902538716793

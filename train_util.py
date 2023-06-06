@@ -266,11 +266,15 @@ class TrainLoop:
             }
             last_batch = (i + self.microbatch) >= batch.shape[0]
             
+            # t -> tensor of timesteps e.g. [1793, 2027,  897, 2192, 1736]
+            # w -> tensor of weight starting with [1. 1. 1. 1. 1.]
             t, weights = self.schedule_sampler.sample(micro.shape[0], dist_util.dev())
-            print(t)
-            print("\nWEIGHTS:")
-            print(weights)
-            exit()
+            if self.step % 10 == 0:
+                print("TIMESTEPS:")
+                print(t)
+                print("\nWEIGHTS:")
+                print(weights)
+        
             # print(micro_cond.keys())
             compute_losses = functools.partial(
                 self.diffusion.training_losses,
