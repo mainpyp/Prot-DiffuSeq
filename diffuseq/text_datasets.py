@@ -167,11 +167,11 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
     )
     
     print(tokenized_datasets, 'merged dataset')
-    print(tokenized_datasets["input_ids"])
+    print(len(tokenized_datasets["input_ids"]))
     print(tokenized_datasets["input_ids"][0])
-    print(tokenized_datasets["input_mask"])
+    print(len(tokenized_datasets["input_mask"]))
     print(tokenized_datasets["input_mask"][0])
-    exit
+    
     
     def pad_function(group_lst):
         max_length = seq_len
@@ -186,7 +186,13 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
         batched=True,
         desc=f"padding",
     )
+    print(len(lm_datasets["input_ids"]))
+    print(lm_datasets["input_ids"][0])
+    print(len(lm_datasets["input_mask"]))
+    print(lm_datasets["input_mask"][0])
 
+    exit()
+    
     print(lm_datasets, 'padded dataset')
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
 
