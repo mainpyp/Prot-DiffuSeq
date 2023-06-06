@@ -555,19 +555,16 @@ class GaussianDiffusion:
         '''
         reshaped_x_t = x_t
         logits = get_logits(reshaped_x_t)  # bsz, seqlen, vocab
-        # print(logits.shape)
-        print("LOGITS VIEW")
-        print(logits.view(-1, logits.size(-1)))
-        print(logits.view(-1, logits.size(-1)).shape)
-        print("INPUT IDS VIEW")
-        print(input_ids.view(-1))
-        print(input_ids.view(-1).shape)
-        # input ids shape = [bsz * seqlen]
+        
+        # input ids shape = [bsz * seqlen] (input_ids.view(-1).shape)
+        # logits torch.Size([bsz * seqlen, vocab size]) (logits.view(-1, logits.size(-1)).shape)
+        # logits has one value for each word in the vocab
         loss_fct = th.nn.CrossEntropyLoss(reduction='none')
         decoder_nll = loss_fct(logits.view(-1, logits.size(-1)), input_ids.view(-1)).view(input_ids.shape)
         print("DECODER NLL")
-        print(decoder_nll)
-
+        print(decoder_nll[0])
+        print(sum(decoder_nll))
+        
         if mask != None:
             print("MASK")
             print(mask)
