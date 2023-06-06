@@ -247,7 +247,7 @@ class TrainLoop:
                 if last_batch or not self.use_ddp:
                     losses = compute_losses()
                 else:
-                    with self.accelerator.no_sync():
+                    with self.accelerator.no_sync(self.model):
                         losses = compute_losses()
 
                 log_loss_dict(
