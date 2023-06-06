@@ -261,7 +261,7 @@ class TrainLoop:
         for i in range(0, batch.shape[0], self.microbatch):
             micro = batch[i : i + self.microbatch].to(dist_util.dev())
             print(micro.shape)
-            print("#" + 200)
+            print("#" * 200)
             print(cond.keys())
             micro_cond = {
                 k: v[i : i + self.microbatch].to(dist_util.dev())
