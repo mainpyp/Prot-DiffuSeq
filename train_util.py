@@ -195,7 +195,7 @@ class TrainLoop:
                 elapsed_time = end_time - start_time
                 # estimated time for 1000 steps
                 
-                print(f'step {self.step} in {elapsed_time:.3f} sec, est. 1000 steps: {elapsed_time*100:.3f} seconds, est. next ckpt: {elapsed_time * ((1000 - self.step) / 10):.3f} seconds')
+                print(f'step {self.step} in {elapsed_time:.3f} sec, est. 1000 steps: {(elapsed_time*100) / 60:.3f} min, est. next ckpt: {elapsed_time * (((self.save_interval - self.step) / 10) / 60):.3f} min')
                 start_time = time.time()
                 
             self.run_step(batch, cond)
