@@ -561,7 +561,7 @@ class GaussianDiffusion:
         # logits has one value for each word in the vocab
         loss_fct = th.nn.CrossEntropyLoss(reduction='none')
         print("CROSS ENTROPY INPUT")
-        print(logits.view(-1, logits.size(-1)),"\n", logits.view(-1, logits.size(-1))[0] ,"\n\n\n" ,input_ids.view(-1), "\n", input_ids.view(-1)[0])
+        print(logits.view(-1, logits.size(-1)),"\n", logits.view(-1, logits.size(-1))[1] ,"\n\n\n" ,input_ids.view(-1), "\n", input_ids.view(-1)[0])
         decoder_nll = loss_fct(logits.view(-1, logits.size(-1)), input_ids.view(-1)).view(input_ids.shape)
         print("DECODER NLL")
         print(decoder_nll[0])
