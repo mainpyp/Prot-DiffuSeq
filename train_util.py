@@ -259,18 +259,20 @@ class TrainLoop:
         zero_grad(self.model_params)
         # gradient accumulation
         for i in range(0, batch.shape[0], self.microbatch):
+            # micro shape (microbatch, seq_len, hidden_dim)
             micro = batch[i : i + self.microbatch].to(dist_util.dev())
             print(micro.shape)
-            print("#" * 200)
-            print(cond.keys())
+           
             micro_cond = {
                 k: v[i : i + self.microbatch].to(dist_util.dev())
                 for k, v in cond.items()
             }
-            print("#" + 200)
+             print("#" * 200)
+            print(cond.keys())
+            print("\n\n", cond)
+            print("#" * 200)
             print(micro_cond.keys())
             print(micro_cond)
-            print("\n\n", cond)
             print("\n\n")
             last_batch = (i + self.microbatch) >= batch.shape[0]
             
