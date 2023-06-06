@@ -195,7 +195,7 @@ class TrainLoop:
                 elapsed_time = end_time - start_time
                 # estimated time for 1000 steps
                 
-                print(f'step {self.step} in {elapsed_time:.3f} sec, est. 1000 steps: {elapsed_time*100:.3f} seconds, est. next ckpt: {elapsed_time * ((1000 - self.step) / 10):.3f} seconds')
+                print(f'step {self.step} in {elapsed_time:.3f} sec, est. 1000 steps: {(elapsed_time*100) / 60:.3f} min, est. next ckpt: {elapsed_time * (((self.save_interval - self.step) / 10) / 60):.3f} min')
                 start_time = time.time()
                 
             self.run_step(batch, cond)
@@ -257,7 +257,7 @@ class TrainLoop:
 
     def forward_backward(self, batch, cond):
         zero_grad(self.model_params)
-        # gradient accumulation
+        
         for i in range(0, batch.shape[0], self.microbatch):
             micro = batch[i : i + self.microbatch].to(dist_util.dev())
             micro_cond = {
