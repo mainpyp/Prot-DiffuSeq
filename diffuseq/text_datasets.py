@@ -216,6 +216,9 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
             sentence_lst['src'].append(line['src'].strip())
             sentence_lst['trg'].append(line['trg'].strip())
             if 'af_id' in line.keys():
+                # check if af in sentence_lst and if not add it
+                if 'af_id' not in sentence_lst.keys():
+                    sentence_lst['af_id'] = []
                 sentence_lst['af_id'].append(line['af_id'].strip())
 
     if "af_id" in sentence_lst.keys():
