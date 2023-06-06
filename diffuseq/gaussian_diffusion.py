@@ -258,13 +258,20 @@ class GaussianDiffusion:
         )
 
         if mask == None:
-            print("MASK IS NONE FUUUUUUUQ")
             return x_t
         else:
-            mask = th.broadcast_to(mask.unsqueeze(dim=-1), x_start.shape)
-            print("MASK IS NOT NONE")
-            print(mask.shape)
-            print(mask[0])
+            # Here we add the mask to the conditional diffusion process
+            # torch.Size([64, 256, 128])
+            # tensor([[0, 0, 0,  ..., 0, 0, 0],
+            #         [0, 0, 0,  ..., 0, 0, 0],
+            #         [0, 0, 0,  ..., 0, 0, 0],
+            #         ...,
+            #         [1, 1, 1,  ..., 1, 1, 1],
+            #         [1, 1, 1,  ..., 1, 1, 1],
+            #         [1, 1, 1,  ..., 1, 1, 1]], device='cuda:0'
+            
+            mask = th.broadcast_to(mask.unsqueeze(dim=-1), x_start.shape)            
+            # we add noise to the masked positions and keep the conditional sequence
             return th.where(mask==0, x_start, x_t)
 
     def q_posterior_mean_variance(self, x_start, x_t, t):
@@ -564,32 +571,21 @@ class GaussianDiffusion:
         # logits torch.Size([bsz * seqlen, vocab size]) (logits.view(-1, logits.size(-1)).shape)
         # logits has one value for each word in the vocab
         loss_fct = th.nn.CrossEntropyLoss(reduction='none')
-        print("CROSS ENTROPY INPUT")
-        print(logits.view(-1, logits.size(-1)),"\n", logits.view(-1, logits.size(-1))[1] ,"\n\n\n" ,input_ids.view(-1), "\n", input_ids.view(-1)[0])
         
         # this is 0 from the beginning... why?
+        # for each token the cross entropy loss
+        # at the beginning 0 for all tokens
         decoder_nll = loss_fct(logits.view(-1, logits.size(-1)), input_ids.view(-1)).view(input_ids.shape)
-        print("DECODER NLL")
-        print(decoder_nll[0])
-        print(sum(decoder_nll))
         
         if mask != None:
-            print("MASK")
-            print(mask)
             decoder_nll *= mask
         # print(decoder_nll.shape)
         if mask != None:
-            print("FINAL DECODER NLL")
-            
             decoder_nll = decoder_nll.sum(dim=-1)/mask.sum(dim=-1)
-            print(decoder_nll.shape)
-            print(decoder_nll)
             
         else:
-            print("FINAL DECODER NLL NO MASK")
+            # microbatch time 0 (tensor([0, 0, 0...]))
             decoder_nll = decoder_nll.mean(dim=-1)
-            print(decoder_nll)
-            print(decoder_nll.shape)
         exit()
         return decoder_nll
 
@@ -638,11 +634,9 @@ class GaussianDiffusion:
         if noise is None:
             noise = th.randn_like(x_start)
         # shape: bsz, seqlen, embedding
+        # here we are adding noise to the sequence and keep the structure embedding
         # FORWARD DIFFUSION STEP
         x_t = self.q_sample(x_start, t, noise=noise, mask=input_ids_mask) # reparametrization trick
-        print(x_t)
-        print(x_t.shape)
-        print("\n\n\n")
         get_logits = model.model.module.get_logits
 
         terms = {}
@@ -664,8 +658,6 @@ class GaussianDiffusion:
         # x_start shape: torch.Size([64, 256, 256])
         target = x_start
         model_output = model(x_t, self._scale_timesteps(t), **model_kwargs)
-        print(model_output)
-        print(model_output.shape)
         # target mean: 0.01418902538716793
         # model_output mean: 0.002865137066692114
         # x_start mean: 0.01418902538716793
@@ -676,6 +668,8 @@ class GaussianDiffusion:
         terms["mse"] = mean_flat((target - model_output) ** 2)
 
         model_out_x_start = self._x0_helper(model_output, x_t, t)['pred_xstart'] # predicted_xstart = model_output
+        
+        # [false false false]
         t0_mask = (t == 0)
         print(f"t0 mask: {t0_mask}")
     
