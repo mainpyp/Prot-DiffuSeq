@@ -1,5 +1,6 @@
 bert_score
 blobfile
+accelerate
 nltk
 numpy
 packaging
@@ -7,9 +8,9 @@ psutil
 PyYAML
 setuptools
 spacy
-torch==1.9.0
+torch
 torchmetrics
 tqdm
-transformers==4.22.2
+transformers
 wandb
 datasets
