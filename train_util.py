@@ -280,7 +280,7 @@ class TrainLoop:
                 losses = compute_losses()
             else:
                 # gradient accumulation
-                with self.ddp_model.no_sync():
+                with self.accelerator.no_sync(self.model):
                     losses = compute_losses()
 
             if isinstance(self.schedule_sampler, LossAwareSampler):
