@@ -556,16 +556,27 @@ class GaussianDiffusion:
         reshaped_x_t = x_t
         logits = get_logits(reshaped_x_t)  # bsz, seqlen, vocab
         # print(logits.shape)
+        print("LOGITS VIEW")
+        print(logits.view(-1, logits.size(-1)))
+        print("INPUT IDS VIEW")
+        print(input_ids.view(-1))
         loss_fct = th.nn.CrossEntropyLoss(reduction='none')
         decoder_nll = loss_fct(logits.view(-1, logits.size(-1)), input_ids.view(-1)).view(input_ids.shape)
+        print("DECODER NLL")
+        print(decoder_nll)
+
         if mask != None:
+            print("MASK")
+            print(mask)
             decoder_nll *= mask
         # print(decoder_nll.shape)
         if mask != None:
+            print("FINAL DECODER NLL")
             decoder_nll = decoder_nll.sum(dim=-1)/mask.sum(dim=-1)
+            print(decoder_nll)
         else:
             decoder_nll = decoder_nll.mean(dim=-1)
-
+        exit()
         return decoder_nll
 
     def _x0_helper(self, model_output, x, t):
@@ -653,11 +664,12 @@ class GaussianDiffusion:
         model_out_x_start = self._x0_helper(model_output, x_t, t)['pred_xstart'] # predicted_xstart = model_output
         t0_mask = (t == 0)
         print(f"t0 mask: {t0_mask}")
-        exit()
+    
         t0_loss = mean_flat((x_start_mean - model_out_x_start) ** 2)
         terms["mse"] = th.where(t0_mask, t0_loss, terms["mse"])
 
         # tT_mask = (t == self.num_timesteps - 1)
+        # Get the distribution q(x_t | x_0).
         out_mean, _, _ = self.q_mean_variance(x_start, th.LongTensor([self.num_timesteps - 1]).to(x_start.device))
         tT_loss =  mean_flat(out_mean ** 2)
         #print(f"x_start: {x_start.shape}, x_t: {x_t.shape}, model_out_x_start: {model_out_x_start.shape}, out_mean: {out_mean.shape}")
