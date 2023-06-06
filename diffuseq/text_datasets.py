@@ -166,6 +166,13 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
         desc=f"merge and mask",
     )
     
+    print(tokenized_datasets, 'merged dataset')
+    print(tokenized_datasets["input_ids"])
+    print(tokenized_datasets["input_ids"][0])
+    print(tokenized_datasets["input_mask"])
+    print(tokenized_datasets["input_mask"][0])
+    exit
+    
     def pad_function(group_lst):
         max_length = seq_len
         group_lst['input_ids'] = _collate_batch_helper(group_lst['input_ids'], vocab_dict.pad_token_id, max_length)
