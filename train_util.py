@@ -269,6 +269,7 @@ class TrainLoop:
             # t -> tensor of timesteps e.g. [1793, 2027,  897, 2192, 1736]
             # w -> tensor of weight starting with [1. 1. 1. 1. 1.]
             t, weights = self.schedule_sampler.sample(micro.shape[0], dist_util.dev())
+            
             if self.step % 10 == 0:
                 print("TIMESTEPS:")
                 print(t)
@@ -454,6 +455,7 @@ def log_loss_dict(diffusion, ts, losses):
         logger.logkv_mean(key, values.mean().item())
         # Log the quantiles (four quartiles, in particular).
         for sub_t, sub_loss in zip(ts.cpu().numpy(), values.detach().cpu().numpy()):
+            # TODO: check this
             quartile = int(4 * sub_t / diffusion.num_timesteps)
             logger.logkv_mean(f"{key}_q{quartile}", sub_loss)
 

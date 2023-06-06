@@ -586,7 +586,7 @@ class GaussianDiffusion:
         else:
             # microbatch time 0 (tensor([0, 0, 0...]))
             decoder_nll = decoder_nll.mean(dim=-1)
-        exit()
+
         return decoder_nll
 
     def _x0_helper(self, model_output, x, t):
@@ -671,7 +671,6 @@ class GaussianDiffusion:
         
         # [false false false]
         t0_mask = (t == 0)
-        print(f"t0 mask: {t0_mask}")
     
         t0_loss = mean_flat((x_start_mean - model_out_x_start) ** 2)
         terms["mse"] = th.where(t0_mask, t0_loss, terms["mse"])
