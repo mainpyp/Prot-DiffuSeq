@@ -194,8 +194,6 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
     print('#'*30, '\nLoading dataset {} from {}...'.format(data_args.dataset, data_args.data_dir))
     
     sentence_lst = {'src':[], 'trg': []}
-    if split == 'test':
-        sentence_lst = {'src':[], 'trg': [], 'af_id': []}
 
     if split == 'train':
         print('### Loading form the TRAIN set...')
