@@ -195,7 +195,7 @@ class TrainLoop:
                 elapsed_time = end_time - start_time
                 # estimated time for 1000 steps
                 
-                print(f'step {self.step} in {elapsed_time:.3f} sec, est. 1000 steps: {(elapsed_time*100) / 60:.3f} min, est. next ckpt: {elapsed_time * (((self.save_interval - self.step) / 10) / 60):.3f} min')
+                print(f'step {self.step} in {elapsed_time:.3f} sec, est. 1000 steps: {(elapsed_time*100) / 60:.3f} min, est. next ckpt: {elapsed_time * (((self.save_interval - (self.step % self.save_interval)) / 10) / 60):.3f} min')
                 start_time = time.time()
                 
             self.run_step(batch, cond)
@@ -267,6 +267,10 @@ class TrainLoop:
             last_batch = (i + self.microbatch) >= batch.shape[0]
             
             t, weights = self.schedule_sampler.sample(micro.shape[0], dist_util.dev())
+            print(t)
+            print("\nWEIGHTS:")
+            print(weights)
+            exit()
             # print(micro_cond.keys())
             compute_losses = functools.partial(
                 self.diffusion.training_losses,
