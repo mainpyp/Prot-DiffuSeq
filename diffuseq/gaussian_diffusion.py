@@ -258,9 +258,13 @@ class GaussianDiffusion:
         )
 
         if mask == None:
+            print("MASK IS NONE FUUUUUUUQ")
             return x_t
         else:
             mask = th.broadcast_to(mask.unsqueeze(dim=-1), x_start.shape)
+            print("MASK IS NOT NONE")
+            print(mask.shape)
+            print(mask[0])
             return th.where(mask==0, x_start, x_t)
 
     def q_posterior_mean_variance(self, x_start, x_t, t):
@@ -562,6 +566,8 @@ class GaussianDiffusion:
         loss_fct = th.nn.CrossEntropyLoss(reduction='none')
         print("CROSS ENTROPY INPUT")
         print(logits.view(-1, logits.size(-1)),"\n", logits.view(-1, logits.size(-1))[1] ,"\n\n\n" ,input_ids.view(-1), "\n", input_ids.view(-1)[0])
+        
+        # this is 0 from the beginning... why?
         decoder_nll = loss_fct(logits.view(-1, logits.size(-1)), input_ids.view(-1)).view(input_ids.shape)
         print("DECODER NLL")
         print(decoder_nll[0])
