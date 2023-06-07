@@ -101,6 +101,7 @@ class TransformerNetModel(nn.Module):
         elif init_pretrained == 'no':
             # BERT 
             self.input_transformers = BertEncoder(config)
+            print(config)
 
             self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
             self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
