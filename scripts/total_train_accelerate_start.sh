@@ -1,0 +1,15 @@
+accelerate launch --multi_gpu run_train.py \
+	--diff_steps 2000 \
+	--lr 0.0001 \
+	--learning_steps 1000001 \
+	--save_interval 1000 \
+	--seed 102 \
+	--noise_schedule sqrt \
+	--hidden_dim 1024 \
+	--bsz 1024 \
+	--dataset ProtTotal \
+	--data_dir datasets/ProtTotal \
+	--vocab protbert \
+	--seq_len 256 \
+	--schedule_sampler lossaware \
+	--notes ProtTotalFinalRunAccelerate
