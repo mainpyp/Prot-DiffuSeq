@@ -43,15 +43,15 @@ class TransformerNetModel(nn.Module):
         super().__init__()
 
         if config is None:
-            print(f"Using {config} for TransformerNetModel")
-            config = AutoConfig.from_pretrained(config_name)
-            config.hidden_dropout_prob = dropout
-            
-            # print("config is none (TransformerNetModel) loading default RoFormer config...")
-            # config = RoFormerConfig()
+            # print(f"Using {config} for TransformerNetModel")
+            # config = AutoConfig.from_pretrained(config_name)
             # config.hidden_dropout_prob = dropout
-            # config.num_hidden_layers = 12
-            # config.num_attention_heads = 12
+            
+            print("config is none (TransformerNetModel) loading default RoFormer config...")
+            config = RoFormerConfig()
+            config.hidden_dropout_prob = dropout
+            config.num_hidden_layers = 12
+            config.num_attention_heads = 12
             
 
         self.input_dims = input_dims
