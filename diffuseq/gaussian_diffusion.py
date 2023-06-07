@@ -683,10 +683,9 @@ class GaussianDiffusion:
         #print(f"input ids shape: {input_ids_x.shape}")
         #print(f"input ids: {input_ids_x[0]}")
         decoder_nll = self._token_discrete_loss(x_start, get_logits, input_ids_x) # embedding regularization
-        # CrossEntropyLoss
+        # CrossEntropyLoss over the masked tokens. So only over the noised tokens
         terms["nll"] = self._token_discrete_loss(model_out_x_start, get_logits, input_ids_x, mask=input_ids_mask, truncate=True, t=t) # x_0->model_out_x_start
         # assert (model.lm_head.weight == model.word_embedding.weight).all()
-        print(decoder_nll)
         terms["loss"] = terms["mse"] + decoder_nll + tT_loss
         #terms["loss"] = terms["mse"] + tT_loss
         

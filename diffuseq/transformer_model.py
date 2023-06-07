@@ -50,8 +50,8 @@ class TransformerNetModel(nn.Module):
             print("config is none (TransformerNetModel) loading default RoFormer config...")
             config = RoFormerConfig()
             config.hidden_dropout_prob = dropout
-            config.num_hidden_layers = 2
-            config.num_attention_heads = 2
+            config.num_hidden_layers = 32
+            config.num_attention_heads = 24
             
 
         self.input_dims = input_dims

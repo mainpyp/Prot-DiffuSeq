@@ -104,9 +104,7 @@ def get_weights(model, args):
         input_embs = model.transformer.wte  # input_embs
         down_proj = model.down_proj
         model_emb = down_proj(input_embs.weight)
-        print(model_emb.shape)
         model = torch.nn.Embedding(model_emb.size(0), model_emb.size(1))
-        print(args.emb_scale_factor)
         model.weight.data = model_emb * args.emb_scale_factor
 
     elif hasattr(model, 'weight'):
