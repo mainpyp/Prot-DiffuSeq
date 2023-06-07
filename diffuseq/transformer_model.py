@@ -100,28 +100,28 @@ class TransformerNetModel(nn.Module):
 
         elif init_pretrained == 'no':
             # BERT 
-            self.input_transformers = BertEncoder(config)
-            print(config)
-
-            self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
-            self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
-            self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
-        
-            
-            # To use RoFormer
-            # print('initializing ROFORMER from scratch...')
-            # self.input_transformers = RoFormerEncoder(config)
-            # # this was og: self.input_transformers = BertEncoder(config)
+            # self.input_transformers = BertEncoder(config)
             # print(config)
 
             # self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
-            # # We are using RoFormer pos. embs.
-            # # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
-            # print(f"USING RoFormerSinusoidalPositionalEmbedding")
-            # self.position_embeddings = RoFormerSinusoidalPositionalEmbedding(
-            #                             config.max_position_embeddings,
-            #                             config.hidden_size)
+            # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
             # self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
+        
+            
+            # To use RoFormer
+            print('initializing ROFORMER from scratch...')
+            self.input_transformers = RoFormerEncoder(config)
+            # this was og: self.input_transformers = BertEncoder(config)
+            print(config)
+
+            self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
+            # We are using RoFormer pos. embs.
+            # self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
+            print(f"USING RoFormerSinusoidalPositionalEmbedding")
+            self.position_embeddings = RoFormerSinusoidalPositionalEmbedding(
+                                        config.max_position_embeddings,
+                                        config.hidden_size)
+            self.LayerNorm = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
         
         else:
             assert False, "invalid type of init_pretrained"
@@ -172,7 +172,7 @@ class TransformerNetModel(nn.Module):
         position_ids = self.position_ids[:, : seq_length ]
         
         # Before it was just postion_ids (RoFormer fix)
-        emb_inputs = self.position_embeddings(position_ids) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
+        emb_inputs = self.position_embeddings(position_ids[0]) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
         
         emb_inputs = self.dropout(self.LayerNorm(emb_inputs))
 
