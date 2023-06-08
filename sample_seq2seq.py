@@ -137,9 +137,6 @@ def main():
         af_ids=af_ids
     )
     
-    print(data_valid)
-    exit()
-    
     model, data_valid = accelerator.prepare(model, data_valid)
 
     start_t = time.time()
@@ -154,7 +151,6 @@ def main():
             # input_ids shape: 50 (batch size), 256 (hidden dim)
             # we have the embeddings of n_batch_size sequences 
             batch, cond = next(data_valid)
-            print(len(cond))   
     
             # Split data per nodes
             if idx % world_size == rank:  
@@ -178,14 +174,16 @@ def main():
         print("RANK != 0")
         iterator = iter(all_test_data)
         
-    exit()
 
     for cond in iterator:
         if not cond:  # Barrier for Remainder
             for i in range(world_size):
                 dist.barrier()
             continue
-
+        
+        print(cond)
+        exit()
+        
         input_ids_x = cond.pop('input_ids').to(dist_util.dev())
         x_start = model.get_embeds(input_ids_x)
         input_ids_mask = cond.pop('input_mask')
