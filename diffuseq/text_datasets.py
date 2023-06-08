@@ -115,8 +115,6 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
         print("#"*72)
          
         raw_datasets = Dataset2.from_dict(sentence_lst)
-        del sentence_lst
-        gc.collect()
         
         print(raw_datasets)
         print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
@@ -138,6 +136,9 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
         
         if "af_ids" in sentence_lst.keys():
             tokenized_datasets.add_column("af_id", sentence_lst["af_ids"])
+        
+        del sentence_lst
+        gc.collect()
         
         
         
