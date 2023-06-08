@@ -121,7 +121,7 @@ def main():
     
     # Prepare af_id lookup dictionary, each af_id gets mapped to unique integer id
     if args.split == 'test':
-        path = f'{data_args.data_dir}/test.jsonl'
+        path = f'{args.data_dir}/test.jsonl'
         af_ids = []
         with open(path, 'r') as f: 
             for line in f:
