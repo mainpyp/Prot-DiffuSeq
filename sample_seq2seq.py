@@ -247,7 +247,7 @@ def main():
                 # The dataset is split into batches, so the length of the word_lst_recover is 50
                 print(f"i: {i}, rank: {rank}")
                 for (recov, ref, src, af_id) in zip(word_lst_recover, word_lst_ref, word_lst_source, cond["af_ids_int"]):
-                    print(json.dumps({"recover": recov, "reference": ref, "source": src, "af_id": af_ids_lookup(int(af_id))}), file=fout)
+                    print(json.dumps({"recover": recov, "reference": ref, "source": src, "af_id": int(af_id)}), file=fout)
                 fout.close()
             dist.barrier()
 

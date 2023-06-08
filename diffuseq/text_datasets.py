@@ -227,7 +227,6 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
                 af_ids.append(line['af_id'].strip())
 
     # create af id lookup dict, each id gets a unique int
-    global af_ids_lookup
     af_ids_lookup = {af_id: idx for idx, af_id in enumerate(af_ids)}
     af_ids_int = [af_ids_lookup[af_id] for af_id in af_ids]
     
