@@ -119,6 +119,9 @@ def main():
     print(len(af_ids))
     print(f"WORLD SIZE: {world_size}") 
     print(f"RANK: {rank}")
+    import datasets
+    print("### Dataset version:")
+    print(datasets.__version__)
     
     print(f"### Sampling...on {args.split}")
     ##### DATA #####
