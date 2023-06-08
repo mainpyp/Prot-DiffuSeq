@@ -182,6 +182,8 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
         desc=f"padding",
     )
     
+    print(lm_datasets)
+    
     print(lm_datasets, 'padded dataset')
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
 
