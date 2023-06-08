@@ -119,6 +119,19 @@ def main():
         loop=False
     )
     
+    # Prepare af_id lookup dictionary, each af_id gets mapped to unique integer id
+    if args.split == 'test':
+        path = f'{data_args.data_dir}/test.jsonl'
+        af_ids = []
+        with open(path, 'r') as f: 
+            for line in f:
+                af_ids.append(json.loads(line)['af_id'])
+        af_ids_lookup = {af_id: idx for idx, af_id in enumerate(af_ids)}
+    
+    print(af_ids_lookup)
+    exit()
+        
+    
     model, data_valid = accelerator.prepare(model, data_valid)
 
     start_t = time.time()
@@ -151,9 +164,7 @@ def main():
     if rank == 0:
         from tqdm import tqdm
         iterator = tqdm(all_test_data)
-        print("RANK 0")
     else:
-        print("RANK != 0")
         iterator = iter(all_test_data)
         
 
