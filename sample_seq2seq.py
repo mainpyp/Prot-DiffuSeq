@@ -42,6 +42,24 @@ def create_argparser():
 def main():
     args = create_argparser().parse_args()
     accelerator = Accelerator()
+    
+    # set output dir and file name
+    # skips the generation if the file already exists
+    model_base_name = os.path.basename(os.path.split(args.model_path)[0]) + f'.{os.path.split(args.model_path)[1]}'
+    out_dir = os.path.join(args.out_dir, f"{model_base_name.split('.ema')[0]}")
+    if not os.path.isdir(out_dir):
+        os.mkdir(out_dir)
+
+    out_path = os.path.join(out_dir, f"ema{model_base_name.split('.ema')[1]}.samples")
+    if not os.path.isdir(out_path):
+        os.mkdir(out_path)
+    out_path = os.path.join(out_path, f"seed{args.seed2}_step{args.clamp_step}.json")
+    
+    if os.path.isfile(out_path):
+        print("### File already exists. Please delete it first if you want to force generation.")
+        return
+
+    print("### Generation will be saved to:\n", out_path)
 
     # dist_util.setup_dist()
     logger.configure()
@@ -52,7 +70,7 @@ def main():
     # load configurations.
     config_path = os.path.join(os.path.split(args.model_path)[0], "training_args.json")
     print(config_path)
-    # sys.setdefaultencoding('utf-8')
+
     with open(config_path, 'rb', ) as f:
         training_args = json.load(f)
     training_args['batch_size'] = args.batch_size
@@ -66,6 +84,7 @@ def main():
     )
 
     state_dict = dist_util.load_state_dict(args.model_path, map_location="cpu")
+    
     # because of DDP to accelerate, the model is wrapped by DDP, so we need to remove the "module." prefix
     state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
     model.load_state_dict(
@@ -101,25 +120,22 @@ def main():
         loop=False
     )
     
+    # Get AF IDs from test dataset
+    dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
+    logger.log(f"Extracting AF IDs")
+    af_ids = []
+    with open(dataset_dir, 'r') as f:
+        for line in f:
+            assert "af_id" in line, "Dataset does not contain af_id. Aborting..."
+            af_ids.append(json.loads(line)["af_id"])
+    print(af_ids)
+    print(len(af_ids))
+    print(f"WORLD SIZE: {world_size}") 
+    print(f"RANK: {rank}")
+    
     model, data_valid = accelerator.prepare(model, data_valid)
 
     start_t = time.time()
-
-    model_base_name = os.path.basename(os.path.split(args.model_path)[0]) + f'.{os.path.split(args.model_path)[1]}'
-    out_dir = os.path.join(args.out_dir, f"{model_base_name.split('.ema')[0]}")
-    if not os.path.isdir(out_dir):
-        os.mkdir(out_dir)
-
-    out_path = os.path.join(out_dir, f"ema{model_base_name.split('.ema')[1]}.samples")
-    if not os.path.isdir(out_path):
-        os.mkdir(out_path)
-    out_path = os.path.join(out_path, f"seed{args.seed2}_step{args.clamp_step}.json")
-    
-    print("### Generation will be saved to:\n", out_path)
-    
-    if os.path.isfile(out_path):
-        print("### File already exists. Please delete it first if you want to force generation.")
-        return
 
     all_test_data = []
 
@@ -131,6 +147,7 @@ def main():
             # input_ids shape: 50 (batch size), 256 (hidden dim)
             # we have the embeddings of n_batch_size sequences 
             batch, cond = next(data_valid)
+            print(len(cond))   
     
             # Split data per nodes
             if idx % world_size == rank:  
@@ -139,7 +156,7 @@ def main():
 
     except StopIteration:
         print('### End of reading iteration...')
-
+    print(len(all_test_data))
     # model_emb.to(dist_util.dev())
 
     if idx % world_size and rank >= idx % world_size:
@@ -149,8 +166,12 @@ def main():
     if rank == 0:
         from tqdm import tqdm
         iterator = tqdm(all_test_data)
+        print("RANK 0")
     else:
+        print("RANK != 0")
         iterator = iter(all_test_data)
+        
+    exit()
 
     for cond in iterator:
         if not cond:  # Barrier for Remainder
@@ -247,39 +268,6 @@ def main():
             dist.barrier()
 
     logger.log(f'### Written the decoded output to: {out_path}')
-        
-    # Get AF IDs from test dataset
-    dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
-    logger.log(f"Extracting AF IDs")
-    af_ids = []
-    contains_af_id = True
-    with open(dataset_dir, 'r') as f:
-        for line in f:
-            if "af_id" not in line:
-                logger.log(f"Dataset does not contain af_id. Aborting...")
-                contains_af_id = False
-                break
-            af_ids.append(json.loads(line)["af_id"])
-    
-    if contains_af_id:
-        assert os.path.isfile(out_path), f"Output file {out_path} does not exist"
-        with open(out_path, 'r') as f:
-            lines = f.readlines()
-            lines = [json.loads(line) for line in lines]
-
-            if not len(lines) == len(af_ids): 
-                print(f"CAUTION: Number of lines ({len(lines)}) does not match number of af_ids ({len(af_ids)})")
-            
-            for line in lines:
-                line["af_id"] = af_ids.pop(0)
-
-        with open(out_path, 'w') as f:
-            # converts to string
-            lines = [json.dumps(line) + "\n" for line in lines]
-            f.writelines(lines)
-        logger.log(f'### Written the decoded output with af ids to {out_path}')
-    else:
-        print("No af_id found in dataset. Skipping extraction of af_ids")
     print('### Total takes {:.2f}s .....'.format(time.time() - start_t))
     
 
