@@ -22,7 +22,7 @@ def load_data_text(
     split='train', 
     loaded_vocab=None,
     loop=True,
-    af_ids=None,
+    af_ids_int=None,
 ):
     """
     For a dataset, create a generator over (seqs, kwargs) pairs.
@@ -134,8 +134,8 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
             desc="Running tokenizer on dataset",
         )
         
-        if "af_ids" in sentence_lst.keys():
-            tokenized_datasets.add_column("af_id", sentence_lst["af_ids"])
+        if "af_ids_int" in sentence_lst.keys():
+            tokenized_datasets.add_column("af_ids_int", sentence_lst["af_ids_int"])
         
         del sentence_lst
         gc.collect()
@@ -219,6 +219,7 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
         assert False, "invalid split for dataset"
 
 
+    af_ids = []
     with open(path, 'r') as f_reader:
         for index, row in tqdm.tqdm(enumerate(f_reader)):
             line = json.loads(row)
@@ -226,12 +227,17 @@ def get_corpus(data_args, seq_len, split='train', loaded_vocab=None):
             sentence_lst['trg'].append(line['trg'].strip())
             if 'af_id' in line.keys():
                 # check if af in sentence_lst and if not add it
-                if 'af_id' not in sentence_lst.keys():
-                    sentence_lst['af_id'] = []
-                sentence_lst['af_id'].append(line['af_id'].strip())
+                af_ids.append(line['af_id'].strip())
 
-    if "af_id" in sentence_lst.keys():
-        print('### Data samples...\n', sentence_lst['src'][:2], sentence_lst['trg'][:2], sentence_lst['af_id'][:2])
+    # create af id lookup dict, each id gets a unique int
+    af_ids_lookup = {af_id: idx for idx, af_id in enumerate(af_ids)}
+    af_ids_int = [af_ids_lookup[af_id] for af_id in af_ids]
+    
+    if len(af_ids_int) > 0:
+        sentence_lst['af_ids_int'] = af_ids_int
+    
+    if "af_ids_int" in sentence_lst.keys():
+        print('### Data samples...\n', sentence_lst['src'][:2], sentence_lst['trg'][:2], sentence_lst['af_ids_int'][:2])
     else:
         print('### Data samples...\n', sentence_lst['src'][:2], sentence_lst['trg'][:2])
         

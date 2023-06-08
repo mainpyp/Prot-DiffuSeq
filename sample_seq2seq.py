@@ -105,20 +105,6 @@ def main():
     ).eval().requires_grad_(False)
 
     set_seed(args.seed2)
-
-
-    # Get AF IDs from test dataset
-    dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
-    logger.log(f"Extracting AF IDs")
-    af_ids = []
-    with open(dataset_dir, 'r') as f:
-        for line in f:
-            assert "af_id" in line, "Dataset does not contain af_id. Aborting..."
-            af_ids.append(json.loads(line)["af_id"])
-    
-    # lookup dict for af_ids, each af_id is mapped to an integer
-    af_ids_lookup = {af_id: idx for idx, af_id in enumerate(af_ids)}
-    af_ids_int = [af_ids_lookup[af_id] for af_id in af_ids]
     
     print(f"### Sampling...on {args.split}")
     ##### DATA #####
@@ -130,8 +116,7 @@ def main():
         split=args.split,
         loaded_vocab=tokenizer,
         model_emb=model_emb.cpu(),  # using the same embedding wight with tranining data
-        loop=False,
-        af_ids=af_ids_int
+        loop=False
     )
     
     model, data_valid = accelerator.prepare(model, data_valid)
