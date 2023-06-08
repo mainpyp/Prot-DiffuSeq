@@ -50,7 +50,7 @@ def load_data_text(
         data_args,
         model_emb=model_emb
     )
-
+    
     if split != 'test':
         sampler = DistributedSampler(dataset)
         data_loader = DataLoader(
@@ -182,8 +182,6 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
         desc=f"padding",
     )
     
-    print(lm_datasets)
-    
     print(lm_datasets, 'padded dataset')
     print(f"RAM used: {psutil.Process().memory_info().rss / (1024 * 1024):.2f} MB")
 
@@ -273,8 +271,8 @@ class TextDataset(Dataset):
             out_kwargs = {}
             out_kwargs['input_ids'] = np.array(self.text_datasets['train'][idx]['input_ids'])
             out_kwargs['input_mask'] = np.array(self.text_datasets['train'][idx]['input_mask'])
-            if 'af_id' in self.text_datasets['train'][idx].keys():
-                out_kwargs['af_id'] = np.array(self.text_datasets['train'][idx]['af_id'])
+            if 'af_ids_int' in self.text_datasets['train'][idx].keys():
+                out_kwargs['af_ids_int'] = np.array(self.text_datasets['train'][idx]['af_ids_int'])
 
             return arr, out_kwargs
 
