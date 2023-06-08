@@ -22,6 +22,7 @@ def load_data_text(
     split='train', 
     loaded_vocab=None,
     loop=True,
+    af_ids=None,
 ):
     """
     For a dataset, create a generator over (seqs, kwargs) pairs.
@@ -62,6 +63,9 @@ def load_data_text(
         
     else:
         print("TEST SET")
+        if af_ids:
+            dataset.add_column("af_id", af_ids)
+            
         data_loader = DataLoader(
             dataset,
             batch_size=batch_size,  # 20,

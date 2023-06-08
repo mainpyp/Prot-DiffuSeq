@@ -106,20 +106,7 @@ def main():
 
     set_seed(args.seed2)
 
-    print(f"### Sampling...on {args.split}")
 
-    ##### DATA #####
-    data_valid = load_data_text(
-        batch_size=args.batch_size,
-        seq_len=args.seq_len,
-        deterministic=True,
-        data_args=args,
-        split=args.split,
-        loaded_vocab=tokenizer,
-        model_emb=model_emb.cpu(),  # using the same embedding wight with tranining data
-        loop=False
-    )
-    
     # Get AF IDs from test dataset
     dataset_dir = os.path.join(args.data_dir, args.split + '.jsonl')
     logger.log(f"Extracting AF IDs")
@@ -132,6 +119,23 @@ def main():
     print(len(af_ids))
     print(f"WORLD SIZE: {world_size}") 
     print(f"RANK: {rank}")
+    
+    print(f"### Sampling...on {args.split}")
+    ##### DATA #####
+    data_valid = load_data_text(
+        batch_size=args.batch_size,
+        seq_len=args.seq_len,
+        deterministic=True,
+        data_args=args,
+        split=args.split,
+        loaded_vocab=tokenizer,
+        model_emb=model_emb.cpu(),  # using the same embedding wight with tranining data
+        loop=False,
+        af_ids=af_ids
+    )
+    
+    print(data_valid)
+    exit()
     
     model, data_valid = accelerator.prepare(model, data_valid)
 
