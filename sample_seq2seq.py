@@ -163,9 +163,6 @@ def main():
                 dist.barrier()
             continue
         
-        print(cond)
-        exit()
-        
         input_ids_x = cond.pop('input_ids').to(dist_util.dev())
         x_start = model.get_embeds(input_ids_x)
         input_ids_mask = cond.pop('input_mask')
@@ -249,8 +246,8 @@ def main():
                 fout = open(out_path, 'a')  # appends to file    
                 # The dataset is split into batches, so the length of the word_lst_recover is 50
                 print(f"i: {i}, rank: {rank}")
-                for (recov, ref, src) in zip(word_lst_recover, word_lst_ref, word_lst_source):
-                    print(json.dumps({"recover": recov, "reference": ref, "source": src}), file=fout)
+                for (recov, ref, src, af_id) in zip(word_lst_recover, word_lst_ref, word_lst_source, cond["af_ids_int"]):
+                    print(json.dumps({"recover": recov, "reference": ref, "source": src, "af_id": af_id}), file=fout)
                 fout.close()
             dist.barrier()
 
