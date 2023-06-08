@@ -126,11 +126,7 @@ def main():
         with open(path, 'r') as f: 
             for line in f:
                 af_ids.append(json.loads(line)['af_id'])
-        af_ids_lookup = {af_id: idx for idx, af_id in enumerate(af_ids)}
-    
-    print(af_ids_lookup)
-    exit()
-        
+        af_ids_lookup = {idx: af_id for idx, af_id in enumerate(af_ids)}
     
     model, data_valid = accelerator.prepare(model, data_valid)
 
@@ -258,7 +254,7 @@ def main():
                 # The dataset is split into batches, so the length of the word_lst_recover is 50
                 print(f"i: {i}, rank: {rank}")
                 for (recov, ref, src, af_id) in zip(word_lst_recover, word_lst_ref, word_lst_source, cond["af_ids_int"]):
-                    print(json.dumps({"recover": recov, "reference": ref, "source": src, "af_id": int(af_id)}), file=fout)
+                    print(json.dumps({"recover": recov, "reference": ref, "source": src, "af_id": af_ids_lookup[int(af_id)]}), file=fout)
                 fout.close()
             dist.barrier()
 
