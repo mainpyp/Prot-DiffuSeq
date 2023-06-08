@@ -44,8 +44,6 @@ def load_data_text(
 
     training_data = get_corpus(data_args, seq_len, split=split, loaded_vocab=loaded_vocab)
     print("TEST SET")
-    if af_ids:
-        training_data.add_column("af_id", af_ids)
 
     dataset = TextDataset(
         training_data,
@@ -137,6 +135,9 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
             remove_columns=['src', 'trg'],
             desc="Running tokenizer on dataset",
         )
+        
+        if "af_ids" in sentence_lst.keys():
+            tokenized_datasets.add_column("af_id", sentence_lst["af_ids"])
         
         
         
