@@ -43,6 +43,9 @@ def load_data_text(
     print('#'*30, '\nLoading text data...')
 
     training_data = get_corpus(data_args, seq_len, split=split, loaded_vocab=loaded_vocab)
+    print("TEST SET")
+    if af_ids:
+        dataset.add_column("af_id", af_ids)
 
     dataset = TextDataset(
         training_data,
@@ -62,10 +65,6 @@ def load_data_text(
         )
         
     else:
-        print("TEST SET")
-        if af_ids:
-            dataset.add_column("af_id", af_ids)
-            
         data_loader = DataLoader(
             dataset,
             batch_size=batch_size,  # 20,
@@ -267,6 +266,8 @@ class TextDataset(Dataset):
             out_kwargs = {}
             out_kwargs['input_ids'] = np.array(self.text_datasets['train'][idx]['input_ids'])
             out_kwargs['input_mask'] = np.array(self.text_datasets['train'][idx]['input_mask'])
+            if 'af_id' in self.text_datasets['train'][idx].keys():
+                out_kwargs['af_id'] = np.array(self.text_datasets['train'][idx]['af_id'])
 
             return arr, out_kwargs
 
