@@ -134,9 +134,6 @@ def helper_tokenize(sentence_lst, vocab_dict, seq_len, preload: bool = True, spl
             desc="Running tokenizer on dataset",
         )
         
-        if "af_ids_int" in sentence_lst.keys():
-            tokenized_datasets.add_column("af_ids_int", sentence_lst["af_ids_int"])
-        
         del sentence_lst
         gc.collect()
         
