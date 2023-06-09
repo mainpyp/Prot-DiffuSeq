@@ -112,8 +112,7 @@ class TransformerNetModel(nn.Module):
             print('initializing ROFORMER from scratch...')
             self.input_transformers = RoFormerEncoder(config)
             # this was og: self.input_transformers = BertEncoder(config)
-            print(config)
-
+            
             self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
             # We are using RoFormer pos. embs.
             # RoFormer already has sinusoidal positional embeddings per default
@@ -174,7 +173,7 @@ class TransformerNetModel(nn.Module):
         position_ids = self.position_ids[:, : seq_length ]
         
         # Before it was just postion_ids (RoFormer fix)
-        emb_inputs = self.input_transformer.embed_positions(position_ids[0]) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
+        emb_inputs = self.input_transformers.embed_positions(position_ids[0]) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
         
         emb_inputs = self.dropout(self.LayerNorm(emb_inputs))
 
