@@ -116,7 +116,7 @@ class TransformerNetModel(nn.Module):
 
             self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
             # We are using RoFormer pos. embs.
-            self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
+            #self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
             
             print(f"USING RoFormerSinusoidalPositionalEmbedding")
             # self.position_embeddings = RoFormerSinusoidalPositionalEmbedding(
