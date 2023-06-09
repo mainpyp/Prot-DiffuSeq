@@ -174,7 +174,8 @@ class TransformerNetModel(nn.Module):
         
         # Before it was just postion_ids (RoFormer fix)
         print(f"position_ids: {position_ids.shape}")
-        emb_inputs = self.position_embeddings(position_ids[0]) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
+        #emb_inputs = self.position_embeddings(position_ids[0]) + emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
+        emb_inputs = emb_x + emb_t.unsqueeze(1).expand(-1, seq_length, -1)
         
         emb_inputs = self.dropout(self.LayerNorm(emb_inputs))
 
