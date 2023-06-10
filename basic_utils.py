@@ -36,6 +36,13 @@ class myTokenizer():
             self.pad_token_id = tokenizer.pad_token_id
             # save
             tokenizer.save_pretrained(args.checkpoint_path)
+        elif args.vocab == 'lucid-prot':
+            tokenizer = AutoTokenizer.from_pretrained("adrianhenkel/lucid-prot-tokenizer")
+            self.tokenizer = tokenizer
+            self.sep_token_id = tokenizer.sep_token_id
+            self.pad_token_id = tokenizer.pad_token_id
+            # save
+            tokenizer.save_pretrained(args.checkpoint_path)
         else: 
             # load vocab from the path
             print('#'*30, 'load vocab from', args.vocab)
