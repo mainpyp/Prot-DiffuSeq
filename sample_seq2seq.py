@@ -239,8 +239,9 @@ def main():
 
         for seq, input_mask in zip(cands.indices, input_ids_mask_ori):
             len_x = args.seq_len - sum(input_mask).tolist()
-            print(f"Pre-decoding  {seq}")
+            print(f"Pre-decoding  {seq.tolist()}")
             tokens = tokenizer.decode_token(seq[len_x:])
+            print(tokens)
             word_lst_recover.append(tokens)
 
         for seq, input_mask in zip(input_ids_x, input_ids_mask_ori):
