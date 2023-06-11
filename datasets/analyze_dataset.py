@@ -41,7 +41,7 @@ def get_column_counter(series:pd.Series) -> Counter:
     """Get the Counter of a pandas Series"""
     c = Counter()
     for s in series:
-        c.update(s)
+        c.update(s[:512])
     return c
 
 
@@ -65,6 +65,11 @@ def main(args):
     sns.histplot(train.length, bins=50, ax=ax1, alpha=0.8, stat='percent')
     sns.histplot(test.length, bins=50, ax=ax1, alpha=0.8, stat='percent')
     sns.histplot(valid.length, bins=50, ax=ax1, alpha=0.8, stat='percent')
+    
+    # add vertical line at 512 to show the truncation
+    ax1.axvline(512, color='red', linestyle='--', label='cutoff')
+    # add annotation to that line with the title cutoff and rotate it 90 degrees
+    ax1.annotate('cutoff', xy=(512, 0.5), xytext=(512, 10), rotation=270, color='red')
     
     from matplotlib.patches import Patch
     a = Patch([], [], color='#0673B2', label='train')
@@ -98,9 +103,13 @@ def main(args):
     scr_counter = scr_counter.sort_index()
     scr_counter[['train_norm', 'test_norm', 'valid_norm']].plot.bar(ax=ax2)
     
+    print(f"3Di source counter train: {scr_counter['train']}")
+    print(f"3Di source counter test: {scr_counter['test']}")
+    print(f"3Di source counter valid: {scr_counter['valid']}")
+    
     ax2.set_xlabel('3Di residue')
     ax2.set_ylabel('Percentage')
-    ax2.set_title('Distribution of 3Di residues in source sequences')
+    ax2.set_title('Distribution of 3Di residues after cutoff')
     ax2.get_legend().remove()
 
     # turn the xticks
@@ -129,9 +138,13 @@ def main(args):
     trg_counter = trg_counter.sort_index()
     trg_counter[['train_norm', 'test_norm', 'valid_norm']].plot.bar(ax=ax3)
     
+    print(f"AA target counter train: {trg_counter['train']}")
+    print(f"AA target counter test: {trg_counter['test']}")
+    print(f"AA target counter valid: {trg_counter['valid']}")
+    
     ax3.set_xlabel('Amino acid')
     ax3.set_ylabel('Percentage')
-    ax3.set_title('Distribution of amino acids in target sequences')
+    ax3.set_title('Distribution of amino acids after cutoff')
     # turn the xticks
     ax3.tick_params(axis='x', rotation=0)
     
@@ -150,7 +163,7 @@ if __name__ == '__main__':
     sns.set_palette(PALETTE)
     sns.set_style("whitegrid")
     # set seaborn font sizes to something readable
-    sns.set_context("paper", font_scale=1.5)
+    sns.set_context("paper", font_scale=2)
     
     args = parse_args()
     
