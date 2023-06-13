@@ -60,7 +60,7 @@ def foldseek(pdb_dir: str, out_aln:str, format_output: list):
     
     format_output = ','.join(format_output)
     
-    output_tmp = os.path.join(pdb_dir, "tmp")
+    output_tmp = pdb_dir + "_tmp"
     COMMAND = f'/mnt/home/mheinzinger/deepppi1tb/foldseek/foldseek_latest/foldseek/bin/foldseek easy-search ' \
             f'/mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ ' \
             f'{pdb_dir} ' \
