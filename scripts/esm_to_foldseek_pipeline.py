@@ -236,7 +236,7 @@ def compare_with_validation(aln_path: str, validation_path: str):
     
 
 if __name__ == "__main__":
-    input_path = "FINAL_GENERATIONS/"
+    input_path = "diffuseq_ProtMedium_h1024_lr0.0001_t2000_sqrt_lossaware_seed123_ProtMedium1MLsfRoFormerDebug20230610-18:32:34/"
     full_input_path = os.path.join("..", "generation_outputs", input_path)
     validate_directory(full_input_path)
     
