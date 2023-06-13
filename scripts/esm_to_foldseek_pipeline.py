@@ -53,7 +53,8 @@ def create_esm_prediction(path_to_fasta: str, pdb_path: str = None, pLDDT_path: 
 
 
 def foldseek(pdb_dir: str, out_aln:str, format_output: list):
-    if os.file.exists(out_aln):
+    # check if out_aln already exists
+    if os.path.exists(out_aln):
         print(f"Foldseek output {out_aln} already exists. Skipping foldseek.")
         return
     
@@ -133,6 +134,10 @@ if __name__ == "__main__":
     input_path = "FINAL_GENERATIONS/"
     full_input_path = os.path.join("..", "generation_outputs", input_path)
     validate_directory(full_input_path)
+    
+    generate_references()
+    
+    exit()
 
     checkpoints = get_checkpoints(full_input_path)
     for ckpt in checkpoints:
