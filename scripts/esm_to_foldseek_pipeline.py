@@ -2,6 +2,7 @@ import os
 import glob
 import matplotlib.pyplot as plt
 import pandas as pd
+# from PIL import Image
 
 def validate_directory(path: str, validation_file: str):
     if not os.path.isdir(path):
@@ -186,6 +187,13 @@ def compare_with_validation(aln_path: str, validation_path: str, format_output):
     ax4_n, _, _ = ax4.hist(df_rec["alntmscore"], bins=bins, color=color_rec, alpha=alpha, label="rec")
     ax5_n, _, _ = ax5.hist(df_rec["lddt"], bins=bins, color=color_rec, alpha=alpha, label="rec")
     
+    # fix x axis
+    ax1.set_xlim([0, 100])
+    # skip ax2
+    # skip ax3 bits
+    ax4.set_xlim([0, 1])
+    ax5.set_xlim([0, 1])
+    
     ax1.hist(df_ref["pident"], bins=bins, color=color_ref, alpha=alpha, label="ref")
     ax2.hist(df_ref["evalue"], bins=bins, color=color_ref, alpha=alpha, label="ref")
     ax3.hist(df_ref["bits"], bins=bins, color=color_ref, alpha=alpha, label="ref")
@@ -242,15 +250,26 @@ def compare_with_validation(aln_path: str, validation_path: str, format_output):
     plt.savefig(os.path.join(plot_output, f"{seed}_compare_plot.png"))
     print(f"Saved {os.path.join(plot_output, f'{seed}_compare_plot.png')}")
     plt.close()
-    
 
+
+def create_gif(full_input_path: str):
+    image_paths = glob.glob(full_input_path + "/**/**/*.png")
+    image_paths = sorted(image_paths, reverse=False)
+    frames = [Image.open(image_path) for image_path in image_paths]
+    frame_one = frames[0]
+    frame_one.save(full_input_path + "/generation_evolution.gif", format="GIF", append_images=frames[1:], save_all=True, duration=1000, loop=0)
+    
+    
 if __name__ == "__main__":
     input_path = "diffuseq_ProtMedium_h1024_lr0.0001_t2000_sqrt_lossaware_seed123_ProtMedium1MLsfRoFormerDebug20230610-18:32:34/"
-    full_input_path = os.path.join("..", "generation_outputs", input_path)
+    full_input_path = os.path.join("generation_outputs", input_path)
     
-    validation_file = os.path.join("..", "generation_outputs", "test_sequences", "val_AA_512_aln_parsed.m8")
+    validation_file = os.path.join("generation_outputs", "test_sequences", "val_AA_512_aln_parsed.m8")
     validate_directory(full_input_path, validation_file)
 
+    #create_gif(full_input_path)
+    #exit()
+    
     checkpoints = get_checkpoints(full_input_path)
     for ckpt in checkpoints:
         for fasta in get_fastas(ckpt):
