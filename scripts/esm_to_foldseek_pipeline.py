@@ -132,14 +132,116 @@ def generate_references():
     print("DONE CREATING REFERENCE PREDICTIONS")
 
 
+def compare_with_validation(aln_path: str, validation_path: str):
+    df_rec = pd.read_csv(aln_path, sep="\t", header=0)
+    df_ref = pd.read_csv(validation_path, sep="\t", header=0)
+    
+    # create five subplots the first 4 are equally sized and the last one is twice as big
+    # 
+    # 1st subplot: histogram of pident
+    # 2nd subplot: histogram of evalue
+    # 3rd subplot: histogram of bits
+    # 4th subplot: histogram of alntmscore
+    # 5th subplot: histogram of lddt        
+        
+    # Create the figure and axes
+    fig = plt.figure(figsize=(10, 12))
+    
+    # add title to figure
+    seed = aln_path.split("/")[-1].split("_")[0]
+    fig.suptitle(f"ckpt: {aln_path.split('/')[-2].replace('.pt.samples', '')} - {seed}", fontsize=16)
+
+    # Define the layout
+    ax1 = plt.subplot2grid((3, 2), (0, 0))
+    ax2 = plt.subplot2grid((3, 2), (0, 1))
+    ax3 = plt.subplot2grid((3, 2), (1, 0))
+    ax4 = plt.subplot2grid((3, 2), (1, 1))
+    ax5 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
+
+    # Set the titles for each subplot (optional)
+    ax1.set_title('pident')
+    ax2.set_title('evalue')
+    ax3.set_title('bits')
+    ax4.set_title('alntmscore')
+    ax5.set_title('lddt')
+    
+    bins = 15
+    color_rec = "green"
+    color_ref = "orange"
+    text_color = "black"
+    alpha = 0.5
+    
+    ax1_n, _, _ = ax1.hist(df_rec["pident"], bins=bins, color=color_rec, alpha=alpha, label="rec")
+    ax2_n, _, _ = ax2.hist(df_rec["evalue"], bins=bins, color=color_rec, alpha=alpha, label="rec")
+    ax3_n, _, _ = ax3.hist(df_rec["bits"], bins=bins, color=color_rec, alpha=alpha, label="rec")
+    ax4_n, _, _ = ax4.hist(df_rec["alntmscore"], bins=bins, color=color_rec, alpha=alpha, label="rec")
+    ax5_n, _, _ = ax5.hist(df_rec["lddt"], bins=bins, color=color_rec, alpha=alpha, label="rec")
+    
+    ax1.hist(df_ref["pident"], bins=bins, color=color_ref, alpha=alpha, label="ref")
+    ax2.hist(df_ref["evalue"], bins=bins, color=color_ref, alpha=alpha, label="ref")
+    ax3.hist(df_ref["bits"], bins=bins, color=color_ref, alpha=alpha, label="ref")
+    ax4.hist(df_ref["alntmscore"], bins=bins, color=color_ref, alpha=alpha, label="ref")
+    ax5.hist(df_ref["lddt"], bins=bins, color=color_ref, alpha=alpha, label="ref")
+    
+    # adds mean and std to each subplot
+    ax1.axvline(df_rec["pident"].mean(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax1.axvline(df_ref["pident"].mean(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax2.axvline(df_rec["evalue"].mean(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax2.axvline(df_ref["evalue"].mean(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax3.axvline(df_rec["bits"].mean(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax3.axvline(df_ref["bits"].mean(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax4.axvline(df_rec["alntmscore"].mean(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax4.axvline(df_ref["alntmscore"].mean(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax5.axvline(df_rec["lddt"].mean(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax5.axvline(df_ref["lddt"].mean(), color=color_ref, linestyle='dashed', linewidth=1)
+    
+    # adds mean as text to each subplot next to each axvline and in the middle of the height of the histogram
+    
+    ax1_half = ax1_n.max() / 2
+    ax2_half = ax2_n.max() / 2
+    ax3_half = ax3_n.max() / 2
+    ax4_half = ax4_n.max() / 2
+    ax5_half = ax5_n.max() / 2
+    
+    ax1.text(df_rec["pident"].mean(), ax1_half, f"mean: {df_rec['pident'].mean():.2f}", rotation=90, color=text_color)
+    ax1.text(df_ref["pident"].mean(), ax1_half, f"mean: {df_ref['pident'].mean():.2f}", rotation=90, color=text_color)
+    ax2.text(df_rec["evalue"].mean(), ax2_half, f"mean: {df_rec['evalue'].mean():.2f}", rotation=90, color=text_color)
+    ax2.text(df_ref["evalue"].mean(), ax2_half, f"mean: {df_ref['evalue'].mean():.2f}", rotation=90, color=text_color)
+    ax3.text(df_rec["bits"].mean(), ax3_half, f"mean: {df_rec['bits'].mean():.2f}", rotation=90, color=text_color)
+    ax3.text(df_ref["bits"].mean(), ax3_half, f"mean: {df_ref['bits'].mean():.2f}", rotation=90, color=text_color)
+    ax4.text(df_rec["alntmscore"].mean(), ax4_half, f"mean: {df_rec['alntmscore'].mean():.2f}", rotation=90, color=text_color)
+    ax4.text(df_ref["alntmscore"].mean(), ax4_half, f"mean: {df_ref['alntmscore'].mean():.2f}", rotation=90, color=text_color)
+    ax5.text(df_rec["lddt"].mean(), ax5_half, f"mean: {df_rec['lddt'].mean():.2f}", rotation=90, color=text_color)
+    ax5.text(df_ref["lddt"].mean(), ax5_half, f"mean: {df_ref['lddt'].mean():.2f}", rotation=90, color=text_color)
+    
+    # add legend
+    ax1.legend()
+    ax2.legend()
+    ax3.legend()
+    ax4.legend()
+    ax5.legend()
+
+    # Adjust the spacing between subplots
+    plt.tight_layout()
+    
+   # export results
+    plot_output = os.path.split(aln_path)[0]  # removes last part of path
+    plot_output = os.path.join(plot_output, "plots")
+    if not os.path.isdir(plot_output):
+        os.makedirs(plot_output)
+        print(f"Created {plot_output}")
+    plt.savefig(os.path.join(plot_output, f"{seed}_compare_plot.png"))
+    print(f"Saved {os.path.join(plot_output, f'{seed}_compare_plot.png')}")
+    plt.close()
+    
+
 if __name__ == "__main__":
     input_path = "FINAL_GENERATIONS/"
     full_input_path = os.path.join("..", "generation_outputs", input_path)
     validate_directory(full_input_path)
     
-    generate_references()
-    
-    exit()
+    validation_file = os.path.join("..", "generation_outputs", "test_sequences", "val_AA_512_aln_parsed.m8")
+    assert os.path.isfile(validation_file), f'{validation_file} not found'
 
     checkpoints = get_checkpoints(full_input_path)
     for ckpt in checkpoints:
@@ -153,3 +255,6 @@ if __name__ == "__main__":
             output_tmp = fasta.replace(".fasta", "_tmpFolder")
             format_output = ["query", "target", "pident", "evalue", "bits", "alntmscore", "lddt"]
             foldseek(pdb_dir=pdb_path, out_aln=output_aln, format_output=format_output)
+            parse_m8(output_aln, format_output=format_output)
+            
+            compare_with_validation(output_aln, validation_file)
