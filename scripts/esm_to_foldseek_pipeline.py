@@ -131,9 +131,12 @@ def generate_references():
     print("DONE CREATING REFERENCE PREDICTIONS")
 
 
-def compare_with_validation(aln_path: str, validation_path: str):
+def compare_with_validation(aln_path: str, validation_path: str, format_output):
     df_rec = pd.read_csv(aln_path, sep="\t", header=0)
     df_ref = pd.read_csv(validation_path, sep="\t", header=0)
+    
+    df_rec.columns = format_output
+    df_ref.columns = format_output
     
     # create five subplots the first 4 are equally sized and the last one is twice as big
     # 
@@ -255,4 +258,4 @@ if __name__ == "__main__":
             foldseek(pdb_dir=pdb_path, out_aln=output_aln, format_output=format_output)
             parse_m8(output_aln, format_output=format_output)
             
-            compare_with_validation(output_aln, validation_file)
+            compare_with_validation(output_aln, validation_file, format_output=format_output)
