@@ -107,10 +107,13 @@ def parse_m8(m8_file: str, format_output: list, dry_run: bool=False):
         print(f"Write parsed m8 file to {parsed_file_path}")
         print(f"DF: {df.shape}")
         df.to_csv(parsed_file_path, sep="\t", header=True)
+        return parsed_file_path
     else:
         print("DRY RUN")
         print(f"DF: {df.head()}")
         print(f"DF: {df.shape}")
+        return None
+
         
         
 def generate_references():
@@ -134,6 +137,10 @@ def generate_references():
 def compare_with_validation(aln_path: str, validation_path: str, format_output):
     df_rec = pd.read_csv(aln_path, sep="\t", header=0)
     df_ref = pd.read_csv(validation_path, sep="\t", header=0)
+    
+    print(df_rec.head())
+    print(df_ref.head())
+    print(format_output)
     
     df_rec.columns = format_output
     df_ref.columns = format_output
@@ -256,6 +263,6 @@ if __name__ == "__main__":
             output_tmp = fasta.replace(".fasta", "_tmpFolder")
             format_output = ["query", "target", "pident", "evalue", "bits", "alntmscore", "lddt"]
             foldseek(pdb_dir=pdb_path, out_aln=output_aln, format_output=format_output)
-            parse_m8(output_aln, format_output=format_output)
+            parsed_file_path = parse_m8(output_aln, format_output=format_output)
             
-            compare_with_validation(output_aln, validation_file, format_output=format_output)
+            compare_with_validation(parsed_file_path, validation_file, format_output=format_output)
