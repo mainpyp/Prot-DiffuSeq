@@ -53,6 +53,10 @@ def create_esm_prediction(path_to_fasta: str, pdb_path: str = None, pLDDT_path: 
 
 
 def foldseek(pdb_dir: str, out_aln:str, format_output: list):
+    if os.file.exists(out_aln):
+        print(f"Foldseek output {out_aln} already exists. Skipping foldseek.")
+        return
+    
     output_tmp = os.path.join(pdb_dir, "tmp")
     COMMAND = f'/mnt/home/mheinzinger/deepppi1tb/foldseek/foldseek_latest/foldseek/bin/foldseek easy-search ' \
             f'/mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ ' \
@@ -85,7 +89,7 @@ def generate_truncated_reference_fastas(path_to_reference: str, original_length:
 
 
 
-def parse_m8(m8_file: str, dry_run: False):
+def parse_m8(m8_file: str, format_output: list, dry_run: bool=False):
     """Parses the m8 file from foldseek."""
     df = pd.read_csv(m8_file, sep="\t", header=None)
     df.columns = format_output
@@ -105,31 +109,31 @@ def parse_m8(m8_file: str, dry_run: False):
         print("DRY RUN")
         print(f"DF: {df.head()}")
         print(f"DF: {df.shape}")
+        
+        
+def generate_references():
+    """This was only done once"""
+    for i in [256, 512, 1024]:
+            reference_fasta = os.path.join("..", "generation_outputs", "test_sequences", f"val_AA_{i}.fasta")
+            assert os.path.isfile(reference_fasta), f'{reference_fasta} not found'
+            reference_pdb_path = reference_fasta.replace(".fasta", "_pdb")
+            reference_pLDDT_path = reference_fasta.replace(".fasta", "_esmfold_pLDDT.csv")
+            create_esm_prediction(path_to_fasta=reference_fasta, pdb_path=reference_pdb_path, pLDDT_path=reference_pLDDT_path)
+            
+            output_aln = reference_fasta.replace(".fasta", "_aln.m8")
+            format_output = ["query", "target", "pident", "evalue", "bits", "alntmscore", "lddt"]
+            foldseek(pdb_dir=reference_pdb_path, out_aln=output_aln, format_output=format_output)
+            
+            parse_m8(output_aln, format_output=format_output)
+        
+    print("DONE CREATING REFERENCE PREDICTIONS")
 
 
 if __name__ == "__main__":
     input_path = "FINAL_GENERATIONS/"
-    full_input_path = os.path.join("generation_outputs", input_path)
+    full_input_path = os.path.join("..", "generation_outputs", input_path)
     validate_directory(full_input_path)
-    
-    ### CREATE REFERENCE PREDICTIONS
-    
-    for i in [256, 512, 1024]:
-        reference_fasta = os.path.join("generation_outputs/test_sequences", f"val_AA_{i}.fasta")
-        assert os.path.isfile(reference_fasta), f'{reference_fasta} not found'
-        reference_pdb_path = reference_fasta.replace(".fasta", "_pdb")
-        reference_pLDDT_path = reference_fasta.replace(".fasta", "_esmfold_pLDDT.csv")
-        create_esm_prediction(path_to_fasta=reference_fasta, pdb_path=reference_pdb_path, pLDDT_path=reference_pLDDT_path)
-        
-        output_aln = reference_fasta.replace(".fasta", "_aln.m8")
-        format_output = ["query", "target", "pident", "evalue", "bits", "alntmscore", "lddt"]
-        foldseek(pdb_dir=reference_pdb_path, out_aln=output_aln, format_output=format_output)
-        
-        parse_m8(output_aln)
-    
-    print("DONE CREATING REFERENCE PREDICTIONS")
-    exit()
-    
+
     checkpoints = get_checkpoints(full_input_path)
     for ckpt in checkpoints:
         for fasta in get_fastas(ckpt):
