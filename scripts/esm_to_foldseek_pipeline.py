@@ -139,13 +139,6 @@ def compare_with_validation(aln_path: str, validation_path: str, format_output):
     df_rec = pd.read_csv(aln_path, sep="\t", header=0)
     df_ref = pd.read_csv(validation_path, sep="\t", header=0)
     
-    print(df_rec.head())
-    print(df_ref.head())
-    print(format_output)
-    
-    df_rec.columns = format_output
-    df_ref.columns = format_output
-    
     # create five subplots the first 4 are equally sized and the last one is twice as big
     # 
     # 1st subplot: histogram of pident
