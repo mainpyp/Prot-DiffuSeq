@@ -3,13 +3,12 @@ import glob
 import matplotlib.pyplot as plt
 import pandas as pd
 
-def validate_directory(path: str):
+def validate_directory(path: str, validation_file: str):
     if not os.path.isdir(path):
         raise FileNotFoundError(f"Path {path} does not exist.")
     
-    validation_fasta_path = os.path.join(path, "val_AA.fasta")
-    if not os.path.exists(validation_fasta_path):
-        raise FileNotFoundError(f"Path {validation_fasta_path} does not exist.")
+    if not os.path.isfile(validation_file):
+        raise FileNotFoundError(f"Validation file {validation_file} does not exist.")
     
     return path
     
@@ -238,10 +237,9 @@ def compare_with_validation(aln_path: str, validation_path: str):
 if __name__ == "__main__":
     input_path = "diffuseq_ProtMedium_h1024_lr0.0001_t2000_sqrt_lossaware_seed123_ProtMedium1MLsfRoFormerDebug20230610-18:32:34/"
     full_input_path = os.path.join("..", "generation_outputs", input_path)
-    validate_directory(full_input_path)
     
     validation_file = os.path.join("..", "generation_outputs", "test_sequences", "val_AA_512_aln_parsed.m8")
-    assert os.path.isfile(validation_file), f'{validation_file} not found'
+    validate_directory(full_input_path, validation_file)
 
     checkpoints = get_checkpoints(full_input_path)
     for ckpt in checkpoints:
