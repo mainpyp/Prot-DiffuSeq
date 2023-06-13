@@ -2,7 +2,7 @@ import os
 import glob
 import matplotlib.pyplot as plt
 import pandas as pd
-# from PIL import Image
+#from PIL import Image
 
 def validate_directory(path: str, validation_file: str):
     if not os.path.isdir(path):
@@ -135,6 +135,17 @@ def generate_references():
     print("DONE CREATING REFERENCE PREDICTIONS")
 
 
+def compute_RMSD(pdb_dir: str, out_rmsd: str):
+    assert os.path.isdir(pdb_dir), f"{pdb_dir} not found"
+    
+    COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ProSST5/scripts/compute_RMSD.py ' \
+            f'/mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ ' \
+            f'{pdb_dir} ' \
+            f'{out_rmsd} '
+    print("\n#### Running compute_RMSD.py:\n", COMMAND, "\n", "-"*50)
+    os.system(COMMAND)
+
+
 def compare_with_validation(aln_path: str, validation_path: str, format_output):
     df_rec = pd.read_csv(aln_path, sep="\t", header=0)
     df_ref = pd.read_csv(validation_path, sep="\t", header=0)
@@ -260,8 +271,8 @@ if __name__ == "__main__":
     validation_file = os.path.join("..", "generation_outputs", "test_sequences", "val_AA_512_aln_parsed.m8")
     validate_directory(full_input_path, validation_file)
 
-    #create_gif(full_input_path)
-    #exit()
+    # create_gif(full_input_path)
+    # exit()
     
     checkpoints = get_checkpoints(full_input_path)
     for ckpt in checkpoints:
@@ -278,3 +289,6 @@ if __name__ == "__main__":
             parsed_file_path = parse_m8(output_aln, format_output=format_output)
             
             compare_with_validation(parsed_file_path, validation_file, format_output=format_output)
+            
+            rmsd_file = fasta.replace(".fasta", "_val_EFvsAFDB_RMSDs.log")
+            compute_RMSD(pdb_path, rmsd_file)
