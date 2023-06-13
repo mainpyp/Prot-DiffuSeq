@@ -255,9 +255,9 @@ def create_gif(full_input_path: str):
     
 if __name__ == "__main__":
     input_path = "diffuseq_ProtMedium_h1024_lr0.0001_t2000_sqrt_lossaware_seed123_ProtMedium1MLsfRoFormerDebug20230610-18:32:34/"
-    full_input_path = os.path.join("generation_outputs", input_path)
+    full_input_path = os.path.join("..", "generation_outputs", input_path)
     
-    validation_file = os.path.join("generation_outputs", "test_sequences", "val_AA_512_aln_parsed.m8")
+    validation_file = os.path.join("..", "generation_outputs", "test_sequences", "val_AA_512_aln_parsed.m8")
     validate_directory(full_input_path, validation_file)
 
     #create_gif(full_input_path)
