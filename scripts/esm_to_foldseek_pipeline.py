@@ -2,7 +2,7 @@ import os
 import glob
 import matplotlib.pyplot as plt
 import pandas as pd
-#from PIL import Image
+# from PIL import Image
 
 def validate_directory(path: str, validation_file: str):
     if not os.path.isdir(path):
@@ -137,6 +137,9 @@ def generate_references():
 
 def compute_RMSD(pdb_dir: str, out_rmsd: str):
     assert os.path.isdir(pdb_dir), f"{pdb_dir} not found"
+    if os.path.isfile(out_rmsd):
+        print(f"WARNING: File {out_rmsd} already exists. Skipping RMSD computation.")
+        return
     
     COMMAND = f'python /mnt/home/mheinzinger/deepppi1tb/ProSST5/scripts/compute_RMSD.py ' \
             f'/mnt/home/mheinzinger/deepppi1tb/ProSST5/analysis_prosst5/reference_structures/AFDB/val/ ' \
@@ -205,16 +208,16 @@ def compare_with_validation(aln_path: str, validation_path: str, format_output):
     ax5.hist(df_ref["lddt"], bins=bins, color=color_ref, alpha=alpha, label="ref")
     
     # adds mean and std to each subplot
-    ax1.axvline(df_rec["pident"].mean(), color=color_rec, linestyle='dashed', linewidth=1)
-    ax1.axvline(df_ref["pident"].mean(), color=color_ref, linestyle='dashed', linewidth=1)
-    ax2.axvline(df_rec["evalue"].mean(), color=color_rec, linestyle='dashed', linewidth=1)
-    ax2.axvline(df_ref["evalue"].mean(), color=color_ref, linestyle='dashed', linewidth=1)
-    ax3.axvline(df_rec["bits"].mean(), color=color_rec, linestyle='dashed', linewidth=1)
-    ax3.axvline(df_ref["bits"].mean(), color=color_ref, linestyle='dashed', linewidth=1)
-    ax4.axvline(df_rec["alntmscore"].mean(), color=color_rec, linestyle='dashed', linewidth=1)
-    ax4.axvline(df_ref["alntmscore"].mean(), color=color_ref, linestyle='dashed', linewidth=1)
-    ax5.axvline(df_rec["lddt"].mean(), color=color_rec, linestyle='dashed', linewidth=1)
-    ax5.axvline(df_ref["lddt"].mean(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax1.axvline(df_rec["pident"].median(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax1.axvline(df_ref["pident"].median(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax2.axvline(df_rec["evalue"].median(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax2.axvline(df_ref["evalue"].median(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax3.axvline(df_rec["bits"].median(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax3.axvline(df_ref["bits"].median(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax4.axvline(df_rec["alntmscore"].median(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax4.axvline(df_ref["alntmscore"].median(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax5.axvline(df_rec["lddt"].median(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax5.axvline(df_ref["lddt"].median(), color=color_ref, linestyle='dashed', linewidth=1)
     
     # adds mean as text to each subplot next to each axvline and in the middle of the height of the histogram
     
@@ -224,16 +227,16 @@ def compare_with_validation(aln_path: str, validation_path: str, format_output):
     ax4_half = ax4_n.max() / 2
     ax5_half = ax5_n.max() / 2
     
-    ax1.text(df_rec["pident"].mean(), ax1_half, f"mean: {df_rec['pident'].mean():.2f}", rotation=90, color=text_color)
-    ax1.text(df_ref["pident"].mean(), ax1_half, f"mean: {df_ref['pident'].mean():.2f}", rotation=90, color=text_color)
-    ax2.text(df_rec["evalue"].mean(), ax2_half, f"mean: {df_rec['evalue'].mean():.2f}", rotation=90, color=text_color)
-    ax2.text(df_ref["evalue"].mean(), ax2_half, f"mean: {df_ref['evalue'].mean():.2f}", rotation=90, color=text_color)
-    ax3.text(df_rec["bits"].mean(), ax3_half, f"mean: {df_rec['bits'].mean():.2f}", rotation=90, color=text_color)
-    ax3.text(df_ref["bits"].mean(), ax3_half, f"mean: {df_ref['bits'].mean():.2f}", rotation=90, color=text_color)
-    ax4.text(df_rec["alntmscore"].mean(), ax4_half, f"mean: {df_rec['alntmscore'].mean():.2f}", rotation=90, color=text_color)
-    ax4.text(df_ref["alntmscore"].mean(), ax4_half, f"mean: {df_ref['alntmscore'].mean():.2f}", rotation=90, color=text_color)
-    ax5.text(df_rec["lddt"].mean(), ax5_half, f"mean: {df_rec['lddt'].mean():.2f}", rotation=90, color=text_color)
-    ax5.text(df_ref["lddt"].mean(), ax5_half, f"mean: {df_ref['lddt'].mean():.2f}", rotation=90, color=text_color)
+    ax1.text(df_rec["pident"].median(), ax1_half, f"median: {df_rec['pident'].median():.2f}", rotation=90, color=text_color)
+    ax1.text(df_ref["pident"].median(), ax1_half, f"median: {df_ref['pident'].median():.2f}", rotation=90, color=text_color)
+    ax2.text(df_rec["evalue"].median(), ax2_half, f"median: {df_rec['evalue'].median():.2f}", rotation=90, color=text_color)
+    ax2.text(df_ref["evalue"].median(), ax2_half, f"median: {df_ref['evalue'].median():.2f}", rotation=90, color=text_color)
+    ax3.text(df_rec["bits"].median(), ax3_half, f"median: {df_rec['bits'].median():.2f}", rotation=90, color=text_color)
+    ax3.text(df_ref["bits"].median(), ax3_half, f"median: {df_ref['bits'].median():.2f}", rotation=90, color=text_color)
+    ax4.text(df_rec["alntmscore"].median(), ax4_half, f"median: {df_rec['alntmscore'].median():.2f}", rotation=90, color=text_color)
+    ax4.text(df_ref["alntmscore"].median(), ax4_half, f"median: {df_ref['alntmscore'].median():.2f}", rotation=90, color=text_color)
+    ax5.text(df_rec["lddt"].median(), ax5_half, f"median: {df_rec['lddt'].median():.2f}", rotation=90, color=text_color)
+    ax5.text(df_ref["lddt"].median(), ax5_half, f"median: {df_ref['lddt'].median():.2f}", rotation=90, color=text_color)
     
     # add legend
     ax1.legend()
@@ -266,9 +269,9 @@ def create_gif(full_input_path: str):
     
 if __name__ == "__main__":
     input_path = "diffuseq_ProtMedium_h1024_lr0.0001_t2000_sqrt_lossaware_seed123_ProtMedium1MLsfRoFormerDebug20230610-18:32:34/"
-    full_input_path = os.path.join("..", "generation_outputs", input_path)
+    full_input_path = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", input_path)
     
-    validation_file = os.path.join("..", "generation_outputs", "test_sequences", "val_AA_512_aln_parsed.m8")
+    validation_file = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", "test_sequences", "val_AA_512_aln_parsed.m8")
     validate_directory(full_input_path, validation_file)
 
     # create_gif(full_input_path)
