@@ -64,7 +64,7 @@ def tokenizing(paths, tokenizer):
             raise ValueError("Path not valid")
     print('### datadict', datadict)
         
-    datadict.push_to_hub("adrianhenkel/lucidprots_testdata")
+    datadict.push_to_hub("adrianhenkel/lucidprots_full_data")
     print('### tokenized_datasets', tokenized_datasets)
     
 if __name__ == "__main__":
