@@ -52,7 +52,7 @@ def main():
 
     out_path = os.path.join(out_dir, f"ema{model_base_name.split('.ema')[1]}.samples")
     if not os.path.isdir(out_path):
-        os.mkdir(out_path)
+        os.makedirs(out_path, exist_ok=True)
     out_path = os.path.join(out_path, f"seed{args.seed2}_step{args.clamp_step}.json")
     
     if os.path.isfile(out_path):
