@@ -152,14 +152,6 @@ def compare_with_validation(aln_path: str, validation_path: str, mpnn_file: str,
     df_rec = pd.read_csv(aln_path, sep="\t", header=0)
     df_ref = pd.read_csv(validation_path, sep="\t", header=0)
     df_mpnn = pd.read_csv(mpnn_file, sep="\t", header=0)
-    
-    # create five subplots the first 4 are equally sized and the last one is twice as big
-    # 
-    # 1st subplot: histogram of pident
-    # 2nd subplot: histogram of evalue
-    # 3rd subplot: histogram of bits
-    # 4th subplot: histogram of alntmscore
-    # 5th subplot: histogram of lddt        
         
     # Create the figure and axes
     fig = plt.figure(figsize=(10, 12))
@@ -331,16 +323,15 @@ def plot_RMSD(full_input_path: str):
     plt.show()
         
 if __name__ == "__main__":
-    input_path = "diffuseq_ProtMediumCorrect_h256_lr1e-05_t6000_sqrt_lossaware_seed123_pm-correct-new-params20230419-17:39:32/"
-    #full_input_path = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", input_path)
+    input_path = "FINAL12x12MODEL/"
     
-    #validation_file = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", "test_sequences", "val_AA_512_aln_parsed.m8")
+    full_input_path = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", input_path)
+    validation_file = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", "test_sequences", "val_AA_512_aln_parsed.m8")
+    mpnn_file = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", "test_sequences", "val_EFvsAFDB_aln_PMPNN_parsed.m8")
     
-    full_input_path = os.path.join("generation_outputs/", input_path)
-    
-    validation_file = os.path.join("generation_outputs/", "test_sequences", "val_AA_1024_aln_parsed.m8")
-    
-    mpnn_file = os.path.join("generation_outputs/", "test_sequences", "val_EFvsAFDB_aln_PMPNN_parsed.m8")
+    # full_input_path = os.path.join("generation_outputs/", input_path)
+    # validation_file = os.path.join("generation_outputs/", "test_sequences", "val_AA_1024_aln_parsed.m8")
+    # mpnn_file = os.path.join("generation_outputs/", "test_sequences", "val_EFvsAFDB_aln_PMPNN_parsed.m8")
 
     
     validate_directory(full_input_path, validation_file)
