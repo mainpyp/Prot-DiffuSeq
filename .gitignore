@@ -1,3 +1,5 @@
+
+test_subset_pdbs/*
 *__pycache__*
 /venv/*
 *egg-info*
