@@ -11,7 +11,7 @@ from collections import Counter
 #from generation_outputs.dataset_utils import remove_brackets, dummy_aligner
 
 # global settings for matplotlib
-plt.rcParams.update({'font.size': 17})
+plt.rcParams.update({'font.size': 20})
 plt.rc('legend', fontsize=12)
 
 
@@ -52,9 +52,9 @@ def extract_seqs_to_df(paths: str) -> dict:
                 # concatenate to dataframe with concat
                 df = pd.concat([df, pd.DataFrame([[rec, ref, src, af_id]], columns=["recover", "reference", "source", "af_id"])])
         # add length column
-        df["len_rec"] = df["recover"].apply(lambda x: len(x.split(" ")))
-        df["len_ref"] = df["reference"].apply(lambda x: len(x.split(" ")))
-        df["len_src"] = df["source"].apply(lambda x: len(x.split(" ")))
+        df["len_rec"] = df["recover"].apply(lambda x: len(x.replace(" ", "")))
+        df["len_ref"] = df["reference"].apply(lambda x: len(x.replace(" ", "")))
+        df["len_src"] = df["source"].apply(lambda x: len(x.replace(" ", "")))
         df.reset_index(inplace=False)
         df_dict[path] = df
     
@@ -84,12 +84,15 @@ def plot_pearsons(dataframes: dict, step_labels: list, colors: list) -> None:
     
     # plot with two subplots neqxt to each other
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
+    # set fontsize to 20
+    plt.rcParams.update({'font.size': 22})
     
     length_correlations = []
     distribution_correlations = []
     for path in dataframes:
         df = dataframes[path]
         # length correlation
+        print(path)
         length_correlations.append(len_pearson_corr(df))
         
         # distribution correlation
@@ -100,13 +103,13 @@ def plot_pearsons(dataframes: dict, step_labels: list, colors: list) -> None:
     
     # PLOT THE LENGTH CORRELATIONS    
     ax1.bar(range(len(length_correlations)), length_correlations, color=colors)
-    ax1.set_xticks(range(len(length_correlations)), step_labels , rotation=45)
+    ax1.set_xticks(range(1, len(length_correlations), 2), step_labels[1::2] , rotation=45)
     ax1.axhline(y=0, color="k", linestyle='-')
     ax1.set_title("Sequence length correlation")
     
     # PLOT THE DISTRIBUTION CORRELATIONS
     ax2.bar(range(len(distribution_correlations)), distribution_correlations, color=colors)
-    ax2.set_xticks(range(len(distribution_correlations)), step_labels , rotation=45)
+    ax2.set_xticks(range(1, len(length_correlations), 2), step_labels[1::2], rotation=45)
     ax2.axhline(y=0, color="k", linestyle='-')
     ax2.set_title("AA distribution correlation")
     
@@ -150,6 +153,31 @@ def compare_aa_distribution(dataframes: dict, step_labels: list, colors: list) -
     """
     
     # plot with as many subfigures as there are dataframes
+    fig, ax = plt.subplots(1, 1, figsize=(20, 10))
+    # set fontsize to 20
+    plt.rcParams.update({'font.size': 22})
+    # set legend fontsize to 20
+    plt.rcParams['legend.fontsize'] = 20
+    final_ckpt = dataframes["./ema_0.9999_080000.pt.samples/seed102_step0.json"]
+    glob_c_recover, glob_c_reference = get_global_counter(final_ckpt)
+    
+    glob_c_recover = sorted(glob_c_recover.items())
+    glob_c_reference = sorted(glob_c_reference.items())
+    
+    # keep order of amino acids
+    x_rec = [x[0] for x in glob_c_recover]
+    y_rec = [x[1] for x in glob_c_recover]
+    
+    x_ref = [x[0] for x in glob_c_reference]
+    y_ref = [x[1] for x in glob_c_reference]
+    
+    # plot as barplot the two distributions
+    ax.bar(x_rec, y_rec, color="blue", alpha=0.5, label="recover")
+    ax.bar(x_ref, y_ref, color="red", alpha=0.5, label="reference")
+    ax.set_title("Amino Acid Distribution of final Checkpoint")
+    plt.legend()
+    plt.show()
+    
     fig, axs = plt.subplots(len(dataframes) // 2, 2, figsize=(10, 8))
     
     for i, (ax, title, path) in enumerate(zip(axs.reshape(-1), step_labels, dataframes)):
@@ -178,18 +206,22 @@ def compare_aa_distribution(dataframes: dict, step_labels: list, colors: list) -
     fig.legend(["recover", "reference"], loc="upper right")
     plt.tight_layout()
     plt.show()
+    
+
 
 
 if __name__ == "__main__":
-    generation_path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/FINAL_GENERATIONS"
+    generation_path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/diffuseq_ProtMedium_h1024_lr0.0001_t2000_sqrt_lossaware_seed123_ProtMedium1MLsfRoFormerDebug20230610-18:32:34"
+    generation_path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/BIG1_diffuseq_ProtMedium_h1024_lr0.0001_t2000_sqrt_lossaware_seed123_ProtMedium1MLsfRoFormerDebug20230610-18:32:34"
+    #generation_path = "/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/generation_outputs/FINAL12x12MODEL"
     # change working directory to this directory
     os.chdir(generation_path)
-    
-    paths = get_paths("seed101")
+
+    paths = get_paths("seed102")[1:44:2] # [::N] to only take every Nth path
     print(paths)
-    step_labels = from_path_to_step_K(paths[::2])
+    step_labels = from_path_to_step_K(paths)
     
-    dataframes = extract_seqs_to_df(paths[::2])
+    dataframes = extract_seqs_to_df(paths)
     print(dataframes.keys())
     
     # list of 50 different colors
@@ -197,6 +229,3 @@ if __name__ == "__main__":
     plot_pearsons(dataframes, step_labels, colors)
     
     compare_aa_distribution(dataframes, step_labels, colors)
-
-    
-    
