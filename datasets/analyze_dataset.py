@@ -27,8 +27,8 @@ def load_data(path:str) -> pd.DataFrame:
                 
             l = json.loads(line)
             src, target = l['src'], l['trg']
-            srcs.append(src.replace(' ', ''))
-            targets.append(target.replace(' ', ''))
+            srcs.append(src.replace(' ', '').strip())
+            targets.append(target.replace(' ', '').strip())
         print('Done!')
     df = pd.DataFrame(columns=['src', 'trg'])
     df['src'] = srcs
@@ -49,7 +49,14 @@ def main(args, save=False):
     train = load_data(args.train)
     test = load_data(args.test)
     valid = load_data(args.valid)
-    pdb_df = pd.read_csv("../3DI_stats/seq_ss_3Di.csv")   
+    pdb_df = pd.read_csv("../3DI_stats/seq_ss_3Di.csv")
+    print("VALID")
+    print(valid.length.describe())
+    print("TEST")
+    print(test.length.describe())
+    print("TRAIN")
+    print(train.length.describe())
+    
     pdb_df['length'] = pdb_df['sequence'].apply(len)
     print(pdb_df)
     # calculate the mean, mediad, std, 25 percentile and 75 percentile of the train length
