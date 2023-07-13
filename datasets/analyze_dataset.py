@@ -106,7 +106,7 @@ def main(args, save=False):
     # create three subplots
     # order axis so that ax1 spans the whole width and ax2 and ax3 are next to each other below ax1
     fig = plt.figure(figsize=(16, 8))
-    ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=2)
+    ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=1)
     ax2 = plt.subplot2grid((3, 2), (1, 0))
     ax3 = plt.subplot2grid((3, 2), (1, 1))
 
@@ -258,7 +258,7 @@ if __name__ == '__main__':
     args = parse_args()
     
     # output path is the input path without the last extension file
-    output_path = args.train.split('.')[0] + "_dataset_distributions"
+    output_path = args.train.split('.')[0] + "_dataset_distributions_squeezed"
     args.output_path = output_path
     
     main(args, save=True)
