@@ -105,7 +105,7 @@ def main(args, save=False):
     
     # create three subplots
     # order axis so that ax1 spans the whole width and ax2 and ax3 are next to each other below ax1
-    fig = plt.figure(figsize=(16, 8))
+    fig = plt.figure(figsize=(16, 14))
     ax1 = plt.subplot2grid((3, 2), (0, 0), colspan=1)
     ax2 = plt.subplot2grid((3, 2), (1, 0))
     ax3 = plt.subplot2grid((3, 2), (1, 1))
