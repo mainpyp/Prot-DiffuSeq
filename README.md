@@ -12,4 +12,6 @@ ______
 * [Tokenizer](https://huggingface.co/adrianhenkel/lucid-prot-tokenizer)
 
 ### Poster
-<img src="ECCB_poster.odf" alt="LucidProts Poster" title="" />
+<p align = "center">
+<img src="LucidProts_poster.png" width="100%" alt="" align=center />
+</p>
