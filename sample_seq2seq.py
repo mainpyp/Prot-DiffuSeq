@@ -225,7 +225,7 @@ def main():
         # logits not normalized or rather output before softmax
         # logits shape torch.Size([10, 256, 50])
         # bsz, seqlen, vocab
-        logits = model.get_logits(sample)  
+        logits = model.get_logits(sample)
 
         # Returns the k (1) largest elements of the given 
         # input tensor along a given dimension.

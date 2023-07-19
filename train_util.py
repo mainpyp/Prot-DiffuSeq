@@ -184,7 +184,7 @@ class TrainLoop:
     def run_loop(self):
         start_time = time.time()
         while (
-            not self.learning_steps
+            not self.learning_steps # if not given run forever
             or self.step + self.resume_step < self.learning_steps
         ):  
             batch, cond = next(self.data)
@@ -280,7 +280,8 @@ class TrainLoop:
             )
 
             if last_batch or not self.use_ddp:
-                losses = compute_losses()
+                losses = compute_losses() 
+                # losses -> terms
             else:
                 # gradient accumulation
                 with self.accelerator.no_sync(self.model):
