@@ -139,6 +139,8 @@ def main(args, save=False):
     c = Patch([], [], color='#089E73', label='valid')
     d = Patch([], [], color='#325880', label='PDB')
     
+
+    
     ax1.set_xlim(0, 512)
     ax1.set_xlabel('Length of source sequence')
     ax1.legend(handles=[a, b, c, d])
