@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <style>
+        .sankey .link {
+            fill: none;
+            stroke-opacity: 0.2;
+        }
+
+        .sankey .node rect {
+            fill-opacity: 0.9;
+        }
+
+        .sankey .node text {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        var units = "Counts";
+
+        var margin = {top: 10, right: 10, bottom: 10, left: 10},
+            width = 800 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        var formatNumber = d3.format(",.0f"),
+            format = function(d) { return formatNumber(d) + " " + units; },
+            color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", 
+                  "translate(" + margin.left + "," + margin.top + ")");
+
+        var sankey = d3.sankey()
+            .nodeId(function(d) { return d.name; })
+            .nodeWidth(15)
+            .nodePadding(10)
+            .extent([[1, 5], [width - 1, height - 5]]);
+
+        var path = sankey.link();
+
+        d3.csv("/Users/adrianhenkel/Documents/Programming/git/github/Prot-DiffuSeq/3DI_stats/PDB_ss_dis.csv", function(error, data) {
+            if (error) throw error;
+
+            // Format the data
+            data.forEach(function(d) {
+                d.value = +d.value;
+            });
+
+            // Set up the Sankey diagram
+            var {nodes, links} = sankey(data);
+
+            // Add links
+            svg.append("g")
+                .attr("fill", "none")
+                .attr("stroke-opacity", 0.2)
+                .selectAll("path")
+                .data(links)
+                .join("path")
+                .attr("d", path)
+                .attr("stroke", function(d) { return color(d.source.name); })
+                .attr("stroke-width", function(d) { return Math.max(1, d.width); });
+
+            // Add nodes
+            var node = svg.append("g")
+                .selectAll("g")
+                .data(nodes)
+                .join("g")
+                .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; });
+
+            node.append("rect")
+                .attr("height", function(d) { return d.y1 - d.y0; })
+                .attr("width", sankey.nodeWidth())
+                .attr("fill", function(d) { return color(d.name.replace(/ .*/, "")); })
+                .attr("opacity", 0.9)
+                .append("title")
+                .text(function(d) { return d.name + "\n" + format(d.value); });
+
+            node.append("text")
+                .attr("x", -6)
+                .attr("y", function(d) { return (d.y1 - d.y0) / 2; })
+                .attr("dy", "0.35em")
+                .attr("text-anchor", "end")
+                .text(function(d) { return d.name; })
+                .filter(function(d) { return d.x0 < width / 2; })
+                .attr("x", 6 + sankey.nodeWidth())
+                .attr("text-anchor", "start");
+        });
+    </script>
+</body>
+</html>

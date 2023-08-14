@@ -39,7 +39,6 @@ def compare(path):
     
     # create subplots with 1 row and 2 columns
     fig, (ax1, ax2) = plt.subplots(1, 2)
-    
     sns.scatterplot(data=full, x="SeqID", y="lddt", hue="TM-score", palette="coolwarm", alpha=0.8, ax=ax1, legend="brief")
     sns.regplot(data=full, x="SeqID", y="lddt", scatter=False, color="orange", ax=ax1)
     ax1.set_xlabel("SeqID")
@@ -61,9 +60,23 @@ def compare(path):
                 ax2.text(row["lddt"], row["TM-score"], row["ID"] + " g.o.a.t.", fontsize=10)
             else:
                 ax2.text(row["lddt"], row["TM-score"], row["ID"], fontsize=8)
-            
-    
     full["Length Category"] = full["sequence_length"].apply(lambda x: "< 94" if x < 94 else "> 94")
+    
+    # calculate pearson correlation between lddt and SeqID
+    print("Correlation between SeqID and lddt")
+    print(full[["SeqID", "lddt"]].corr(method="pearson"))
+    print(full[["SeqID", "lddt"]].corr(method="spearman"))
+    print(full[["SeqID", "lddt"]].corr(method="kendall"))
+    
+    
+    print("Correlation between sequence length and lddt")
+    print(full[["sequence_length", "lddt"]].corr(method="pearson"))
+    print(full[["sequence_length", "lddt"]].corr(method="spearman"))
+    print(full[["sequence_length", "lddt"]].corr(method="kendall"))
+    print("Correlation between sequence length and SeqID")
+    print(full[["sequence_length", "SeqID"]].corr(method="pearson"))
+    print(full[["sequence_length", "SeqID"]].corr(method="spearman"))
+    print(full[["sequence_length", "SeqID"]].corr(method="kendall"))
     print(full.sequence_length.median())
     # Define the color palette for the categories
     category_colors = {"< 94": "#0169B2", "> 94": "orange"}
