@@ -52,7 +52,7 @@ def main():
 
     out_path = os.path.join(out_dir, f"ema{model_base_name.split('.ema')[1]}.samples")
     if not os.path.isdir(out_path):
-        os.mkdir(out_path)
+        os.makedirs(out_path, exist_ok=True)
     out_path = os.path.join(out_path, f"seed{args.seed2}_step{args.clamp_step}.json")
     
     if os.path.isfile(out_path):
@@ -225,7 +225,7 @@ def main():
         # logits not normalized or rather output before softmax
         # logits shape torch.Size([10, 256, 50])
         # bsz, seqlen, vocab
-        logits = model.get_logits(sample)  
+        logits = model.get_logits(sample)
 
         # Returns the k (1) largest elements of the given 
         # input tensor along a given dimension.

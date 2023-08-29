@@ -31,7 +31,7 @@ def generate_samples(args: argparse.Namespace, out_dir: str = 'generation_output
 
         if not os.path.isdir(out_dir):
             print(f'creating {out_dir}...')
-            os.mkdir(out_dir)
+            os.makedirs(out_dir, exist_ok=True)
 
         ##### GENERATE SAMPLES #####
         print(f"\nGenerating samples for {len(checkpoints)} checkpoints and {len(args.seeds)} seeds...\n")

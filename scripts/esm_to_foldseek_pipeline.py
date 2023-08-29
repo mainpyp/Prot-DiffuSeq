@@ -2,7 +2,6 @@ import os
 import glob
 import matplotlib.pyplot as plt
 import pandas as pd
-# from PIL import Image
 
 def validate_directory(path: str, validation_file: str):
     if not os.path.isdir(path):
@@ -149,101 +148,107 @@ def compute_RMSD(pdb_dir: str, out_rmsd: str):
     os.system(COMMAND)
 
 
-def compare_with_validation(aln_path: str, validation_path: str, format_output):
+def compare_with_validation(aln_path: str, validation_path: str, mpnn_file: str, format_output):
     df_rec = pd.read_csv(aln_path, sep="\t", header=0)
     df_ref = pd.read_csv(validation_path, sep="\t", header=0)
-    
-    # create five subplots the first 4 are equally sized and the last one is twice as big
-    # 
-    # 1st subplot: histogram of pident
-    # 2nd subplot: histogram of evalue
-    # 3rd subplot: histogram of bits
-    # 4th subplot: histogram of alntmscore
-    # 5th subplot: histogram of lddt        
+    df_mpnn = pd.read_csv(mpnn_file, sep="\t", header=0)
         
     # Create the figure and axes
     fig = plt.figure(figsize=(10, 12))
     
     # add title to figure
     seed = aln_path.split("/")[-1].split("_")[0]
-    fig.suptitle(f"ckpt: {aln_path.split('/')[-2].replace('.pt.samples', '')} - {seed}", fontsize=16)
+    path_to_step = lambda x: int(x.split("/")[-2].replace(".pt.samples", "").split("_")[-1])
+    fig.suptitle(f"Checkpoint: {path_to_step(aln_path):.1e} (Seed {seed.replace('seed', '')})", fontsize=18)
 
     # Define the layout
     ax1 = plt.subplot2grid((3, 2), (0, 0))
     ax2 = plt.subplot2grid((3, 2), (0, 1))
-    ax3 = plt.subplot2grid((3, 2), (1, 0))
-    ax4 = plt.subplot2grid((3, 2), (1, 1))
-    ax5 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
+    ax3 = plt.subplot2grid((3, 2), (1, 0), colspan=2)
+    ax4 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
 
     # Set the titles for each subplot (optional)
     ax1.set_title('pident')
     ax2.set_title('evalue')
-    ax3.set_title('bits')
-    ax4.set_title('alntmscore')
-    ax5.set_title('lddt')
+    ax3.set_title('alntmscore')
+    ax4.set_title('lddt')
     
     bins = 15
-    color_rec = "green"
-    color_ref = "orange"
+    color_rec = "orange"
+    color_ref = "green"
+    color_mpnn = "blue"
     text_color = "black"
+    glob_font_size = 14
+    legend_size = 14
     alpha = 0.5
+    # change global font size
+    plt.rcParams.update({'font.size': glob_font_size})
     
     ax1_n, _, _ = ax1.hist(df_rec["pident"], bins=bins, color=color_rec, alpha=alpha, label="rec")
     ax2_n, _, _ = ax2.hist(df_rec["evalue"], bins=bins, color=color_rec, alpha=alpha, label="rec")
-    ax3_n, _, _ = ax3.hist(df_rec["bits"], bins=bins, color=color_rec, alpha=alpha, label="rec")
-    ax4_n, _, _ = ax4.hist(df_rec["alntmscore"], bins=bins, color=color_rec, alpha=alpha, label="rec")
-    ax5_n, _, _ = ax5.hist(df_rec["lddt"], bins=bins, color=color_rec, alpha=alpha, label="rec")
+    ax4_n, _, _ = ax3.hist(df_rec["alntmscore"], bins=bins, color=color_rec, alpha=alpha, label="rec")
+    ax5_n, _, _ = ax4.hist(df_rec["lddt"], bins=bins, color=color_rec, alpha=alpha, label="rec")
     
     # fix x axis
     ax1.set_xlim([0, 100])
     # skip ax2
     # skip ax3 bits
+    ax3.set_xlim([0, 1])
     ax4.set_xlim([0, 1])
-    ax5.set_xlim([0, 1])
     
     ax1.hist(df_ref["pident"], bins=bins, color=color_ref, alpha=alpha, label="ref")
     ax2.hist(df_ref["evalue"], bins=bins, color=color_ref, alpha=alpha, label="ref")
-    ax3.hist(df_ref["bits"], bins=bins, color=color_ref, alpha=alpha, label="ref")
-    ax4.hist(df_ref["alntmscore"], bins=bins, color=color_ref, alpha=alpha, label="ref")
-    ax5.hist(df_ref["lddt"], bins=bins, color=color_ref, alpha=alpha, label="ref")
+    ax3.hist(df_ref["alntmscore"], bins=bins, color=color_ref, alpha=alpha, label="ref")
+    ax4.hist(df_ref["lddt"], bins=bins, color=color_ref, alpha=alpha, label="ref")
     
     # adds mean and std to each subplot
     ax1.axvline(df_rec["pident"].median(), color=color_rec, linestyle='dashed', linewidth=1)
     ax1.axvline(df_ref["pident"].median(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax1.axvline(df_mpnn["pident"].median(), color=color_mpnn, linestyle='dashed', linewidth=1)
+    
     ax2.axvline(df_rec["evalue"].median(), color=color_rec, linestyle='dashed', linewidth=1)
     ax2.axvline(df_ref["evalue"].median(), color=color_ref, linestyle='dashed', linewidth=1)
-    ax3.axvline(df_rec["bits"].median(), color=color_rec, linestyle='dashed', linewidth=1)
-    ax3.axvline(df_ref["bits"].median(), color=color_ref, linestyle='dashed', linewidth=1)
-    ax4.axvline(df_rec["alntmscore"].median(), color=color_rec, linestyle='dashed', linewidth=1)
-    ax4.axvline(df_ref["alntmscore"].median(), color=color_ref, linestyle='dashed', linewidth=1)
-    ax5.axvline(df_rec["lddt"].median(), color=color_rec, linestyle='dashed', linewidth=1)
-    ax5.axvline(df_ref["lddt"].median(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax2.axvline(df_mpnn["evalue"].median(), color=color_mpnn, linestyle='dashed', linewidth=1)
+    
+    ax3.axvline(df_rec["alntmscore"].median(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax3.axvline(df_ref["alntmscore"].median(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax3.axvline(df_mpnn["alntmscore"].median(), color=color_mpnn, linestyle='dashed', linewidth=1)
+    
+    ax4.axvline(df_rec["lddt"].median(), color=color_rec, linestyle='dashed', linewidth=1)
+    ax4.axvline(df_ref["lddt"].median(), color=color_ref, linestyle='dashed', linewidth=1)
+    ax4.axvline(df_mpnn["lddt"].median(), color=color_mpnn, linestyle='dashed', linewidth=1)
     
     # adds mean as text to each subplot next to each axvline and in the middle of the height of the histogram
     
     ax1_half = ax1_n.max() / 2
     ax2_half = ax2_n.max() / 2
-    ax3_half = ax3_n.max() / 2
-    ax4_half = ax4_n.max() / 2
-    ax5_half = ax5_n.max() / 2
+    ax3_half = ax4_n.max() / 2
+    ax4_half = ax5_n.max() / 2
     
-    ax1.text(df_rec["pident"].median(), ax1_half, f"median: {df_rec['pident'].median():.2f}", rotation=90, color=text_color)
-    ax1.text(df_ref["pident"].median(), ax1_half, f"median: {df_ref['pident'].median():.2f}", rotation=90, color=text_color)
-    ax2.text(df_rec["evalue"].median(), ax2_half, f"median: {df_rec['evalue'].median():.2f}", rotation=90, color=text_color)
-    ax2.text(df_ref["evalue"].median(), ax2_half, f"median: {df_ref['evalue'].median():.2f}", rotation=90, color=text_color)
-    ax3.text(df_rec["bits"].median(), ax3_half, f"median: {df_rec['bits'].median():.2f}", rotation=90, color=text_color)
-    ax3.text(df_ref["bits"].median(), ax3_half, f"median: {df_ref['bits'].median():.2f}", rotation=90, color=text_color)
-    ax4.text(df_rec["alntmscore"].median(), ax4_half, f"median: {df_rec['alntmscore'].median():.2f}", rotation=90, color=text_color)
-    ax4.text(df_ref["alntmscore"].median(), ax4_half, f"median: {df_ref['alntmscore'].median():.2f}", rotation=90, color=text_color)
-    ax5.text(df_rec["lddt"].median(), ax5_half, f"median: {df_rec['lddt'].median():.2f}", rotation=90, color=text_color)
-    ax5.text(df_ref["lddt"].median(), ax5_half, f"median: {df_ref['lddt'].median():.2f}", rotation=90, color=text_color)
+    ax1.text(df_rec["pident"].median(), ax1_half, f"{df_rec['pident'].median():.2f}", rotation=90, color=text_color)
+    ax1.text(df_ref["pident"].median(), ax1_half, f"{df_ref['pident'].median():.2f}", rotation=90, color=text_color)
+    ax1.text(df_mpnn["pident"].median(), ax1_half + (ax1_half*2), f"{df_mpnn['pident'].median():.2f}", rotation=90, color=text_color)
     
-    # add legend
-    ax1.legend()
-    ax2.legend()
-    ax3.legend()
-    ax4.legend()
-    ax5.legend()
+    ax2.text(df_rec["evalue"].median(), ax2_half, f"{df_rec['evalue'].median():.2f}", rotation=90, color=text_color)
+    ax2.text(df_ref["evalue"].median(), ax2_half, f"{df_ref['evalue'].median():.2f}", rotation=90, color=text_color)
+    ax2.text(df_mpnn["evalue"].median(), ax2_half + (ax2_half*2), f"{df_mpnn['evalue'].median():.2f}", rotation=90, color=text_color)
+    
+    ax3.text(df_rec["alntmscore"].median(), ax3_half, f"{df_rec['alntmscore'].median():.2f}", rotation=90, color=text_color)
+    ax3.text(df_ref["alntmscore"].median(), ax3_half, f"{df_ref['alntmscore'].median():.2f}", rotation=90, color=text_color)
+    ax3.text(df_mpnn["alntmscore"].median(), ax3_half + (ax3_half*2), f"{df_mpnn['alntmscore'].median():.2f}", rotation=90, color=text_color)
+    
+    ax4.text(df_rec["lddt"].median(), ax4_half, f"{df_rec['lddt'].median():.2f}", rotation=90, color=text_color)
+    ax4.text(df_ref["lddt"].median(), ax4_half, f"{df_ref['lddt'].median():.2f}", rotation=90, color=text_color)
+    ax4.text(df_mpnn["lddt"].median(), ax4_half + (ax4_half*2), f"{df_mpnn['lddt'].median():.2f}", rotation=90, color=text_color)
+    
+    # add global legend
+    ax2.legend(["Inference", "Truth", "Median Inference", "Median Truth", "Median MPNN", ], loc="upper right", prop={'size': legend_size})
+    
+    # add titles
+    ax1.set_title("Percent Identity")
+    ax2.set_title("E-Value")
+    ax3.set_title("Alignment Score")
+    ax4.set_title("lDDT")
 
     # Adjust the spacing between subplots
     plt.tight_layout()
@@ -260,25 +265,84 @@ def compare_with_validation(aln_path: str, validation_path: str, format_output):
 
 
 def create_gif(full_input_path: str):
+    from PIL import Image
     image_paths = glob.glob(full_input_path + "/**/**/*.png")
     image_paths = sorted(image_paths, reverse=False)
+    
+    if len(image_paths) == 0:
+        print("No images found")
+        return
+    
     frames = [Image.open(image_path) for image_path in image_paths]
     frame_one = frames[0]
     frame_one.save(full_input_path + "/generation_evolution.gif", format="GIF", append_images=frames[1:], save_all=True, duration=1000, loop=0)
+
+def plot_RMSD(full_input_path: str):
+    log_paths = sorted(glob.glob(full_input_path + "/**/*.log"))
+    
+    total = pd.DataFrame(columns=["file", "RMSD", "TM-score", "aligned_length", "SeqID"])
+    
+    for log in log_paths:
+        df = pd.read_csv(log)
+        RMSD = df.RMSD.mean()
+        TM = df["TM-score"].mean()
+        aligned_length = df["aligned-length"].mean()
+        id = df["SeqID"].mean()
+        total = total.append({"file": log, "RMSD": RMSD, "TM-score": TM, "aligned_length": aligned_length, "SeqID": id}, ignore_index=True)
+        
+    print(total)
+    
+    fig, axs = plt.subplots(4, 1, figsize=(8, 5))
     
     
+    # plot RMSD
+    axs[0].plot(total["RMSD"])
+    axs[0].set_title("RMSD over time")
+    axs[0].set_ylabel("RMSD")
+    # add horizontal grid
+    axs[0].grid(True)
+    
+    # plot TM scores
+    axs[1].plot(total["TM-score"])
+    axs[1].set_title("TM scores over time")
+    axs[1].set_ylabel("TM score")
+    
+    axs[2].plot(total["SeqID"])
+    axs[2].set_title("SeqID over time")
+    axs[2].set_xlabel("Time")
+    
+    
+    # plot histogram of aligned lengths
+    axs[3].plot(total["aligned_length"])
+    axs[3].set_title("# aligned residues")
+    axs[3].set_xlabel("Aligned length")
+    axs[3].set_ylabel("Length")
+    
+
+    plt.tight_layout()
+    plt.show()
+        
 if __name__ == "__main__":
-    input_path = "diffuseq_ProtMedium_h1024_lr0.0001_t2000_sqrt_lossaware_seed123_ProtMedium1MLsfRoFormerDebug20230610-18:32:34/"
-    full_input_path = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", input_path)
+    input_path = "FINAL12x12MODEL/"
     
+    full_input_path = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", input_path)
     validation_file = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", "test_sequences", "val_AA_512_aln_parsed.m8")
+    mpnn_file = os.path.join("/mnt/project/henkel/repositories/Prot-DiffuSeq/generation_outputs/", "test_sequences", "val_EFvsAFDB_aln_PMPNN_parsed.m8")
+    
+    # full_input_path = os.path.join("generation_outputs/", input_path)
+    # validation_file = os.path.join("generation_outputs/", "test_sequences", "val_AA_1024_aln_parsed.m8")
+    # mpnn_file = os.path.join("generation_outputs/", "test_sequences", "val_EFvsAFDB_aln_PMPNN_parsed.m8")
+
+    
     validate_directory(full_input_path, validation_file)
 
+    # plot_RMSD(full_input_path)
     # create_gif(full_input_path)
     # exit()
     
     checkpoints = get_checkpoints(full_input_path)
     for ckpt in checkpoints:
+        print(ckpt)
         for fasta in get_fastas(ckpt):
             # store pdb and pLDDT in the same folder as the fasta
             pdb_path = fasta.replace(".fasta", "_pdb")
@@ -291,7 +355,7 @@ if __name__ == "__main__":
             foldseek(pdb_dir=pdb_path, out_aln=output_aln, format_output=format_output)
             parsed_file_path = parse_m8(output_aln, format_output=format_output)
             
-            compare_with_validation(parsed_file_path, validation_file, format_output=format_output)
+            compare_with_validation(parsed_file_path, validation_file, mpnn_file, format_output=format_output)
             
             rmsd_file = fasta.replace(".fasta", "_val_EFvsAFDB_RMSDs.log")
             compute_RMSD(pdb_path, rmsd_file)

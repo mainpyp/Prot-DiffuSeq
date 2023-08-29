@@ -1,3 +1,5 @@
+
+test_subset_pdbs/*
 *__pycache__*
 /venv/*
 *egg-info*
@@ -8,3 +10,4 @@ diffusion_models/*
 *_tmpFolder/
 *.log
 *.pth
+generation_outputs/BIG1_diffuseq_ProtMedium_h1024_lr0.0001_t2000_sqrt_lossaware_seed123_ProtMedium1MLsfRoFormerDebug20230610-18:32:34/ema_0.9999_080000.pt.samples/seed102_step0_rec_pdb/*
