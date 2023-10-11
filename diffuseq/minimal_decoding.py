@@ -64,15 +64,15 @@ def tokenizing(paths, tokenizer):
             raise ValueError("Path not valid")
     print('### datadict', datadict)
         
-    datadict.push_to_hub("adrianhenkel/lucidprots_full_data")
+    datadict.push_to_hub("adrianhenkel/lucidprots_full_data_val_474")
     print('### tokenized_datasets', tokenized_datasets)
     
 if __name__ == "__main__":
     import os 
     print(os.getcwd())
-    path_train = "datasets/ProtTotal/train.jsonl"
-    path_test = "datasets/ProtTotal/test.jsonl"
-    path_valid = "datasets/ProtTotal/valid.jsonl"
+    path_train = "datasets/ProtTotalCorrect/train.jsonl"
+    path_test = "datasets/ProtTotalCorrect/test.jsonl"
+    path_valid = "datasets/ProtTotalCorrect/val_474.jsonl"
     paths = [path_train, path_test, path_valid]
     print("\nCreate tokenizer")
     tokenizer = create_tokenizer()
