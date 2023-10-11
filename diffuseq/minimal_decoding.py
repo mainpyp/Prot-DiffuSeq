@@ -71,7 +71,7 @@ if __name__ == "__main__":
     import os 
     print(os.getcwd())
     path_train = "datasets/ProtTotalCorrect/train.jsonl"
-    path_test = "datasets/ProtTotalCorrect/test.jsonl"
+    path_test = "datasets/ProtTotalCorrect/test_474.jsonl"
     path_valid = "datasets/ProtTotalCorrect/val_474.jsonl"
     paths = [path_train, path_test, path_valid]
     print("\nCreate tokenizer")
