@@ -3,13 +3,12 @@ from torch.utils.data import DataLoader, Dataset
 from datasets import DatasetDict
 from torch.utils.data.distributed import DistributedSampler
 
-import torch
 import json
-import itertools
 import tqdm
-import psutil
-from transformers import AutoTokenizer
+
+from transformers import AutoTokenizer, T5Tokenizer
 import datasets
+import os
 from datasets import Dataset as Dataset2
 
 
@@ -24,11 +23,12 @@ def get_sentence_list(path):
     return sentence_lst
 
 def create_tokenizer():
-    tokenizer = AutoTokenizer.from_pretrained("Rostlab/prot_bert")
+    # tokenizer = AutoTokenizer.from_pretrained("Rostlab/prot_bert")
+    tokenizer = T5Tokenizer.from_pretrained('Rostlab/ProstT5', do_lower_case=False)
 
     # adds 3di tokens that are lowercase
-    threedi = ['a','c','d','e','f','g','h','i','k','l','m','n','p','q','r','s','t','v','w','y']
-    tokenizer.add_tokens(threedi)
+    # threedi = ['a','c','d','e','f','g','h','i','k','l','m','n','p','q','r','s','t','v','w','y']
+    # tokenizer.add_tokens(threedi)
 
     return tokenizer
 
@@ -43,6 +43,7 @@ def tokenizing(paths, tokenizer):
             return result_dict
     datadict = DatasetDict()
     for path in paths:
+        print(f"### path: {path}")
         sentence_lst = get_sentence_list(path)
         raw_datasets = Dataset2.from_dict(sentence_lst)
 
@@ -64,16 +65,15 @@ def tokenizing(paths, tokenizer):
             raise ValueError("Path not valid")
     print('### datadict', datadict)
         
-    datadict.push_to_hub("adrianhenkel/lucidprots_full_data_val_474")
+    datadict.push_to_hub("Rostlab/ProstT5Dataset")
     print('### tokenized_datasets', tokenized_datasets)
     
-if __name__ == "__main__":
-    import os 
-    print(os.getcwd())
+if __name__ == "__main__": 
     path_train = "datasets/ProtTotalCorrect/train.jsonl"
     path_test = "datasets/ProtTotalCorrect/test_474.jsonl"
     path_valid = "datasets/ProtTotalCorrect/val_474.jsonl"
-    paths = [path_train, path_test, path_valid]
+    
+    paths = [path_test, path_valid, path_train]
     print("\nCreate tokenizer")
     tokenizer = create_tokenizer()
     print("\nTokenizing")
