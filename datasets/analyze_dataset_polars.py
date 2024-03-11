@@ -35,7 +35,7 @@ def parse_args():
 
 
 def setup_plot_params():
-    plt.rcParams["figure.figsize"] = (20, 15)
+    plt.rcParams["figure.figsize"] = (25, 20)
     plt.rcParams["font.size"] = 20
     plt.rcParams["axes.labelsize"] = 350
     plt.rcParams["axes.labelweight"] = "semibold"
@@ -203,7 +203,7 @@ def main(files) -> None:
         "pdb": "#325880",
     }
 
-    violin = False
+    violin = True
     if violin:
         sns.violinplot(
             combined_data_pd,
@@ -212,6 +212,7 @@ def main(files) -> None:
             linewidth=2,
             alpha=0.8,
             cut=0,
+            hue="length",
             split=True,
             fill=True,
             palette=dataset_colors,
@@ -268,8 +269,11 @@ def main(files) -> None:
     axs[2].legend(["Train", "Test", "Valid", "PDB"])
 
     plt.tight_layout()
-    
+    # plt.show()
+
+
     plt.savefig(f"{files['output']}analysis_plot_{violin=}.png")
+
 
 
 if __name__ == "__main__":
