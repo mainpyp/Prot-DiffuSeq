@@ -197,7 +197,7 @@ def main(files) -> None:
     )
 
     dataset_colors = {
-        "train": "#336FA1",
+        "train": "darkred",
         "test": "orange",
         "valid": "green",
         "pdb": "#325880",
@@ -271,8 +271,9 @@ def main(files) -> None:
     plt.tight_layout()
     # plt.show()
 
-
-    plt.savefig(f"{files['output']}analysis_plot_{violin=}.png")
+    output_name = f"{files['output']}analysis_plot_{violin=}.png"
+    plt.savefig(output_name)
+    print(f"Saving plot to {output_name}")
 
 
 
